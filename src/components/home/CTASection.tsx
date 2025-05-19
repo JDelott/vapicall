@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Phone } from "lucide-react";
+import VapiCall from "@/components/vapi/VapiCall";
 
 export default function CTASection() {
   return (
@@ -32,15 +32,15 @@ export default function CTASection() {
               </h2>
               
               <p className="text-gray-300 mb-8">
-                Join thousands of users who are already enhancing their productivity with our quantum voice technology.
+                Call our AI assistant through the web interface or on your phone to experience our quantum voice technology firsthand.
               </p>
               
               {/* Feature list */}
               <div className="space-y-3 mb-8">
                 {[
-                  "No registration required to try",
-                  "Works with any phone or device",
-                  "Free tier available for personal use"
+                  "Make a call directly from your browser",
+                  "Natural conversation with advanced AI",
+                  "Try it now, no registration required"
                 ].map((item, i) => (
                   <div key={i} className="flex items-start">
                     <div className="mt-1.5 flex-shrink-0 h-3 w-3 rounded-sm bg-[#00F5A0] mr-3"></div>
@@ -49,14 +49,18 @@ export default function CTASection() {
                 ))}
               </div>
               
-              {/* CTA Button */}
-              <Link 
-                href="/start" 
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#B83280] to-[#4B2D83] text-white font-medium rounded-lg hover:from-[#C93D90] hover:to-[#5B3D93] transition-all duration-300"
-              >
-                <Phone className="mr-2 h-5 w-5" />
-                Start a Call Now
-              </Link>
+              {/* Display VapiCall component */}
+              <VapiCall />
+              
+              <div className="mt-6">
+                <p className="text-gray-300 text-sm mb-2">Prefer to call by phone?</p>
+                <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-4">
+                  <div className="font-mono text-[#00F5A0] text-lg mb-1">+1 (412) 520 8354</div>
+                  <p className="text-xs text-gray-500">
+                    Call this number from any phone to speak with our AI assistant.
+                  </p>
+                </div>
+              </div>
               
               <p className="mt-4 text-gray-500 text-xs">
                 By using our service, you agree to our Terms of Service and Privacy Policy.
@@ -99,14 +103,16 @@ export default function CTASection() {
                 </div>
               </div>
               
-              {/* Bottom badge */}
+              {/* Setup link */}
               <div className="absolute bottom-8 inset-x-0 flex justify-center">
-                <div className="px-4 py-2 bg-[#1C1D2B] border border-[#2E2D47] rounded-full">
-                  <div className="flex items-center">
-                    <div className="h-2 w-2 rounded-full bg-[#00F5A0] animate-pulse mr-2"></div>
-                    <div className="text-[#00F5A0] text-xs font-mono">SYSTEM ONLINE</div>
+                <Link href="/setup">
+                  <div className="px-4 py-2 bg-[#1C1D2B] border border-[#2E2D47] rounded-full hover:border-[#00F5A0] transition-colors">
+                    <div className="flex items-center">
+                      <div className="h-2 w-2 rounded-full bg-[#00F5A0] animate-pulse mr-2"></div>
+                      <div className="text-[#00F5A0] text-xs font-mono">SETUP YOUR OWN NUMBER</div>
+                    </div>
                   </div>
-                </div>
+                </Link>
               </div>
             </div>
           </div>
