@@ -14,6 +14,7 @@ export default function VapiCall() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState<string>('');
   const [callStatus, setCallStatus] = useState<string>('Ready to call');
+  const [currentPhoneme, setCurrentPhoneme] = useState<string>('');
 
   // Initialize Vapi client once
   useEffect(() => {
@@ -198,85 +199,70 @@ export default function VapiCall() {
   }, [isCallActive]);
 
   return (
-    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="flex flex-col">
-          <div className="text-white mb-4">
-            <div className="flex items-center">
-              <div className={`h-2 w-2 rounded-full ${isCallActive ? 'bg-[#00F5A0] animate-pulse' : 'bg-gray-500'} mr-2`}></div>
-              <span>{callStatus}</span>
-            </div>
+    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg p-4 flex flex-col">
+      {/* Avatar takes the main focus - much larger */}
+      <div className="w-full h-[500px]">
+        <Avatar3D isSpeaking={isSpeaking} currentPhoneme={currentPhoneme} />
+      </div>
+      
+      {/* Controls overlaid at the bottom */}
+      <div className="mt-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <div className={`h-2 w-2 rounded-full ${isCallActive ? 'bg-[#00F5A0] animate-pulse' : 'bg-gray-500'} mr-2`}></div>
+            <span className="text-white">{callStatus}</span>
           </div>
           
-          <div className="flex space-x-3 mb-4 relative z-20">
-            {!isCallActive ? (
-              <Button 
-                onClick={handleStartCall}
-                className="flex-1 bg-[#1C1D2B] hover:bg-[#00F5A0] hover:text-[#14152A] text-[#00F5A0]"
-              >
-                <Phone className="mr-2 h-4 w-4" />
-                Start Call
-              </Button>
-            ) : (
-              <>
-                <Button 
-                  onClick={handleStopCall}
-                  className="flex-1 bg-[#1C1D2B] hover:bg-[#B83280] hover:text-white text-[#B83280] relative z-20"
-                >
-                  <PhoneOff className="mr-2 h-4 w-4" />
-                  End Call
-                </Button>
-                
-                <Button 
-                  onClick={handleToggleMute}
-                  className={`flex-1 bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'} relative z-20`}
-                >
-                  {isMuted ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
-                  {isMuted ? 'Unmute' : 'Mute'}
-                </Button>
-              </>
-            )}
-          </div>
-          
+          {/* Minimalist transcript popup that appears only when there's content */}
           {transcript && (
-            <div className="mt-2">
-              <div className="text-sm font-semibold text-white mb-1">Transcript</div>
-              <div className="bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3 max-h-40 overflow-y-auto text-xs text-gray-300 whitespace-pre-line">
-                {transcript}
-              </div>
+            <div className="text-xs text-gray-400 truncate max-w-[200px]">
+              {transcript.split('\n').pop()}
             </div>
           )}
         </div>
         
-        <div className="relative z-10">
-          <Avatar3D isSpeaking={isSpeaking} />
+        <div className="flex space-x-3">
+          {!isCallActive ? (
+            <Button 
+              onClick={handleStartCall}
+              className="flex-1 bg-[#1C1D2B] hover:bg-[#00F5A0] hover:text-[#14152A] text-[#00F5A0]"
+            >
+              <Phone className="mr-2 h-4 w-4" />
+              Start Call
+            </Button>
+          ) : (
+            <>
+              <Button 
+                onClick={handleStopCall}
+                className="flex-1 bg-[#1C1D2B] hover:bg-[#B83280] hover:text-white text-[#B83280] relative z-20"
+              >
+                <PhoneOff className="mr-2 h-4 w-4" />
+                End Call
+              </Button>
+              
+              <Button 
+                onClick={handleToggleMute}
+                className={`flex-1 bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'} relative z-20`}
+              >
+                {isMuted ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
+                {isMuted ? 'Unmute' : 'Mute'}
+              </Button>
+            </>
+          )}
         </div>
+        
+        {/* Full transcript available in a collapsible section */}
+        {transcript && (
+          <div className="mt-4 overflow-hidden transition-all duration-300 hover:max-h-40 max-h-0 group">
+            <div className="text-xs text-white/60 group-hover:text-white transition-colors">
+              Click to expand transcript
+            </div>
+            <div className="bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3 max-h-40 overflow-y-auto text-xs text-gray-300 whitespace-pre-line mt-2">
+              {transcript}
+            </div>
+          </div>
+        )}
       </div>
-      
-      {/* Emergency End Call Button */}
-      {isCallActive && (
-        <div className="mt-4">
-          <Button 
-            onClick={() => {
-              console.log("Emergency stop button clicked");
-              try {
-                // Hard reset everything
-                if (vapiClientRef.current) {
-                  vapiClientRef.current.stop();
-                }
-                setIsCallActive(false);
-                setIsSpeaking(false);
-                setCallStatus('Call force-stopped');
-              } catch (error) {
-                console.error("Emergency stop failed:", error);
-              }
-            }}
-            className="w-full bg-red-700 hover:bg-red-800 text-white relative z-30"
-          >
-            Emergency Stop Call
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

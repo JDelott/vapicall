@@ -399,8 +399,8 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
     <group ref={group}>
       <primitive 
         object={scene} 
-        scale={1.3}
-        position={[0, -1.85, 0]} 
+        scale={1.4}
+        position={[0, -1.7, 0]}
         rotation={[0, 0, 0]}
       />
     </group>
@@ -428,10 +428,10 @@ export default function Avatar3D({ isSpeaking, currentPhoneme }: AvatarProps) {
   }
 
   return (
-    <div className="relative w-full h-[400px] bg-[#1C1D2B] rounded-lg overflow-hidden">
+    <div className="relative w-full h-full bg-[#1C1D2B] rounded-lg overflow-hidden">
       <Canvas 
         shadows
-        camera={{ position: [0, 0, 3.2], fov: 45 }}
+        camera={{ position: [0, 0, 3.0], fov: 42 }}
         onCreated={() => console.log("Canvas created successfully")}
         onError={(e) => {
           console.error("Canvas error:", e);
@@ -463,9 +463,9 @@ export default function Avatar3D({ isSpeaking, currentPhoneme }: AvatarProps) {
         />
       </Canvas>
       
-      {/* Status indicator */}
+      {/* Status indicator - more subtle and moved to the top corner */}
       {isSpeaking && (
-        <div className="absolute bottom-4 left-4 bg-[#00F5A0] text-[#14152A] text-xs py-1 px-3 rounded-full animate-pulse">
+        <div className="absolute top-4 right-4 bg-[#00F5A0] text-[#14152A] text-xs py-1 px-3 rounded-full animate-pulse">
           Speaking
         </div>
       )}
