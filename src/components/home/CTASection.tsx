@@ -1,0 +1,128 @@
+import Link from "next/link";
+import { Phone } from "lucide-react";
+
+export default function CTASection() {
+  return (
+    <section className="w-full bg-[#0A0B14] py-16 relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute inset-0">
+        {/* Stars */}
+        <div className="absolute inset-0" 
+             style={{
+               backgroundImage: 'radial-gradient(1px 1px at 50px 50px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1px 1px at 100px 100px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1.5px 1.5px at 150px 150px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1px 1px at 200px 200px, rgba(255,255,255,0.3) 100%, transparent)',
+               backgroundSize: '250px 250px',
+             }}>
+        </div>
+        
+        {/* Gradient planet */}
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-[#4B2D83] to-[#B83280] opacity-20 blur-xl"></div>
+        <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#00F5A0] opacity-10 blur-xl"></div>
+      </div>
+      
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="bg-[#14152A] border border-[#2E2D47] rounded-xl overflow-hidden">
+          {/* Top glow line */}
+          <div className="h-0.5 w-full bg-gradient-to-r from-[#00F5A0] via-[#B83280] to-[#00F5A0]"></div>
+          
+          <div className="grid md:grid-cols-2 gap-0">
+            {/* Left content */}
+            <div className="p-8 lg:p-10">
+              <h2 className="text-3xl font-bold text-white mb-4">
+                Ready to Experience the Future of Voice AI?
+              </h2>
+              
+              <p className="text-gray-300 mb-8">
+                Join thousands of users who are already enhancing their productivity with our quantum voice technology.
+              </p>
+              
+              {/* Feature list */}
+              <div className="space-y-3 mb-8">
+                {[
+                  "No registration required to try",
+                  "Works with any phone or device",
+                  "Free tier available for personal use"
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start">
+                    <div className="mt-1.5 flex-shrink-0 h-3 w-3 rounded-sm bg-[#00F5A0] mr-3"></div>
+                    <p className="text-gray-300 text-sm">{item}</p>
+                  </div>
+                ))}
+              </div>
+              
+              {/* CTA Button */}
+              <Link 
+                href="/start" 
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#B83280] to-[#4B2D83] text-white font-medium rounded-lg hover:from-[#C93D90] hover:to-[#5B3D93] transition-all duration-300"
+              >
+                <Phone className="mr-2 h-5 w-5" />
+                Start a Call Now
+              </Link>
+              
+              <p className="mt-4 text-gray-500 text-xs">
+                By using our service, you agree to our Terms of Service and Privacy Policy.
+              </p>
+            </div>
+            
+            {/* Right - Visual element */}
+            <div className="relative hidden md:block">
+              {/* Full background gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1C1D2B] to-[#0A0B14]"></div>
+              
+              {/* Circuit pattern */}
+              <div className="absolute inset-0 opacity-10"
+                   style={{
+                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2300F5A0' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1.5'/%3E%3Ccircle cx='13' cy='13' r='1.5'/%3E%3C/g%3E%3C/svg%3E")`,
+                     backgroundSize: '20px 20px'
+                   }}>
+              </div>
+              
+              {/* Centered visual */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative h-40 w-40">
+                  {/* Outer ring */}
+                  <div className="absolute inset-0 rounded-full border-2 border-[#2E2D47] animate-[spin_20s_linear_infinite]"></div>
+                  
+                  {/* Middle ring */}
+                  <div className="absolute inset-[15%] rounded-full border-2 border-[#2E2D47] animate-[spin_15s_linear_infinite_reverse]"></div>
+                  
+                  {/* Inner ring with dots */}
+                  <div className="absolute inset-[30%] rounded-full border-2 border-[#2E2D47] animate-[spin_10s_linear_infinite]">
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-[#00F5A0]"></div>
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 h-2 w-2 rounded-full bg-[#B83280]"></div>
+                  </div>
+                  
+                  {/* Center circle */}
+                  <div className="absolute inset-[45%] rounded-full bg-[#00F5A0] animate-pulse"></div>
+                  
+                  {/* Emanating pulses */}
+                  <div className="absolute inset-[35%] rounded-full border-2 border-[#00F5A0] opacity-0 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+                </div>
+              </div>
+              
+              {/* Bottom badge */}
+              <div className="absolute bottom-8 inset-x-0 flex justify-center">
+                <div className="px-4 py-2 bg-[#1C1D2B] border border-[#2E2D47] rounded-full">
+                  <div className="flex items-center">
+                    <div className="h-2 w-2 rounded-full bg-[#00F5A0] animate-pulse mr-2"></div>
+                    <div className="text-[#00F5A0] text-xs font-mono">SYSTEM ONLINE</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Logos/Trust section */}
+        <div className="mt-16 text-center">
+          <p className="text-gray-500 uppercase text-xs tracking-wider mb-6">Trusted by forward-thinking organizations</p>
+          
+          <div className="flex flex-wrap justify-center gap-8 opacity-40">
+            {['COMPANY', 'ENTERPRISE', 'CORPORATION', 'FIRM', 'AGENCY'].map((name, i) => (
+              <div key={i} className="text-white font-mono text-sm">{name}</div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
