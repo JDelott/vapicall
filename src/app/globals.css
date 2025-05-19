@@ -24,3 +24,35 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Custom animation delay classes */
+.pulse-delay-0 {
+  animation: pulse 1.5s infinite;
+  animation-delay: 0s;
+}
+.pulse-delay-1 {
+  animation: pulse 1.5s infinite; 
+  animation-delay: 0.2s;
+}
+.pulse-delay-2 {
+  animation: pulse 1.5s infinite;
+  animation-delay: 0.4s;
+}
+.pulse-delay-3 {
+  animation: pulse 1.5s infinite;
+  animation-delay: 0.6s;
+}
+.pulse-delay-4 {
+  animation: pulse 1.5s infinite;
+  animation-delay: 0.8s;
+}
+
+/* Define the pulse animation if it's not already in your Tailwind config */
+@keyframes pulse {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.2);
+  }
+}

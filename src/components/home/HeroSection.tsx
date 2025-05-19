@@ -1,6 +1,9 @@
 import CallToAction from "@/components/call/CallToAction";
 
 export default function HeroSection() {
+  // Use fixed heights instead of random ones to prevent hydration mismatch
+  const barHeights = [65, 40, 70, 55, 45]; // Fixed heights
+
   return (
     <section className="w-full bg-[#0A0B14] min-h-[90vh] flex items-center relative overflow-hidden">
       {/* Starry background */}
@@ -80,16 +83,12 @@ export default function HeroSection() {
               <div className="absolute inset-[35%] rounded-full bg-[#1C1D2B] border border-[#2E2D47] shadow-lg flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="h-full flex items-end justify-center gap-1 px-1">
-                    {[...Array(5)].map((_, i) => (
+                    {/* Create custom classes for each bar to avoid inline animation styles */}
+                    {barHeights.map((height, i) => (
                       <div 
                         key={i} 
-                        className="w-1.5 bg-[#00F5A0]"
-                        style={{ 
-                          height: `${20 + Math.floor(Math.random() * 60)}%`,
-                          opacity: 0.7,
-                          animation: 'pulse 1.5s infinite',
-                          animationDelay: `${i * 0.2}s`
-                        }}
+                        className={`w-1.5 bg-[#00F5A0] opacity-70 pulse-delay-${i}`}
+                        style={{ height: `${height}%` }}
                       ></div>
                     ))}
                   </div>

@@ -138,16 +138,14 @@ export default function FeaturesSection() {
                 
                 {/* Voice wave */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-24 flex items-end justify-center gap-1.5">
-                    {[...Array(9)].map((_, i) => (
+                  <div className="flex space-x-1 h-16">
+                    {[70, 40, 90, 60, 80, 50, 75, 45, 85, 55, 65, 35, 75, 50, 80].map((height, i) => (
                       <div 
                         key={i} 
-                        className="w-1.5 bg-[#B83280]"
+                        className={`w-1.5 bg-[#00F5A0] pulse-delay-${i % 5}`}
                         style={{ 
-                          height: `${10 + Math.floor(Math.sin(i/1.5) * 50 + 50)}%`,
-                          opacity: 0.6 + (i % 3) * 0.1,
-                          animation: 'pulse 1.5s infinite',
-                          animationDelay: `${i * 0.1}s`
+                          height: `${height}%`,
+                          opacity: 0.3 + (i % 5) * 0.15 / 10
                         }}
                       ></div>
                     ))}
