@@ -1,66 +1,36 @@
-import CallToAction from "@/components/call/CallToAction";
+import Link from 'next/link';
 
 export default function HeroSection() {
-  // Use fixed heights instead of random ones to prevent hydration mismatch
-  const barHeights = [65, 40, 70, 55, 45]; // Fixed heights
-
   return (
-    <section className="w-full bg-[#0A0B14] min-h-[90vh] flex items-center relative overflow-hidden">
-      {/* Starry background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0" 
-             style={{
-               backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(75, 45, 131, 0.15) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(184, 50, 128, 0.1) 0%, transparent 40%)',
-               backgroundSize: '100% 100%',
-             }}>
-        </div>
-        {/* Stars */}
-        <div className="absolute inset-0" 
-             style={{
-               backgroundImage: 'radial-gradient(1px 1px at 50px 120px, #fff 100%, transparent), radial-gradient(1px 1px at 120px 250px, #fff 100%, transparent), radial-gradient(1.5px 1.5px at 200px 80px, #fff 100%, transparent), radial-gradient(1px 1px at 300px 220px, #fff 100%, transparent), radial-gradient(1px 1px at 400px 150px, #fff 100%, transparent), radial-gradient(1.5px 1.5px at 500px 280px, #fff 100%, transparent), radial-gradient(1px 1px at 50px 350px, #fff 100%, transparent), radial-gradient(1px 1px at 600px 120px, #fff 100%, transparent), radial-gradient(1.5px 1.5px at 700px 190px, #fff 100%, transparent)',
-               backgroundSize: '700px 400px',
-             }}>
-        </div>
-      </div>
-
-      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          {/* Left content */}
-          <div className="max-w-xl">
-            <div className="inline-flex items-center px-3 py-1 bg-[#1C1D2B] border border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-wider mb-5">
-              QUANTUM VOICE TECHNOLOGY
+    <section className="w-full bg-[#0A0B14] pt-16 pb-24 relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0A0B14] to-[#14152A]"></div>
+      
+      <div className="relative z-10 container mx-auto px-4 md:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div className="inline-flex items-center px-3 py-1 bg-[#1C1D2B] border border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-wider mb-6">
+              QUANTUM VOICE AI
             </div>
             
-            <h1 className="text-5xl sm:text-6xl font-bold text-white mb-6 leading-[1.1]">
-              AI <span className="text-[#B83280]">Voice</span><br/>Interface
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+              Experience the Future of <span className="text-[#00F5A0]">AI Voice</span> Technology
             </h1>
             
-            <p className="text-lg text-gray-300 mb-8">
-              The next evolution in communication. Voice commands, reminders, and answers—all powered by advanced AI.
+            <p className="text-gray-300 text-lg mb-8 max-w-xl">
+              Our cutting-edge AI phone service combines neural networks with quantum computing algorithms to deliver the most natural voice interactions available.
             </p>
             
-            {/* Feature bullets */}
-            <div className="mb-10 space-y-4">
-              {[
-                "Neural-network voice processing",
-                "Quantum-enhanced response system",
-                "Adaptive learning algorithms"
-              ].map((feature, index) => (
-                <div key={index} className="flex items-start">
-                  <div className="mt-1.5 flex-shrink-0 h-3 w-3 rounded-sm bg-[#00F5A0] mr-4"></div>
-                  <p className="text-gray-300">{feature}</p>
-                </div>
-              ))}
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <Link 
+                href="#features" 
+                className="px-6 py-3 bg-gradient-to-r from-[#B83280] to-[#4B2D83] text-white rounded-lg font-medium hover:from-[#C93D90] hover:to-[#5B3D93] transition-all duration-300 text-center sm:text-left"
+              >
+                Explore Features
+              </Link>
             </div>
-            
-            <div className="mb-4">
-              <CallToAction />
-            </div>
-            
-            <p className="text-sm text-gray-500">No registration required to try</p>
           </div>
           
-          {/* Right visualization */}
           <div className="hidden lg:block relative">
             <div className="relative aspect-square max-w-md mx-auto">
               {/* Orbital rings */}
@@ -80,27 +50,38 @@ export default function HeroSection() {
               <div className="absolute bottom-[15%] left-[25%] h-2 w-2 rounded-full bg-[#00F5A0] shadow-[0_0_8px_#00F5A0]"></div>
               
               {/* Central orb with voice visualization */}
-              <div className="absolute inset-[35%] rounded-full bg-[#1C1D2B] border border-[#2E2D47] shadow-lg flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-full flex items-end justify-center gap-1 px-1">
-                    {/* Create custom classes for each bar to avoid inline animation styles */}
-                    {barHeights.map((height, i) => (
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-36 h-36 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full bg-[#1C1D2B] border border-[#2E2D47] opacity-70"></div>
+                <div className="absolute inset-[10%] flex items-center justify-center">
+                  {/* Voice wave visualization */}
+                  <div className="flex items-end space-x-1 h-16">
+                    {[65, 40, 80, 50, 75, 60, 85, 45, 70, 55, 65, 40, 80, 50].map((height, i) => (
                       <div 
                         key={i} 
-                        className={`w-1.5 bg-[#00F5A0] opacity-70 pulse-delay-${i}`}
-                        style={{ height: `${height}%` }}
+                        className={`w-1 rounded-sm bg-[#00F5A0] pulse-delay-${i % 5}`}
+                        style={{ 
+                          height: `${height}%`,
+                          opacity: 0.4 + (i % 5) * 0.1
+                        }}
                       ></div>
                     ))}
                   </div>
                 </div>
-                <div className="relative h-14 w-14 rounded-full bg-[#B83280] bg-opacity-20 z-10 flex items-center justify-center">
-                  <div className="h-8 w-8 rounded-full bg-[#B83280] animate-pulse"></div>
-                </div>
+                <div className="absolute inset-0 rounded-full border-2 border-[#00F5A0] opacity-10 animate-pulse"></div>
               </div>
+              
+              {/* Decorative elements */}
+              <div className="absolute inset-0 opacity-30" style={{ 
+                backgroundImage: 'radial-gradient(#2E2D47 1px, transparent 1px)', 
+                backgroundSize: '20px 20px'
+              }}></div>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Decorative elements */}
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#2E2D47] to-transparent"></div>
     </section>
   );
 }
