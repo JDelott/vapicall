@@ -1,194 +1,289 @@
-import { Star, Zap, Sparkles } from "lucide-react";
+import { Phone, Search, MessageSquare } from "lucide-react";
 
 export default function HowItWorksSection() {
-  const steps = [
-    {
-      icon: <Star className="h-5 w-5" strokeWidth={1.5} />,
-      step: "01",
-      title: "Initiate Contact",
-      description: "Call our AI hotline from any phone or device. No registration or downloads required."
-    },
-    {
-      icon: <Zap className="h-5 w-5" strokeWidth={1.5} />,
-      step: "02",
-      title: "Voice Interaction",
-      description: "Speak naturally and our quantum AI will understand your request, question, or command."
-    },
-    {
-      icon: <Sparkles className="h-5 w-5" strokeWidth={1.5} />,
-      step: "03",
-      title: "Receive Results",
-      description: "Get immediate information, set reminders, or complete actions through the voice interface."
-    }
-  ];
-
   return (
-    <section className="w-full bg-[#14152A] py-16 relative">
-      {/* Background elements */}
+    <section id="how-it-works" className="w-full bg-[#0A0B14] py-20 relative overflow-hidden">
+      {/* Cosmic background */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Diagonal grid lines */}
-        <div className="absolute inset-0" 
+        {/* Star field */}
+        <div className="absolute inset-0 opacity-60" 
              style={{
-               backgroundImage: 'linear-gradient(135deg, rgba(46, 45, 71, 0.2) 1px, transparent 1px)',
-               backgroundSize: '40px 40px'
+               backgroundImage: 'radial-gradient(1px 1px at 25px 25px, rgba(255,255,255,0.15) 100%, transparent), radial-gradient(1px 1px at 50px 50px, rgba(255,255,255,0.2) 100%, transparent), radial-gradient(2px 2px at 125px 125px, rgba(255,255,255,0.2) 100%, transparent), radial-gradient(1px 1px at 75px 75px, rgba(255,255,255,0.1) 100%, transparent)',
+               backgroundSize: '100px 100px'
              }}>
         </div>
         
-        {/* Glowing orbs */}
-        <div className="absolute top-1/4 -left-20 w-40 h-40 rounded-full bg-[#4B2D83] opacity-10 blur-3xl"></div>
-        <div className="absolute bottom-1/4 -right-20 w-40 h-40 rounded-full bg-[#B83280] opacity-10 blur-3xl"></div>
+        {/* Nebula effects */}
+        <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 rounded-full bg-gradient-to-br from-[#4B2D83]/10 to-[#B83280]/5 blur-3xl"></div>
+        <div className="absolute bottom-1/3 -right-1/4 w-1/2 h-1/2 rounded-full bg-gradient-to-tl from-[#00F5A0]/5 to-[#4B2D83]/10 blur-3xl"></div>
       </div>
       
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center px-3 py-1 bg-[#1C1D2B] border border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-wider mb-4">
-            PROCESS OVERVIEW
+        <div className="text-center mb-20">
+          <div className="inline-block px-4 py-1 bg-[#14152A] border-2 border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-widest mb-5 shadow-[0_0_10px_rgba(0,245,160,0.1)]">
+            HOW IT WORKS
           </div>
           
-          <h2 className="text-3xl font-bold text-white mb-3">
-            How It Works
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Powerful <span className="text-[#00F5A0]">Voice Intelligence</span>
           </h2>
           
           <p className="text-gray-300 max-w-2xl mx-auto">
-            Three simple steps to interact with our quantum voice technology
+            Access AI through simple voice calls - anywhere, anytime
           </p>
         </div>
         
-        <div className="grid md:grid-cols-3 gap-6 relative">
-          {/* Timeline connector */}
-          <div className="hidden md:block absolute left-1/2 top-24 w-[calc(100%-160px)] h-0.5 bg-gradient-to-r from-transparent via-[#2E2D47] to-transparent transform -translate-x-1/2"></div>
+        {/* 3 Steps in cosmic style */}
+        <div className="grid md:grid-cols-3 gap-10 mb-20 relative">
+          {/* Connector line */}
+          <div className="hidden md:block absolute top-16 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#2E2D47] to-transparent z-0"></div>
           
-          {steps.map((step, index) => (
-            <div 
-              key={index} 
-              className="relative bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-6 flex flex-col items-center text-center group hover:border-[#00F5A0] transition-colors duration-300"
-            >
-              {/* Circle connector */}
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-[#14152A] border-4 border-[#1C1D2B] flex items-center justify-center z-10">
-                <div className="w-6 h-6 rounded-full bg-[#2E2D47] group-hover:bg-[#00F5A0] transition-colors duration-300 flex items-center justify-center text-white">
-                  {step.icon}
+          {/* Step 1 */}
+          <div className="relative bg-[#14152A]/80 backdrop-blur-sm border border-[#2E2D47] rounded-lg p-6 group hover:border-[#00F5A0] transition-all duration-500 hover:shadow-[0_0_20px_rgba(0,245,160,0.15)] overflow-hidden">
+            {/* Cosmic accent */}
+            <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-gradient-to-br from-[#B83280]/10 to-[#B83280]/5 blur-xl"></div>
+            
+            {/* Icon with orbit */}
+            <div className="relative h-16 w-16 mb-6 mx-auto">
+              <div className="absolute inset-0 rounded-full border border-[#2E2D47] animate-[spin_10s_linear_infinite]"></div>
+              <div className="absolute inset-[25%] rounded-full border border-[#2E2D47] animate-[spin_5s_linear_infinite_reverse]"></div>
+              <div className="absolute top-0 right-0 h-2 w-2 rounded-full bg-[#B83280] shadow-[0_0_5px_#B83280]"></div>
+              
+              <div className="absolute inset-[30%] rounded-full bg-[#14152A] border border-[#2E2D47] flex items-center justify-center shadow-lg">
+                <Phone className="h-5 w-5 text-[#00F5A0]" strokeWidth={1.5} />
+              </div>
+            </div>
+            
+            <div className="text-[#B83280] font-mono text-lg mb-2 text-center">01</div>
+            <h3 className="text-white text-lg font-semibold mb-3 text-center">Make a Call</h3>
+            <p className="text-gray-300 text-sm text-center">
+              Call our AI through your phone or browser. No apps, logins, or complex setup needed.
+            </p>
+            
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00F5A0] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+          </div>
+          
+          {/* Step 2 */}
+          <div className="relative bg-[#14152A]/80 backdrop-blur-sm border border-[#2E2D47] rounded-lg p-6 group hover:border-[#00F5A0] transition-all duration-500 hover:shadow-[0_0_20px_rgba(0,245,160,0.15)] overflow-hidden mt-8 md:mt-0">
+            {/* Cosmic accent */}
+            <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-gradient-to-br from-[#00F5A0]/10 to-[#00F5A0]/5 blur-xl"></div>
+            
+            {/* Icon with orbit */}
+            <div className="relative h-16 w-16 mb-6 mx-auto">
+              <div className="absolute inset-0 rounded-full border border-[#2E2D47] animate-[spin_8s_linear_infinite_reverse]"></div>
+              <div className="absolute inset-[25%] rounded-full border border-[#2E2D47] animate-[spin_4s_linear_infinite]"></div>
+              <div className="absolute bottom-0 left-[10%] h-2 w-2 rounded-full bg-[#00F5A0] shadow-[0_0_5px_#00F5A0]"></div>
+              
+              <div className="absolute inset-[30%] rounded-full bg-[#14152A] border border-[#2E2D47] flex items-center justify-center shadow-lg">
+                <Search className="h-5 w-5 text-[#00F5A0]" strokeWidth={1.5} />
+              </div>
+            </div>
+            
+            <div className="text-[#00F5A0] font-mono text-lg mb-2 text-center">02</div>
+            <h3 className="text-white text-lg font-semibold mb-3 text-center">Access Real-Time Data</h3>
+            <p className="text-gray-300 text-sm text-center">
+              Get current information from across the web through voice, with real-time searches and updates.
+            </p>
+            
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00F5A0] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+          </div>
+          
+          {/* Step 3 */}
+          <div className="relative bg-[#14152A]/80 backdrop-blur-sm border border-[#2E2D47] rounded-lg p-6 group hover:border-[#00F5A0] transition-all duration-500 hover:shadow-[0_0_20px_rgba(0,245,160,0.15)] overflow-hidden mt-8 md:mt-0">
+            {/* Cosmic accent */}
+            <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-gradient-to-br from-[#B83280]/10 to-[#4B2D83]/10 blur-xl"></div>
+            
+            {/* Icon with orbit */}
+            <div className="relative h-16 w-16 mb-6 mx-auto">
+              <div className="absolute inset-0 rounded-full border border-[#2E2D47] animate-[spin_12s_linear_infinite]"></div>
+              <div className="absolute inset-[25%] rounded-full border border-[#2E2D47] animate-[spin_6s_linear_infinite_reverse]"></div>
+              <div className="absolute top-[10%] left-[50%] h-2 w-2 rounded-full bg-[#B83280] shadow-[0_0_5px_#B83280]"></div>
+              
+              <div className="absolute inset-[30%] rounded-full bg-[#14152A] border border-[#2E2D47] flex items-center justify-center shadow-lg">
+                <MessageSquare className="h-5 w-5 text-[#00F5A0]" strokeWidth={1.5} />
+              </div>
+            </div>
+            
+            <div className="text-[#B83280] font-mono text-lg mb-2 text-center">03</div>
+            <h3 className="text-white text-lg font-semibold mb-3 text-center">Have Conversations</h3>
+            <p className="text-gray-300 text-sm text-center">
+              Chat naturally with follow-up questions and deep discussions that remember context from your entire call.
+            </p>
+            
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#00F5A0] to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+          </div>
+        </div>
+        
+        {/* Central cosmic visualization */}
+        <div className="relative flex justify-center mb-20">
+          <div className="relative w-full max-w-2xl h-80 bg-[#0A0B14]/60 backdrop-blur-sm border border-[#2E2D47] rounded-xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+            {/* Animated starfield background */}
+            <div className="absolute inset-0 opacity-30"
+                 style={{
+                   backgroundImage: 'radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.2) 100%, transparent), radial-gradient(1.5px 1.5px at 90px 40px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1.5px 1.5px at 60px 100px, rgba(255,255,255,0.3) 100%, transparent)',
+                   backgroundSize: '100px 100px',
+                   animation: 'move-background 30s linear infinite'
+                 }}>
+            </div>
+            
+            {/* Central orbital system */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Orbit rings */}
+              <div className="relative w-72 h-72">
+                <div className="absolute inset-0 rounded-full border border-[#2E2D47] opacity-20 animate-[spin_60s_linear_infinite]"></div>
+                <div className="absolute inset-[20%] rounded-full border border-[#2E2D47] opacity-30 animate-[spin_45s_linear_infinite_reverse]"></div>
+                <div className="absolute inset-[40%] rounded-full border border-[#2E2D47] opacity-40 animate-[spin_30s_linear_infinite]"></div>
+                
+                {/* Center node - Voice Hub */}
+                <div className="absolute inset-[42%] rounded-full bg-gradient-to-br from-[#4B2D83] to-[#B83280] shadow-[0_0_20px_rgba(184,50,128,0.5)] flex items-center justify-center">
+                  <svg className="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    <line x1="12" y1="19" x2="12" y2="23"></line>
+                    <line x1="8" y1="23" x2="16" y2="23"></line>
+                  </svg>
+                </div>
+                
+                {/* Orbiting nodes */}
+                <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2 w-8 h-8 animate-[orbit_10s_linear_infinite]">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="h-4 w-4 rounded-full bg-[#00F5A0] shadow-[0_0_10px_rgba(0,245,160,0.7)]"></div>
+                  </div>
+                </div>
+                
+                <div className="absolute top-[50%] right-[5%] transform -translate-y-1/2 w-8 h-8 animate-[orbit_15s_linear_infinite_2s]">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="h-5 w-5 rounded-full bg-[#B83280] shadow-[0_0_10px_rgba(184,50,128,0.7)]"></div>
+                  </div>
+                </div>
+                
+                <div className="absolute bottom-[10%] left-[20%] w-8 h-8 animate-[orbit_8s_linear_infinite_1s]">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="h-3 w-3 rounded-full bg-[#00F5A0] shadow-[0_0_10px_rgba(0,245,160,0.7)]"></div>
+                  </div>
+                </div>
+                
+                {/* Data transmission beams */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="50%" y1="50%" x2="50%" y2="5%" stroke="url(#gradient1)" strokeWidth="1" strokeDasharray="2,3" className="animate-pulse">
+                      <animate attributeName="y2" values="5%;10%;5%" dur="3s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="50%" y1="50%" x2="95%" y2="50%" stroke="url(#gradient2)" strokeWidth="1" strokeDasharray="2,3" className="animate-pulse">
+                      <animate attributeName="x2" values="95%;90%;95%" dur="4s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="50%" y1="50%" x2="20%" y2="90%" stroke="url(#gradient1)" strokeWidth="1" strokeDasharray="2,3" className="animate-pulse">
+                      <animate attributeName="x2" values="20%;25%;20%" dur="5s" repeatCount="indefinite" />
+                      <animate attributeName="y2" values="90%;85%;90%" dur="5s" repeatCount="indefinite" />
+                    </line>
+                    <defs>
+                      <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#00F5A0" stopOpacity="0" />
+                        <stop offset="50%" stopColor="#00F5A0" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#00F5A0" stopOpacity="0" />
+                      </linearGradient>
+                      <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#B83280" stopOpacity="0" />
+                        <stop offset="50%" stopColor="#B83280" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#B83280" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
                 </div>
               </div>
-              
-              <div className="text-[#B83280] font-mono text-xl mb-3 mt-4">{step.step}</div>
-              
-              <h3 className="text-white text-lg font-semibold mb-3">{step.title}</h3>
-              
-              <p className="text-gray-400 text-sm">{step.description}</p>
-              
-              {/* Bottom highlight */}
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00F5A0] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+            </div>
+            
+            {/* Voice wave visualization on the bottom */}
+            <div className="absolute bottom-8 inset-x-0 h-16 flex items-end justify-center space-x-1">
+              {[40, 60, 90, 75, 50, 65, 80, 95, 70, 55, 75, 85, 65, 50, 70].map((height, i) => (
+                <div 
+                  key={i} 
+                  className="w-1.5 bg-[#00F5A0] rounded-sm"
+                  style={{ 
+                    height: `${height}%`,
+                    opacity: 0.3 + (i % 5) * 0.1,
+                    animation: `sound-wave ${1 + (i % 5) * 0.1}s infinite alternate ${i * 0.05}s ease-in-out`
+                  }}
+                ></div>
+              ))}
+            </div>
+            
+            {/* Top and bottom borders */}
+            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#00F5A0] to-transparent"></div>
+            <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#00F5A0] to-transparent"></div>
+          </div>
+        </div>
+        
+        {/* Features grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            {
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              ),
+              title: "Real-Time Updates",
+              desc: "Get the latest information through voice calls"
+            },
+            {
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              ),
+              title: "Smart Conversations",
+              desc: "Natural back-and-forth AI discussions"
+            },
+            {
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+              ),
+              title: "No Setup Required",
+              desc: "Call without downloads or registration"
+            },
+            {
+              icon: (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              ),
+              title: "Hands-Free Access",
+              desc: "Use while driving or multitasking"
+            }
+          ].map((feature, i) => (
+            <div key={i} className="p-4 bg-[#14152A]/60 backdrop-blur-sm border border-[#2E2D47] rounded-lg hover:border-[#00F5A0] transition-colors duration-300 hover:shadow-[0_0_15px_rgba(0,245,160,0.1)]">
+              <div className="h-8 w-8 rounded-md bg-[#0A0B14] border border-[#2E2D47] flex items-center justify-center text-[#00F5A0] mb-3">
+                {feature.icon}
+              </div>
+              <h4 className="text-white font-medium mb-2">{feature.title}</h4>
+              <p className="text-gray-400 text-xs">{feature.desc}</p>
             </div>
           ))}
         </div>
-        
-        {/* Process visualization */}
-        <div className="mt-16 grid md:grid-cols-5 gap-0 bg-[#0A0B14] border border-[#2E2D47] rounded-lg overflow-hidden">
-          {/* Left side - Voice input */}
-          <div className="md:col-span-2 p-6 border-b md:border-b-0 md:border-r border-[#2E2D47] relative">
-            <div className="absolute inset-0 opacity-5" 
-                 style={{
-                   backgroundImage: 'radial-gradient(#2E2D47 1px, transparent 1px)',
-                   backgroundSize: '20px 20px'
-                 }}>
-            </div>
-            
-            <div className="relative text-center mb-8 flex flex-col items-center">
-              <div className="inline-flex items-center px-3 py-1 bg-[#1C1D2B] border border-[#2E2D47] rounded-md text-[#B83280] text-xs font-mono tracking-wider mb-4">
-                INPUT
-              </div>
-              
-              <h4 className="text-white text-lg font-medium mb-2">Voice Command</h4>
-              <p className="text-gray-400 text-sm mb-4">User speaks a natural language request</p>
-              
-              {/* Voice input visualization */}
-              <div className="h-10 flex items-end justify-center space-x-1 mt-4">
-                {[...Array(10)].map((_, i) => (
-                  <div 
-                    key={i} 
-                    className="w-1 bg-[#B83280]" 
-                    style={{ 
-                      height: `${20 + Math.floor(Math.sin(i/1.5) * 60)}%`,
-                      opacity: 0.4 + (i % 3) * 0.2,
-                      animation: 'pulse 1.5s infinite',
-                      animationDelay: `${i * 0.1}s`
-                    }}
-                  ></div>
-                ))}
-              </div>
-              
-              <div className="mt-6 py-2 px-4 rounded-full bg-[#1C1D2B] border border-[#2E2D47] text-sm text-gray-300">
-                &quot;Set a reminder for my meeting tomorrow at 3pm&quot;
-              </div>
-            </div>
-          </div>
-          
-          {/* Middle - Processing */}
-          <div className="md:col-span-1 p-6 bg-[#1C1D2B] border-b md:border-b-0 md:border-r border-[#2E2D47] flex flex-col items-center justify-center">
-            <div className="text-center">
-              <div className="h-12 w-12 rounded-full bg-[#14152A] border border-[#2E2D47] mx-auto flex items-center justify-center mb-4">
-                <div className="h-6 w-6 text-[#00F5A0] animate-pulse">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 16.5V21m0-12V3m0 13.5l-4-4m4 4l4-4"/>
-                  </svg>
-                </div>
-              </div>
-              
-              <div className="text-xs font-mono text-[#00F5A0] mb-1">PROCESSING</div>
-              <div className="text-gray-400 text-xs">Neural analysis</div>
-            </div>
-          </div>
-          
-          {/* Right side - Output */}
-          <div className="md:col-span-2 p-6 relative">
-            <div className="absolute inset-0 opacity-5" 
-                 style={{
-                   backgroundImage: 'radial-gradient(#2E2D47 1px, transparent 1px)',
-                   backgroundSize: '20px 20px'
-                 }}>
-            </div>
-            
-            <div className="relative text-center mb-4 flex flex-col items-center">
-              <div className="inline-flex items-center px-3 py-1 bg-[#1C1D2B] border border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-wider mb-4">
-                OUTPUT
-              </div>
-              
-              <h4 className="text-white text-lg font-medium mb-2">AI Response</h4>
-              <p className="text-gray-400 text-sm mb-4">System confirms and executes the request</p>
-            </div>
-            
-            {/* Response visualization */}
-            <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-4 max-w-sm mx-auto">
-              <div className="flex items-center mb-3">
-                <div className="h-8 w-8 rounded-full bg-[#14152A] border border-[#2E2D47] flex items-center justify-center mr-3">
-                  <div className="h-4 w-4 text-[#00F5A0]">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 16a4 4 0 0 0 0-8"/>
-                      <path d="M19 6A7.7 7.7 0 0 0 12 3a7.9 7.9 0 0 0-7.93 8c0 3.22 2.2 6.17 5.56 7.66"/>
-                      <path d="M19 14.3V21"/>
-                      <path d="M19 14.3a3.72 3.72 0 0 0-3.75 3.75A3.71 3.71 0 0 0 19 21a3.71 3.71 0 0 0 3.75-3.75A3.71 3.71 0 0 0 19 14.3"/>
-                    </svg>
-                  </div>
-                </div>
-                <div className="text-sm font-medium text-white">VAPI Assistant</div>
-              </div>
-              
-              <div className="text-gray-300 text-sm pl-11">
-                Reminder set for tomorrow at 3:00 PM: &quot;Meeting&quot;
-              </div>
-              
-              <div className="mt-3 pl-11 flex items-center">
-                <div className="h-4 w-4 rounded-full bg-[#00F5A0] text-[#1C1D2B] flex items-center justify-center mr-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 6L9 17l-5-5"/>
-                  </svg>
-                </div>
-                <div className="text-[#00F5A0] text-xs">COMPLETE</div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
+      
+      <style jsx>{`
+        @keyframes sound-wave {
+          0% { transform: scaleY(0.2); }
+          100% { transform: scaleY(1); }
+        }
+        
+        @keyframes move-background {
+          from { background-position: 0 0; }
+          to { background-position: 100px 100px; }
+        }
+        
+        @keyframes orbit {
+          from { transform: rotate(0deg) translateX(90px) rotate(0deg); }
+          to { transform: rotate(360deg) translateX(90px) rotate(-360deg); }
+        }
+      `}</style>
     </section>
   );
 }
