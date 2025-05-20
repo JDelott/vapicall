@@ -1,4 +1,95 @@
+"use client";
+
+import { useState, useEffect } from 'react';
+
 export default function HeroSection() {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Check for mobile on mount and window resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile ? <MobileHeroSection /> : <DesktopHeroSection />;
+}
+
+function MobileHeroSection() {
+  return (
+    <section className="w-full bg-[#0A0B14] pt-28 pb-32 relative overflow-hidden">
+      {/* Space background with stars and gradients - darker version */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#070810] via-[#0C0D1D] to-[#121325]"></div>
+      
+      {/* Stars background with reduced opacity */}
+      <div className="absolute inset-0 opacity-50" 
+        style={{ 
+          backgroundImage: `radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.15) 1px, transparent 1px), 
+                            radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.15) 1px, transparent 1px)`,
+          backgroundSize: '100px 100px, 120px 120px'
+        }}
+      ></div>
+      
+      {/* Subtle nebula effect */}
+      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-b from-[#00F5A0]/3 via-transparent to-transparent opacity-20 blur-3xl"></div>
+      
+      {/* Simpler grid overlay */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gNDAgMCBMIDAgMCAwIDQwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyRTJENDciIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIiBvcGFjaXR5PSIwLjEiLz48L3N2Zz4=')] opacity-20"></div>
+      
+      <div className="relative z-10 container mx-auto px-4">
+        <div className="flex flex-col items-center text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center px-2 py-1 bg-[#1C1D2B]/80 backdrop-blur-sm border border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-wider mb-12 shadow-[0_0_10px_rgba(0,0,0,0.3)]">
+            <span className="mr-1.5">⚡</span> Powered by Vapi AI
+          </div>
+          
+          {/* Large Header */}
+          <h1 className="text-4xl font-bold text-white leading-[1.1] mb-10" style={{textShadow: '0 0 20px rgba(0, 0, 0, 0.5)'}}>
+            <span className="block relative z-10">AI Power</span> 
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00F5A0] to-[#00F5A0] relative">
+              Through Your Phone
+              <span className="absolute -inset-1 bg-gradient-to-r from-[#00F5A0]/5 to-[#B83280]/5 blur-xl opacity-30 -z-10"></span>
+            </span>
+          </h1>
+          
+          {/* Subheading */}
+          <div className="bg-[#14152A]/70 backdrop-blur-sm rounded-lg p-4 border-l-4 border-[#00F5A0] relative overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.3)] mb-14 w-full max-w-xs">
+            <p className="text-base text-white font-medium relative z-10">
+              Experience AI technology with a simple phone call
+            </p>
+          </div>
+          
+          {/* Spacing div */}
+          <div className="h-4 mb-4"></div>
+          
+          {/* CTA Button - larger on mobile */}
+          <a 
+            href="tel:+14125208354" 
+            className="flex items-center justify-center w-full max-w-xs px-5 py-4 bg-[#14152A]/70 backdrop-blur-sm rounded-lg border border-[#2E2D47]/70 text-white font-medium text-lg transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.25)] relative overflow-hidden"
+          >
+            <div className="absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-[#00F5A0]/40 to-[#B83280]/40 opacity-50"></div>
+            
+            <div className="flex items-center">
+              <span className="text-[#B83280] mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </span>
+              <span className="relative z-10 font-semibold">Call AI Assistant Now</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      
+      {/* Decorative element */}
+      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#2E2D47] to-transparent"></div>
+    </section>
+  );
+}
+
+function DesktopHeroSection() {
   return (
     <section className="w-full bg-[#0A0B14] pt-16 pb-20 sm:pt-20 sm:pb-24 md:pt-28 md:pb-32 lg:pt-32 lg:pb-40 relative overflow-hidden">
       {/* Space background with stars and gradients - darker version */}
