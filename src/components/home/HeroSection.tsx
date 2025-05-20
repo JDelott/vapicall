@@ -22,69 +22,74 @@ export default function HeroSection() {
 function MobileHeroSection() {
   return (
     <section className="w-full bg-[#0A0B14] pt-16 pb-20 relative overflow-hidden">
-      {/* Space background with stars and gradients */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#070810] via-[#0C0D1D] to-[#121325]"></div>
+      {/* Dark tech background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0A0B14] via-[#14152A] to-[#121325]"></div>
       
-      {/* Subtle stars background */}
-      <div className="absolute inset-0 opacity-40" 
+      {/* Tech grid lines */}
+      <div className="absolute inset-0 opacity-15" 
         style={{ 
-          backgroundImage: `radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.15) 1px, transparent 1px), 
-                            radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.15) 1px, transparent 1px)`,
-          backgroundSize: '100px 100px, 120px 120px'
+          backgroundImage: `linear-gradient(to right, #2C2C2C 1px, transparent 1px),
+                            linear-gradient(to bottom, #2C2C2C 1px, transparent 1px)`,
+          backgroundSize: '40px 40px'
         }}
       ></div>
       
-      {/* Subtle gradient accent */}
-      <div className="absolute top-0 right-0 w-full h-40 bg-gradient-to-br from-[#00F5A0]/5 to-[#B83280]/5 opacity-50 blur-xl"></div>
+      {/* Accent gradients matching original CTA border */}
+      <div className="absolute top-0 right-0 w-full h-60 bg-gradient-to-br from-[#00F5A0]/20 via-[#00F5A0]/10 to-transparent opacity-60 blur-xl"></div>
+      <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-tr from-[#B83280]/25 via-[#B83280]/15 to-transparent opacity-60 blur-xl"></div>
       
       <div className="relative z-10 container mx-auto px-6">
-        {/* Badge */}
+        {/* Tech Badge */}
         <div className="flex justify-center mb-8">
-          <div className="inline-flex items-center px-3 py-1.5 bg-[#1C1D2B]/80 backdrop-blur-sm border border-[#2E2D47] rounded-full text-[#00F5A0] text-xs font-mono tracking-wider shadow-[0_0_10px_rgba(0,0,0,0.3)]">
+          <div className="inline-flex items-center px-3 py-1.5 bg-[#14152A]/80 backdrop-blur-sm border border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-wider shadow-[0_0_12px_rgba(0,0,0,0.3)]">
             <span className="mr-1.5">⚡</span> Powered by Vapi AI
           </div>
         </div>
         
-        {/* Main Content */}
-        <div className="bg-[#14152A]/50 backdrop-blur-md rounded-2xl p-6 border border-[#2E2D47]/50 shadow-[0_4px_20px_rgba(0,0,0,0.3)] mb-8">
-          {/* Headline */}
-          <h1 className="text-4xl font-bold text-white leading-[1.1] mb-5" style={{textShadow: '0 0 15px rgba(0, 0, 0, 0.3)'}}>
-            <span className="block">AI Power</span> 
-            <span className="bg-gradient-to-r from-[#00F5A0] to-[#00F5A0] bg-clip-text text-transparent">
-              Through Your Phone
+        {/* Main Content - angular design */}
+        <div className="bg-[#14152A]/90 backdrop-blur-md p-6 border-l-4 border-[#00F5A0] rounded-r-md shadow-[0_4px_20px_rgba(0,0,0,0.4)] mb-8 relative overflow-hidden">
+          {/* Headline - ultra simple version */}
+          <h1 className="text-5xl font-bold leading-[1.15] mb-5">
+            <span className="block mb-1 text-white relative z-10">
+              VapiCall
             </span>
           </h1>
           
-          {/* Subheading - redesigned */}
-          <p className="text-white/90 text-lg mb-6 leading-relaxed">
+          {/* Subheading */}
+          <p className="text-white/90 text-md mb-6 leading-relaxed">
             Experience AI technology with a simple phone call - get instant answers to any question.
           </p>
           
-          {/* Feature points - simplified */}
-          <div className="space-y-3 mb-6">
+          {/* Feature points - bold style with matching colors */}
+          <div className="space-y-3.5 mb-6">
             {[
               "Connect to AI with just one call",
               "Have natural conversations",
               "Get real-time information instantly"
             ].map((feature, i) => (
               <div key={i} className="flex items-center">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#00F5A0] mr-2.5"></div>
+                <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-[#14152A] border border-[#00F5A0]/50 rounded-sm mr-3">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#00F5A0]" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 12L10 17L19 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
                 <p className="text-gray-200 text-sm">{feature}</p>
               </div>
             ))}
           </div>
         </div>
         
-        {/* CTA Button - enhanced */}
+        {/* CTA Button - matching original gradient */}
         <div className="flex justify-center">
           <a 
             href="tel:+14125208354" 
-            className="flex items-center justify-center w-full max-w-xs px-5 py-4 bg-gradient-to-r from-[#00F5A0] to-[#00F5A0] rounded-xl text-[#0A0B14] font-semibold text-lg transition-all duration-300 shadow-[0_4px_12px_rgba(0,245,160,0.25)] relative overflow-hidden"
+            className="flex items-center justify-center w-full max-w-xs px-5 py-4 bg-[#14152A]/70 backdrop-blur-sm rounded-md text-white font-bold text-lg transition-all duration-300 shadow-[0_4px_15px_rgba(0,0,0,0.4)] relative overflow-hidden border border-[#2E2D47]/70"
           >
-            <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-20 transition-opacity"></div>
+            <div className="absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-[#00F5A0] to-[#B83280] opacity-80"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[#00F5A0]/5 to-[#B83280]/5 opacity-0 hover:opacity-30 transition-opacity"></div>
             
             <div className="flex items-center">
-              <span className="mr-3">
+              <span className="text-[#B83280] mr-3">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
               </span>
               <span>Call AI Assistant Now</span>
