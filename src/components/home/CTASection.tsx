@@ -3,7 +3,7 @@ import VapiCall from "@/components/vapi/VapiCall";
 
 export default function CTASection() {
   return (
-    <section className="w-full bg-[#0A0B14] py-16 relative overflow-hidden">
+    <section className="w-full bg-[#0A0B14] py-8 sm:py-16 relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0">
         {/* Stars */}
@@ -26,25 +26,25 @@ export default function CTASection() {
           
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left content */}
-            <div className="p-8 lg:p-10">
-              <h2 className="text-3xl font-bold text-white mb-4">
-                Ready to Experience the Future of Voice AI?
+            <div className="p-5 sm:p-6 md:p-8 lg:p-10">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4 leading-tight">
+                Talk with Our AI Assistant
               </h2>
               
-              <p className="text-gray-300 mb-8">
-                Call our AI assistant through the web interface or on your phone to experience our quantum voice technology firsthand.
+              <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6">
+                Experience natural voice conversation with our AI through your browser or phone.
               </p>
               
               {/* Feature list */}
-              <div className="space-y-3 mb-8">
+              <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                 {[
-                  "Make a call directly from your browser",
-                  "Natural conversation with advanced AI",
-                  "Try it now, no registration required"
+                  "Browser-based voice calling",
+                  "Natural AI conversation",
+                  "No registration needed"
                 ].map((item, i) => (
                   <div key={i} className="flex items-start">
-                    <div className="mt-1.5 flex-shrink-0 h-3 w-3 rounded-sm bg-[#00F5A0] mr-3"></div>
-                    <p className="text-gray-300 text-sm">{item}</p>
+                    <div className="mt-1 flex-shrink-0 h-3 w-3 rounded-sm bg-[#00F5A0] mr-2 sm:mr-3"></div>
+                    <p className="text-gray-300 text-xs sm:text-sm">{item}</p>
                   </div>
                 ))}
               </div>
@@ -52,18 +52,19 @@ export default function CTASection() {
               {/* Display VapiCall component */}
               <VapiCall />
               
-              <div className="mt-6">
-                <p className="text-gray-300 text-sm mb-2">Prefer to call by phone?</p>
-                <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-4">
-                  <div className="font-mono text-[#00F5A0] text-lg mb-1">+1 (412) 520 8354</div>
+              {/* Phone calling option */}
+              <div className="mt-4 sm:mt-6">
+                <p className="text-gray-300 text-xs sm:text-sm mb-1 sm:mb-2">Prefer to call by phone?</p>
+                <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-3 sm:p-4">
+                  <div className="font-mono text-[#00F5A0] text-base sm:text-lg mb-1">+1 (412) 520 8354</div>
                   <p className="text-xs text-gray-500">
-                    Call this number from any phone to speak with our AI assistant.
+                    Call from any phone to speak with our AI.
                   </p>
                 </div>
               </div>
               
-              <p className="mt-4 text-gray-500 text-xs">
-                By using our service, you agree to our Terms of Service and Privacy Policy.
+              <p className="mt-3 sm:mt-4 text-gray-500 text-xs">
+                By using our service, you agree to our Terms of Service.
               </p>
             </div>
             
@@ -119,12 +120,12 @@ export default function CTASection() {
         </div>
         
         {/* Logos/Trust section */}
-        <div className="mt-16 text-center">
-          <p className="text-gray-500 uppercase text-xs tracking-wider mb-6">Trusted by forward-thinking organizations</p>
+        <div className="mt-8 sm:mt-16 text-center">
+          <p className="text-gray-500 uppercase text-xs tracking-wider mb-4 sm:mb-6">Trusted by forward-thinking organizations</p>
           
-          <div className="flex flex-wrap justify-center gap-8 opacity-40">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 opacity-40">
             {['COMPANY', 'ENTERPRISE', 'CORPORATION', 'FIRM', 'AGENCY'].map((name, i) => (
-              <div key={i} className="text-white font-mono text-sm">{name}</div>
+              <div key={i} className="text-white font-mono text-xs sm:text-sm">{name}</div>
             ))}
           </div>
         </div>

@@ -7,14 +7,26 @@ import Vapi from "@vapi-ai/web";
 import Avatar3D from './Avatar3D';
 
 export default function VapiCall() {
-  // Use ref for stable reference to client
+  // State variables
   const vapiClientRef = useRef<Vapi | null>(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState<string>('');
   const [callStatus, setCallStatus] = useState<string>('Ready to call');
-  const [currentPhoneme, setCurrentPhoneme] = useState<string>('');
+  const [showTranscript, setShowTranscript] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check for mobile on mount and window resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Initialize Vapi client once
   useEffect(() => {
@@ -198,29 +210,110 @@ export default function VapiCall() {
     };
   }, [isCallActive]);
 
-  return (
-    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg p-4 flex flex-col">
-      {/* Avatar takes the main focus - much larger */}
-      <div className="w-full h-[500px]">
-        <Avatar3D isSpeaking={isSpeaking} currentPhoneme={currentPhoneme} />
-      </div>
-      
-      {/* Controls overlaid at the bottom */}
-      <div className="mt-4">
-        <div className="flex items-center justify-between mb-4">
+  // Mobile-optimized layout
+  if (isMobile) {
+    return (
+      <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg flex flex-col w-full">
+        {/* Status bar */}
+        <div className="bg-[#181A33] px-3 py-2 flex items-center justify-between">
           <div className="flex items-center">
             <div className={`h-2 w-2 rounded-full ${isCallActive ? 'bg-[#00F5A0] animate-pulse' : 'bg-gray-500'} mr-2`}></div>
-            <span className="text-white">{callStatus}</span>
+            <span className="text-white text-xs">
+              {isCallActive ? callStatus : 'Ready for call'}
+            </span>
           </div>
           
-          {/* Minimalist transcript popup that appears only when there's content */}
-          {transcript && (
-            <div className="text-xs text-gray-400 truncate max-w-[200px]">
+          {isSpeaking && (
+            <div className="bg-[#00F5A0]/90 text-[#14152A] text-xs py-0.5 px-2 rounded-full animate-pulse">
+              Speaking
+            </div>
+          )}
+        </div>
+        
+        {/* Avatar - Only upper body view for mobile */}
+        <div className="w-full h-[320px] relative overflow-hidden">
+          <Avatar3D 
+            isSpeaking={isSpeaking} 
+            upperBodyOnly={true} 
+          />
+        </div>
+        
+        {/* Controls bar - fixed at bottom */}
+        <div className="p-3 bg-[#181A33]">
+          {!isCallActive ? (
+            <Button 
+              onClick={handleStartCall}
+              className="w-full bg-[#1C1D2B] hover:bg-[#00F5A0] hover:text-[#14152A] text-[#00F5A0] py-2.5"
+            >
+              <Phone className="mr-2 h-4 w-4" />
+              <span>Start Call</span>
+            </Button>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Button 
+                onClick={handleStopCall}
+                className="bg-[#1C1D2B] hover:bg-[#B83280] text-[#B83280] py-2.5"
+              >
+                <PhoneOff className="mr-2 h-4 w-4" />
+                <span>End Call</span>
+              </Button>
+              
+              <Button 
+                onClick={handleToggleMute}
+                className={`bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'} py-2.5`}
+              >
+                {isMuted ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
+                <span>{isMuted ? 'Unmute' : 'Mute'}</span>
+              </Button>
+            </div>
+          )}
+          
+          {/* Latest transcript - compact version */}
+          {transcript && isCallActive && (
+            <div className="mt-2 text-xs text-gray-400 truncate bg-[#0A0B14]/70 rounded p-1.5">
               {transcript.split('\n').pop()}
             </div>
           )}
         </div>
         
+        {/* Call by phone section - ONLY if needed */}
+        <div className="px-3 py-2 border-t border-[#2E2D47] text-center">
+          <p className="text-sm text-gray-300 mb-1">Prefer to call by phone?</p>
+          <a href="tel:+14125208354" className="text-[#00F5A0] font-medium text-base">
+            +1 (412) 520 8354
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop layout (your existing layout code for larger screens)
+  return (
+    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg p-4 flex flex-col w-full">
+      {/* Avatar container */}
+      <div className="w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] relative">
+        <Avatar3D isSpeaking={isSpeaking} upperBodyOnly={false} />
+        
+        {/* Status indicator */}
+        <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+          <div className="flex items-center bg-[#14152A]/80 backdrop-blur-sm px-3 py-1.5 rounded-full">
+            <div className={`h-2 w-2 rounded-full ${isCallActive ? 'bg-[#00F5A0] animate-pulse' : 'bg-gray-500'} mr-2`}></div>
+            <span className="text-white text-sm">
+              {isCallActive ? callStatus : 'Ready for call'}
+            </span>
+          </div>
+          
+          {isSpeaking && (
+            <div className="bg-[#00F5A0]/90 backdrop-blur-sm text-[#14152A] text-xs py-1 px-3 rounded-full animate-pulse">
+              Speaking
+            </div>
+          )}
+        </div>
+      </div>
+      
+      {/* Controls section */}
+      <div className="mt-4">
+        {/* Call controls */}
         <div className="flex space-x-3">
           {!isCallActive ? (
             <Button 
@@ -234,7 +327,7 @@ export default function VapiCall() {
             <>
               <Button 
                 onClick={handleStopCall}
-                className="flex-1 bg-[#1C1D2B] hover:bg-[#B83280] hover:text-white text-[#B83280] relative z-20"
+                className="flex-1 bg-[#1C1D2B] hover:bg-[#B83280] hover:text-white text-[#B83280]"
               >
                 <PhoneOff className="mr-2 h-4 w-4" />
                 End Call
@@ -242,7 +335,7 @@ export default function VapiCall() {
               
               <Button 
                 onClick={handleToggleMute}
-                className={`flex-1 bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'} relative z-20`}
+                className={`flex-1 bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'}`}
               >
                 {isMuted ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
                 {isMuted ? 'Unmute' : 'Mute'}
@@ -251,15 +344,28 @@ export default function VapiCall() {
           )}
         </div>
         
-        {/* Full transcript available in a collapsible section */}
+        {/* Transcript section */}
         {transcript && (
-          <div className="mt-4 overflow-hidden transition-all duration-300 hover:max-h-40 max-h-0 group">
-            <div className="text-xs text-white/60 group-hover:text-white transition-colors">
-              Click to expand transcript
+          <div className="mt-4">
+            <div className="flex items-center justify-between mb-1">
+              <div className="text-sm font-semibold text-white">Transcript</div>
+              <button 
+                onClick={() => setShowTranscript(!showTranscript)}
+                className="text-xs text-gray-400 hover:text-white"
+              >
+                {showTranscript ? 'Hide' : 'Show full transcript'}
+              </button>
             </div>
-            <div className="bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3 max-h-40 overflow-y-auto text-xs text-gray-300 whitespace-pre-line mt-2">
-              {transcript}
-            </div>
+            
+            {showTranscript ? (
+              <div className="bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3 max-h-40 overflow-y-auto text-xs text-gray-300 whitespace-pre-line">
+                {transcript}
+              </div>
+            ) : (
+              <div className="bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3 text-xs text-gray-300 truncate">
+                {transcript.split('\n').pop()}
+              </div>
+            )}
           </div>
         )}
       </div>

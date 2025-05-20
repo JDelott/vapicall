@@ -8,6 +8,7 @@ import * as THREE from 'three';
 interface AvatarProps {
   isSpeaking: boolean;
   currentPhoneme?: string;
+  upperBodyOnly?: boolean;
 }
 
 // Define viseme mapping
@@ -38,7 +39,12 @@ enum MouthShape {
   EShape = 5,
 }
 
-function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
+function AvatarModel({ 
+  isSpeaking, 
+  currentPhoneme = '', 
+  screenWidth = 1024,
+  upperBodyOnly = false
+}: AvatarProps & { screenWidth?: number, upperBodyOnly?: boolean }) {
   const group = useRef<THREE.Group>(null);
   const [modelError, setModelError] = useState<Error | null>(null);
   
@@ -56,6 +62,37 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
   
   // Always call hooks at the top level
   const { scene, nodes } = useGLTF('/3dModelGuy.glb');
+  
+  // Get appropriate model scale and position based on screen size
+  const getModelSettings = () => {
+    if (upperBodyOnly) {
+      // Mobile upper body
+      return { 
+        scale: 1.0, 
+        position: [0, -1.5, 0] as [number, number, number] 
+      };
+    } else if (screenWidth < 640) {
+      // Mobile full view
+      return { 
+        scale: 0.9, 
+        position: [0, -1.0, 0] as [number, number, number] 
+      };
+    } else if (screenWidth < 1024) {
+      // Tablet
+      return { 
+        scale: 0.9, 
+        position: [0, -0.8, 0] as [number, number, number] 
+      };
+    } else {
+      // Desktop - moved down by another 5%
+      return { 
+        scale: 1.1, // Keep the scale
+        position: [0, -1.51, 0] as [number, number, number] // Moved down from -1.44 to -1.51
+      };
+    }
+  };
+  
+  const { scale, position } = getModelSettings();
   
   useEffect(() => {
     try {
@@ -89,7 +126,7 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
       
       // Set initial values
       lipSyncClock.start();
-      setNextShapeChangeTime(0.1 + Math.random() * 0.2);
+      setNextShapeChangeTime(0.1 + Math.random() * 0.1);
       
     } catch (error) {
       console.error("Error setting up avatar model:", error);
@@ -163,15 +200,15 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
       case MouthShape.Closed:
         return 0;
       case MouthShape.SlightlyOpen:
-        return 0.08;
+        return 0.08; 
       case MouthShape.Open:
-        return 0.15;
+        return 0.15; 
       case MouthShape.WideOpen:
-        return 0.22;
+        return 0.22; 
       case MouthShape.OShape:
-        return 0.12;
+        return 0.12; 
       case MouthShape.EShape:
-        return 0.10;
+        return 0.10; 
       default:
         return 0;
     }
@@ -207,7 +244,7 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
           // Apply to jaw bone
           if (jawBone.current) {
             // Smoothly transition to target jaw rotation
-            const targetRotation = jawOpen * 0.15;
+            const targetRotation = jawOpen * 0.15; // Reduced from 0.3
             const newRotation = THREE.MathUtils.lerp(
               currentJawRotation, 
               targetRotation, 
@@ -260,7 +297,7 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
           });
         } else {
           // Fallback to random mouth shapes if no phoneme data
-          // Check if it's time to change mouth shape - more frequent changes!
+          // Check if it's time to change mouth shape - more frequent changes
           if (lipSyncTime > nextShapeChangeTime) {
             // Choose a random new mouth shape when speaking
             const randomValue = Math.random();
@@ -294,8 +331,7 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
             // Set target rotation based on the new shape
             setTargetJawRotation(getJawRotationForShape(currentMouthShape));
             
-            // Set time for next shape change - much shorter delays for faster changes
-            // Use shorter delays (50-150ms) for more rapid changes
+            // Set time for next shape change - shorter delays for faster changes
             const nextChangeDelay = 0.05 + Math.random() * 0.1;
             setNextShapeChangeTime(lipSyncTime + nextChangeDelay);
             
@@ -310,7 +346,7 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
           const newRotation = THREE.MathUtils.lerp(
             currentJawRotation, 
             targetJawRotation, 
-            transitionSpeed  // Already increased
+            transitionSpeed
           );
           setCurrentJawRotation(newRotation);
           
@@ -320,7 +356,7 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
             jawBone.current.rotation.x = newRotation;
             
             // Add more dynamic jaw movement for more realism
-            jawBone.current.rotation.y = Math.sin(time * 15) * 0.03; // Faster and more pronounced
+            jawBone.current.rotation.y = Math.sin(time * 15) * 0.03;
           }
           
           // Animate morph targets if available
@@ -337,7 +373,6 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
               };
               
               // Apply appropriate morph target values based on current mouth shape
-              // Increase these values for more visible mouth movements
               let openValue = 0;
               if (currentMouthShape === MouthShape.WideOpen) openValue = 0.5;      // Reduced from 1.0
               else if (currentMouthShape === MouthShape.Open) openValue = 0.35;    // Reduced from 0.7
@@ -399,29 +434,68 @@ function AvatarModel({ isSpeaking, currentPhoneme = '' }: AvatarProps) {
     <group ref={group}>
       <primitive 
         object={scene} 
-        scale={1.4}
-        position={[0, -1.7, 0]}
+        scale={scale}
+        position={position}
         rotation={[0, 0, 0]}
       />
     </group>
   );
 }
 
-export default function Avatar3D({ isSpeaking, currentPhoneme }: AvatarProps) {
+export default function Avatar3D({ isSpeaking, currentPhoneme, upperBodyOnly = false }: AvatarProps) {
   const [hasError, setHasError] = useState(false);
-
-  // Error boundary for the Canvas component
+  // Get window dimensions for responsive adjustments
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  
   useEffect(() => {
-    console.log("Avatar3D component mounted");
-    
-    return () => {
-      console.log("Avatar3D component unmounted");
-    };
+    // Update dimensions on mount
+    if (typeof window !== 'undefined') {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+      
+      // Add resize listener
+      const handleResize = () => {
+        setDimensions({
+          width: window.innerWidth,
+          height: window.innerHeight
+        });
+      };
+      
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
   }, []);
+  
+  // Get camera settings based on upper body mode and screen size
+  const getCameraSettings = () => {
+    if (upperBodyOnly) {
+      // Focus camera toward the TOP of the model for mobile
+      return { 
+        position: [0, 0.5, 2.2] as [number, number, number], 
+        fov: 28
+      };
+    } else if (dimensions.width < 640) {
+      // Mobile full view
+      return { 
+        position: [0, 0, 3.0] as [number, number, number], 
+        fov: 35
+      };
+    } else {
+      // Desktop view - zoomed out slightly
+      return { 
+        position: [0, 0.3, 2.625] as [number, number, number], // Moved camera back from 2.5 to 2.625
+        fov: 28 // Increased FOV slightly from 27 to 28
+      };
+    }
+  };
+  
+  const cameraSettings = getCameraSettings();
 
   if (hasError) {
     return (
-      <div className="relative w-full h-[400px] bg-[#1C1D2B] rounded-lg overflow-hidden flex items-center justify-center text-white">
+      <div className="relative w-full h-full bg-[#1C1D2B] rounded-lg overflow-hidden flex items-center justify-center text-white">
         <p>Could not load 3D avatar</p>
       </div>
     );
@@ -431,7 +505,10 @@ export default function Avatar3D({ isSpeaking, currentPhoneme }: AvatarProps) {
     <div className="relative w-full h-full bg-[#1C1D2B] rounded-lg overflow-hidden">
       <Canvas 
         shadows
-        camera={{ position: [0, 0, 3.0], fov: 42 }}
+        camera={{ 
+          position: cameraSettings.position, 
+          fov: cameraSettings.fov 
+        }}
         onCreated={() => console.log("Canvas created successfully")}
         onError={(e) => {
           console.error("Canvas error:", e);
@@ -451,8 +528,13 @@ export default function Avatar3D({ isSpeaking, currentPhoneme }: AvatarProps) {
           intensity={0.5} 
         />
         
-        {/* Avatar model */}
-        <AvatarModel isSpeaking={isSpeaking} currentPhoneme={currentPhoneme} />
+        {/* Avatar model with responsive adjustments */}
+        <AvatarModel 
+          isSpeaking={isSpeaking} 
+          currentPhoneme={currentPhoneme}
+          screenWidth={dimensions.width} 
+          upperBodyOnly={upperBodyOnly}
+        />
         
         {/* Controls for camera movement (optional) */}
         <OrbitControls 
@@ -463,9 +545,9 @@ export default function Avatar3D({ isSpeaking, currentPhoneme }: AvatarProps) {
         />
       </Canvas>
       
-      {/* Status indicator - more subtle and moved to the top corner */}
+      {/* Status indicator */}
       {isSpeaking && (
-        <div className="absolute top-4 right-4 bg-[#00F5A0] text-[#14152A] text-xs py-1 px-3 rounded-full animate-pulse">
+        <div className="absolute bottom-4 left-4 bg-[#00F5A0] text-[#14152A] text-xs py-1 px-3 rounded-full animate-pulse">
           Speaking
         </div>
       )}
