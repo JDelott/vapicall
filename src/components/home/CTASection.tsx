@@ -3,7 +3,7 @@ import VapiCall from "@/components/vapi/VapiCall";
 
 export default function CTASection() {
   return (
-    <section className="w-full bg-[#0A0B14] py-8 sm:py-16 relative overflow-hidden">
+    <section className="w-full bg-[#0A0B14] pt-16 sm:pt-24 md:pt-32 pb-8 sm:pb-16 relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0">
         {/* Stars */}

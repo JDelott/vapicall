@@ -21,22 +21,21 @@ export default function HeroSection() {
 
 function MobileHeroSection() {
   return (
-    <section className="w-full bg-[#0A0B14] pt-16 pb-20 relative overflow-hidden">
-      {/* Dark tech background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0A0B14] via-[#14152A] to-[#121325]"></div>
-      
-      {/* Tech grid lines */}
-      <div className="absolute inset-0 opacity-15" 
-        style={{ 
-          backgroundImage: `linear-gradient(to right, #2C2C2C 1px, transparent 1px),
-                            linear-gradient(to bottom, #2C2C2C 1px, transparent 1px)`,
-          backgroundSize: '40px 40px'
-        }}
-      ></div>
-      
-      {/* Accent gradients matching original CTA border */}
-      <div className="absolute top-0 right-0 w-full h-60 bg-gradient-to-br from-[#00F5A0]/20 via-[#00F5A0]/10 to-transparent opacity-60 blur-xl"></div>
-      <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-tr from-[#B83280]/25 via-[#B83280]/15 to-transparent opacity-60 blur-xl"></div>
+    <section className="w-full bg-[#0A0B14] pt-20 pb-24 relative overflow-hidden">
+      {/* Background elements to match CTA section */}
+      <div className="absolute inset-0">
+        {/* Stars background */}
+        <div className="absolute inset-0" 
+             style={{
+               backgroundImage: 'radial-gradient(1px 1px at 50px 50px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1px 1px at 100px 100px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1.5px 1.5px at 150px 150px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1px 1px at 200px 200px, rgba(255,255,255,0.3) 100%, transparent)',
+               backgroundSize: '250px 250px',
+             }}>
+        </div>
+        
+        {/* Gradient planets to match CTA section */}
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-[#4B2D83] to-[#B83280] opacity-20 blur-xl"></div>
+        <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#00F5A0] opacity-10 blur-xl"></div>
+      </div>
       
       <div className="relative z-10 container mx-auto px-6">
         {/* Tech Badge */}
@@ -103,9 +102,9 @@ function MobileHeroSection() {
 
 function DesktopHeroSection() {
   return (
-    <section className="w-full bg-[#0A0B14] pt-16 pb-20 sm:pt-20 sm:pb-24 md:pt-28 md:pb-32 lg:pt-32 lg:pb-40 relative overflow-hidden">
+    <section className="w-full bg-[#0A0B14] pt-16 pb-20 sm:pt-20 sm:pb-24 md:pt-28 md:pb-0 lg:pt-32 lg:pb-0 relative overflow-hidden">
       {/* Space background with stars and gradients - darker version */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#070810] via-[#0C0D1D] to-[#121325]"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-[#070810] via-[#0C0D1D] to-[#0A0B14]"></div>
       
       {/* Stars background with reduced opacity */}
       <div className="absolute inset-0 opacity-50" 
@@ -254,9 +253,6 @@ function DesktopHeroSection() {
           </div>
         </div>
       </div>
-      
-      {/* Decorative elements */}
-      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#2E2D47] to-transparent"></div>
       
       {/* Single style block with combined animations */}
       <style jsx global>{`
