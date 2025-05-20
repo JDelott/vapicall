@@ -140,7 +140,7 @@ export default function VapiCall() {
   // Mobile-optimized layout
   if (isMobile) {
     return (
-      <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg flex flex-col w-full">
+      <div className="w-full bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg flex flex-col">
         {/* Status bar */}
         <div className="bg-[#181A33] px-3 py-2 flex items-center justify-between">
           <div className="flex items-center">
@@ -155,29 +155,29 @@ export default function VapiCall() {
           )}
         </div>
         
-        {/* Avatar - Only upper body view for mobile */}
-        <div className="w-full h-[240px] relative overflow-hidden">
+        {/* Avatar - centered container for mobile */}
+        <div className="w-full h-[260px] relative overflow-hidden bg-gradient-to-b from-[#1C1D2B] to-[#0A0B14]">
           <Avatar3D 
             isSpeaking={isSpeaking} 
             upperBodyOnly={true} 
           />
         </div>
         
-        {/* Controls bar - fixed at bottom */}
-        <div className="p-3 bg-[#181A33]">
+        {/* Controls bar - improved styling */}
+        <div className="p-4 bg-[#181A33]">
           {!isCallActive ? (
             <Button 
               onClick={handleStartCall}
-              className="w-full bg-[#1C1D2B] hover:bg-[#00F5A0] hover:text-[#14152A] text-[#00F5A0] py-2.5"
+              className="w-full bg-[#1C1D2B] hover:bg-[#00F5A0] hover:text-[#14152A] text-[#00F5A0] py-3 font-medium rounded-lg shadow-sm"
             >
               <Phone className="mr-2 h-4 w-4" />
               <span>Start Call</span>
             </Button>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <Button 
                 onClick={handleStopCall}
-                className="bg-[#1C1D2B] hover:bg-[#B83280] text-[#B83280] py-2.5"
+                className="bg-[#1C1D2B] hover:bg-[#B83280] text-[#B83280] hover:text-white py-3 font-medium rounded-lg shadow-sm"
               >
                 <PhoneOff className="mr-2 h-4 w-4" />
                 <span>End Call</span>
@@ -185,18 +185,11 @@ export default function VapiCall() {
               
               <Button 
                 onClick={handleToggleMute}
-                className={`bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'} py-2.5`}
+                className={`bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'} py-3 font-medium rounded-lg shadow-sm`}
               >
                 {isMuted ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
                 <span>{isMuted ? 'Unmute' : 'Mute'}</span>
               </Button>
-            </div>
-          )}
-          
-          {/* Latest transcript - compact version */}
-          {transcript && isCallActive && (
-            <div className="mt-2 text-xs text-gray-400 truncate bg-[#0A0B14]/70 rounded p-1.5">
-              {transcript.split('\n').pop()}
             </div>
           )}
         </div>
@@ -204,36 +197,36 @@ export default function VapiCall() {
     );
   }
 
-  // Desktop layout
+  // Desktop layout - also improved
   return (
-    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg p-4 flex flex-col w-full">
-      {/* Avatar container */}
-      <div className="w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] relative">
+    <div className="mx-auto w-full max-w-4xl bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg p-4 flex flex-col">
+      {/* Avatar container - enhanced */}
+      <div className="w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] relative bg-gradient-to-b from-[#1C1D2B] to-[#0A0B14] rounded-lg overflow-hidden">
         <Avatar3D isSpeaking={isSpeaking} upperBodyOnly={false} />
         
         {/* Status indicator */}
         <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-          <div className="flex items-center bg-[#14152A]/80 backdrop-blur-sm px-3 py-1.5 rounded-full">
+          <div className="flex items-center bg-[#14152A]/80 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
             <div className={`h-2 w-2 rounded-full ${isCallActive ? 'bg-[#00F5A0] animate-pulse' : 'bg-gray-500'} mr-2`}></div>
             <span className="text-white text-sm">{callStatus}</span>
           </div>
           
           {isSpeaking && (
-            <div className="bg-[#00F5A0]/90 backdrop-blur-sm text-[#14152A] text-xs py-1 px-3 rounded-full animate-pulse">
+            <div className="bg-[#00F5A0]/90 backdrop-blur-sm text-[#14152A] text-xs py-1 px-3 rounded-full shadow-md animate-pulse">
               Speaking
             </div>
           )}
         </div>
       </div>
       
-      {/* Controls section */}
-      <div className="mt-4">
+      {/* Controls section - improved spacing and styling */}
+      <div className="mt-5">
         {/* Call controls */}
-        <div className="flex space-x-3">
+        <div className="flex space-x-4">
           {!isCallActive ? (
             <Button 
               onClick={handleStartCall}
-              className="flex-1 bg-[#1C1D2B] hover:bg-[#00F5A0] hover:text-[#14152A] text-[#00F5A0]"
+              className="flex-1 bg-[#1C1D2B] hover:bg-[#00F5A0] hover:text-[#14152A] text-[#00F5A0] py-3 font-medium rounded-lg shadow-sm"
             >
               <Phone className="mr-2 h-4 w-4" />
               Start Call
@@ -242,7 +235,7 @@ export default function VapiCall() {
             <>
               <Button 
                 onClick={handleStopCall}
-                className="flex-1 bg-[#1C1D2B] hover:bg-[#B83280] hover:text-white text-[#B83280]"
+                className="flex-1 bg-[#1C1D2B] hover:bg-[#B83280] hover:text-white text-[#B83280] py-3 font-medium rounded-lg shadow-sm"
               >
                 <PhoneOff className="mr-2 h-4 w-4" />
                 End Call
@@ -250,7 +243,7 @@ export default function VapiCall() {
               
               <Button 
                 onClick={handleToggleMute}
-                className={`flex-1 bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'}`}
+                className={`flex-1 bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'} py-3 font-medium rounded-lg shadow-sm`}
               >
                 {isMuted ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
                 {isMuted ? 'Unmute' : 'Mute'}
@@ -259,7 +252,7 @@ export default function VapiCall() {
           )}
         </div>
         
-        {/* Transcript section */}
+        {/* Transcript section - enhanced */}
         {transcript && (
           <div className="mt-4">
             <div className="flex items-center justify-between mb-1">

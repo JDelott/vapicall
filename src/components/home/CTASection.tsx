@@ -27,43 +27,45 @@ export default function CTASection() {
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left content */}
             <div className="p-5 sm:p-6 md:p-8 lg:p-10">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4 leading-tight">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2 sm:mb-4 leading-tight">
                 Talk with Our AI Assistant
               </h2>
               
-              <p className="text-sm sm:text-base text-gray-300 mb-4 sm:mb-6">
+              <p className="text-xs sm:text-sm md:text-base text-gray-300 mb-3 sm:mb-6 max-w-sm">
                 Experience natural voice conversation with our AI through your browser or phone.
               </p>
               
-              {/* Feature list */}
-              <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
+              {/* Feature list - improved mobile spacing */}
+              <div className="space-y-1.5 sm:space-y-3 mb-4 sm:mb-8">
                 {[
                   "Browser-based voice calling",
                   "Natural AI conversation",
                   "No registration needed"
                 ].map((item, i) => (
                   <div key={i} className="flex items-start">
-                    <div className="mt-1 flex-shrink-0 h-3 w-3 rounded-sm bg-[#00F5A0] mr-2 sm:mr-3"></div>
+                    <div className="mt-0.5 flex-shrink-0 h-2.5 w-2.5 rounded-sm bg-[#00F5A0] mr-2 sm:mr-3"></div>
                     <p className="text-gray-300 text-xs sm:text-sm">{item}</p>
                   </div>
                 ))}
               </div>
               
-              {/* Display VapiCall component */}
-              <VapiCall />
+              {/* Display VapiCall component - centered with proper margins */}
+              <div className="mx-auto max-w-[280px] sm:max-w-sm md:max-w-md w-full">
+                <VapiCall />
+              </div>
               
-              {/* Phone calling option */}
-              <div className="mt-4 sm:mt-6">
+              {/* Phone calling option - centered with proper width */}
+              <div className="mt-4 sm:mt-6 mx-auto max-w-[280px] sm:max-w-sm md:max-w-md w-full">
                 <p className="text-gray-300 text-xs sm:text-sm mb-1 sm:mb-2">Prefer to call by phone?</p>
                 <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-3 sm:p-4">
-                  <div className="font-mono text-[#00F5A0] text-base sm:text-lg mb-1">+1 (412) 520 8354</div>
-                  <p className="text-xs text-gray-500">
+                  <div className="font-mono text-[#00F5A0] text-base sm:text-lg mb-1 text-center">+1 (412) 520 8354</div>
+                  <p className="text-xs text-gray-500 text-center">
                     Call from any phone to speak with our AI.
                   </p>
                 </div>
               </div>
               
-              <p className="mt-3 sm:mt-4 text-gray-500 text-xs">
+              <p className="mt-3 sm:mt-4 text-gray-500 text-xs text-center">
                 By using our service, you agree to our Terms of Service.
               </p>
             </div>
