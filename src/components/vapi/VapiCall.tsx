@@ -6,14 +6,19 @@ import Button from '@/components/ui/Button';
 import Vapi from "@vapi-ai/web";
 import Avatar3D from './Avatar3D';
 
-export default function VapiCall() {
+// Add proper type for conversation entries
+interface ConversationEntry {
+  role: string;
+  content: string;
+}
+
+export default function VapiCall({ onTranscriptUpdate }: { onTranscriptUpdate?: (text: string) => void }) {
   const vapiClientRef = useRef<Vapi | null>(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [transcript, setTranscript] = useState<string>('');
   const [callStatus, setCallStatus] = useState<string>('Ready to call');
-  const [showTranscript, setShowTranscript] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   // Check for mobile on mount and window resize
@@ -29,8 +34,25 @@ export default function VapiCall() {
     }
   }, []);
 
+  // Update parent component when transcript changes
+  useEffect(() => {
+    if (onTranscriptUpdate) {
+      onTranscriptUpdate(transcript);
+    }
+  }, [transcript, onTranscriptUpdate]);
+
   // Initialize Vapi client
   useEffect(() => {
+    // Clean up previous client if exists
+    if (vapiClientRef.current) {
+      try {
+        vapiClientRef.current.stop();
+      } catch (e) {
+        console.error("Failed to clean up previous client:", e);
+      }
+      vapiClientRef.current = null;
+    }
+
     if (typeof window !== 'undefined') {
       const apiKey = process.env.NEXT_PUBLIC_VAPI_API_KEY;
       if (apiKey) {
@@ -66,10 +88,23 @@ export default function VapiCall() {
           });
           
           client.on('message', (msg) => {
-            if (msg && typeof msg === 'object' && 'type' in msg && msg.type === 'transcript') {
-              if ('transcript' in msg && typeof msg.transcript === 'object' && msg.transcript) {
-                if ('text' in msg.transcript && typeof msg.transcript.text === 'string') {
-                  setTranscript(prev => prev + '\n' + msg.transcript.text);
+            console.log("Vapi message received:", msg);
+            
+            if (msg && typeof msg === 'object') {
+              // Handle conversation updates which contain the transcript
+              if (msg.type === 'conversation-update' && Array.isArray(msg.conversation)) {
+                // Filter out system messages and only keep user/assistant exchanges
+                const filteredConversation = msg.conversation
+                  .filter((entry: ConversationEntry) => entry.role !== 'system')
+                  .map((entry: ConversationEntry) => `${entry.role}: ${entry.content}`)
+                  .join('\n\n');
+                
+                // Update the transcript
+                setTranscript(filteredConversation);
+                
+                // Also pass to parent component if callback exists
+                if (onTranscriptUpdate) {
+                  onTranscriptUpdate(filteredConversation);
                 }
               }
             }
@@ -87,7 +122,19 @@ export default function VapiCall() {
         }
       }
     }
-  }, []);
+
+    // Cleanup function
+    return () => {
+      if (vapiClientRef.current) {
+        try {
+          console.log("Cleaning up Vapi client");
+          vapiClientRef.current.stop();
+        } catch (e) {
+          console.error("Error during cleanup:", e);
+        }
+      }
+    };
+  }, []); // Empty dependency array to only initialize once
 
   // Start call function
   const handleStartCall = async () => {
@@ -115,14 +162,40 @@ export default function VapiCall() {
 
   // Stop call function
   const handleStopCall = () => {
-    if (!vapiClientRef.current) return;
+    console.log("Stop call requested, client ref:", vapiClientRef.current);
     
-    try {
-      vapiClientRef.current.stop();
-      console.log("Call stop requested");
-    } catch (error) {
-      console.error("Failed to stop call:", error);
+    // First attempt - standard way
+    if (vapiClientRef.current) {
+      try {
+        vapiClientRef.current.stop();
+        console.log("Call stop requested via standard method");
+      } catch (error) {
+        console.error("Failed to stop call via standard method:", error);
+      }
+    } else {
+      console.error("Client reference is null");
     }
+    
+    // Second attempt - force reinitialize the client
+    const apiKey = process.env.NEXT_PUBLIC_VAPI_API_KEY;
+    if (apiKey) {
+      try {
+        console.log("Attempting to create new client and stop");
+        const tempClient = new Vapi(apiKey);
+        tempClient.stop();
+        console.log("Call stop requested via temp client");
+      } catch (error) {
+        console.error("Failed to stop via temp client:", error);
+      }
+    }
+    
+    // Force UI update to show call ended
+    setIsCallActive(false);
+    setIsSpeaking(false);
+    setCallStatus('Call ended (forced)');
+    
+    // Keep transcript in state - don't reset it
+    // DO NOT RESET THE TRANSCRIPT HERE
   };
 
   // Toggle mute function
@@ -197,10 +270,10 @@ export default function VapiCall() {
     );
   }
 
-  // Desktop layout - also improved
+  // Desktop layout
   return (
     <div className="mx-auto w-full max-w-4xl bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg p-4 flex flex-col">
-      {/* Avatar container - enhanced */}
+      {/* Avatar container */}
       <div className="w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] relative bg-gradient-to-b from-[#1C1D2B] to-[#0A0B14] rounded-lg overflow-hidden">
         <Avatar3D isSpeaking={isSpeaking} upperBodyOnly={false} />
         
@@ -219,7 +292,7 @@ export default function VapiCall() {
         </div>
       </div>
       
-      {/* Controls section - improved spacing and styling */}
+      {/* Controls section */}
       <div className="mt-5">
         {/* Call controls */}
         <div className="flex space-x-4">
@@ -251,31 +324,6 @@ export default function VapiCall() {
             </>
           )}
         </div>
-        
-        {/* Transcript section - enhanced */}
-        {transcript && (
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-1">
-              <div className="text-sm font-semibold text-white">Transcript</div>
-              <button 
-                onClick={() => setShowTranscript(!showTranscript)}
-                className="text-xs text-gray-400 hover:text-white"
-              >
-                {showTranscript ? 'Hide' : 'Show full transcript'}
-              </button>
-            </div>
-            
-            {showTranscript ? (
-              <div className="bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3 max-h-40 overflow-y-auto text-xs text-gray-300 whitespace-pre-line">
-                {transcript}
-              </div>
-            ) : (
-              <div className="bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3 text-xs text-gray-300 truncate">
-                {transcript.split('\n').pop()}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );

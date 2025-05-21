@@ -1,7 +1,23 @@
 import Link from "next/link";
 import VapiCall from "@/components/vapi/VapiCall";
+import { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function CTASection() {
+  const [showTranscript, setShowTranscript] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  
+  // Add debugging to see if transcript updates
+  useEffect(() => {
+    console.log("CTASection transcript:", transcript);
+  }, [transcript]);
+  
+  // Function to handle transcript updates
+  const handleTranscriptUpdate = (text: string) => {
+    console.log("Received transcript update:", text);
+    setTranscript(text);
+  };
+  
   return (
     <section className="w-full pt-16 sm:pt-24 md:pt-32 pb-8 sm:pb-16 relative overflow-hidden">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -36,8 +52,38 @@ export default function CTASection() {
               
               {/* Display VapiCall component - centered with proper margins */}
               <div className="mx-auto max-w-[280px] sm:max-w-sm md:max-w-md w-full">
-                <VapiCall />
+                <VapiCall onTranscriptUpdate={handleTranscriptUpdate} />
               </div>
+              
+              {/* Transcription toggle button */}
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => setShowTranscript(!showTranscript)}
+                  className="inline-flex items-center text-xs text-gray-400 hover:text-[#00F5A0] transition-colors"
+                >
+                  {showTranscript ? (
+                    <>
+                      <ChevronUp className="h-3 w-3 mr-1" />
+                      Hide Transcription
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="h-3 w-3 mr-1" />
+                      Show Transcription
+                    </>
+                  )}
+                </button>
+              </div>
+              
+              {/* Transcription dropdown */}
+              {showTranscript && (
+                <div className="mt-2 bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3 max-h-40 overflow-y-auto text-xs text-gray-300">
+                  <p className="text-xs font-semibold text-gray-400 mb-2">Live Conversation Transcript</p>
+                  <div className="whitespace-pre-line">
+                    {transcript || "Use the Call button above to start a conversation. The transcript will appear here as you speak with the AI."}
+                  </div>
+                </div>
+              )}
               
               {/* Phone calling option - centered with proper width */}
               <div className="mt-4 sm:mt-6 mx-auto max-w-[280px] sm:max-w-sm md:max-w-md w-full">
