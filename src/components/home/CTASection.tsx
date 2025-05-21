@@ -107,15 +107,7 @@ export default function CTASection() {
         </div>
         
         {/* Logos/Trust section */}
-        <div className="mt-8 sm:mt-16 text-center">
-          <p className="text-gray-500 uppercase text-xs tracking-wider mb-4 sm:mb-6">Trusted by forward-thinking organizations</p>
-          
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 opacity-40">
-            {['COMPANY', 'ENTERPRISE', 'CORPORATION', 'FIRM', 'AGENCY'].map((name, i) => (
-              <div key={i} className="text-white font-mono text-xs sm:text-sm">{name}</div>
-            ))}
-          </div>
-        </div>
+        
       </div>
     </section>
   );
