@@ -1,4 +1,4 @@
-import { Phone, Search, MessageSquare, Globe } from "lucide-react";
+import { Phone, Search, MessageSquare, Globe, Languages } from "lucide-react";
 
 export default function FeaturesSection() {
   const features = [
@@ -79,14 +79,16 @@ export default function FeaturesSection() {
               </h3>
               
               <p className="text-gray-300 mb-6 text-sm">
-                Our AI can search the internet during your call, giving you up-to-date information about news, weather, facts, and more.
+                Get instant help with translation, fraud detection, financial advice, travel planning, and expert explanations - all through a simple phone call.
               </p>
               
               <div className="space-y-4 mb-6">
                 {[
-                  "Get the latest news and updates instantly",
-                  "Ask for real-time information during conversations",
-                  "No need for a separate Google search"
+                  "Get real-time information on any topic",
+                  "Break language barriers with instant translation",
+                  "Protect yourself from scams and fraud",
+                  "Get expert advice on finance and travel",
+                  "Learn complex topics in simple terms"
                 ].map((item, i) => (
                   <div key={i} className="flex items-start">
                     <div className="mt-1 flex-shrink-0 h-3 w-3 rounded-sm bg-[#B83280] mr-3"></div>
@@ -100,10 +102,11 @@ export default function FeaturesSection() {
                 <h4 className="text-sm font-medium text-white mb-2">Example Queries:</h4>
                 <ul className="space-y-2 text-sm">
                   <li className="text-gray-400">&ldquo;What are the breaking developments in AI regulation today?&rdquo;</li>
-                  <li className="text-gray-400">&ldquo;Find me the best-rated Italian restaurants within walking distance&rdquo;</li>
-                  <li className="text-gray-400">&ldquo;When is the next SpaceX launch and what&apos;s its mission?&rdquo;</li>
-                  <li className="text-gray-400">&ldquo;How have cryptocurrency markets responded to the latest Fed announcement?&rdquo;</li>
-                  <li className="text-gray-400">&ldquo;What&apos;s causing the unusual weather pattern in the Pacific Northwest?&rdquo;</li>
+                  <li className="text-gray-400">&ldquo;Can you help me order food in Spanish at this restaurant?&rdquo;</li>
+                  <li className="text-gray-400">&ldquo;Is this email from my bank asking for my password legitimate?&rdquo;</li>
+                  <li className="text-gray-400">&ldquo;What&apos;s the best way to invest $10,000 for retirement?&rdquo;</li>
+                  <li className="text-gray-400">&ldquo;Explain quantum computing like I&apos;m a high school student&rdquo;</li>
+                  <li className="text-gray-400">&ldquo;What&apos;s the cheapest way to get from New York to Tokyo next month?&rdquo;</li>
                 </ul>
               </div>
             </div>
@@ -141,7 +144,7 @@ export default function FeaturesSection() {
                     {/* Voice waveform visualization */}
                     <div className="bg-[#14152A] p-3 rounded-lg border border-[#2E2D47]/50">
                       <div className="text-xs text-gray-400 mb-2">You asked:</div>
-                      <div className="text-white text-sm mb-2">&ldquo;What&apos;s in today&apos;s tech news?&rdquo;</div>
+                      <div className="text-white text-sm mb-2">&ldquo;Can you help me order food in Spanish?&rdquo;</div>
                       <div className="flex items-center justify-center h-8">
                         {[40, 20, 60, 30, 70, 50, 25, 65, 45, 20, 50, 30, 60].map((height, i) => (
                           <div 
@@ -157,11 +160,11 @@ export default function FeaturesSection() {
                       </div>
                     </div>
                     
-                    {/* Search indicator */}
+                    {/* Translation indicator */}
                     <div className="bg-[#14152A] p-3 rounded-lg border border-[#2E2D47]/50">
                       <div className="flex items-center text-[#00F5A0] mb-2">
-                        <Search className="h-3 w-3 mr-1.5" strokeWidth={2} />
-                        <span className="text-xs">Searching the web...</span>
+                        <Languages className="h-3 w-3 mr-1.5" strokeWidth={2} />
+                        <span className="text-xs">Translating to Spanish...</span>
                       </div>
                       <div className="h-1 bg-[#1C1D2B] rounded-full overflow-hidden">
                         <div className="h-full w-2/3 bg-[#00F5A0] rounded-full animate-pulse"></div>
@@ -185,7 +188,7 @@ export default function FeaturesSection() {
                         ))}
                       </div>
                       <div className="text-white text-xs mt-2 italic">
-                        &ldquo;Apple announced new AI features for iOS today...&rdquo;
+                        &ldquo;I&apos;ll help you order. Let me translate: ¿Me podría mostrar el menú, por favor? (Could you show me the menu, please?)&rdquo;
                       </div>
                     </div>
                   </div>
