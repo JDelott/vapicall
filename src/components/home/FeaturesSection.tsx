@@ -25,23 +25,7 @@ export default function FeaturesSection() {
   ];
 
   return (
-    <section className="w-full bg-[#0A0B14] py-16 relative">
-      {/* Space background with stars and gradients - matches hero section */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#070810] via-[#0C0D1D] to-[#121325]"></div>
-      
-      {/* Stars background with reduced opacity */}
-      <div className="absolute inset-0 opacity-50" 
-        style={{ 
-          backgroundImage: `radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.15) 1px, transparent 1px), 
-                          radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
-                          radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12) 1px, transparent 1px)`,
-          backgroundSize: '100px 100px, 120px 120px, 80px 80px'
-        }}
-      ></div>
-      
-      {/* Darker grid overlay */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gNDAgMCBMIDAgMCAwIDQwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyRTJENDciIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIiBvcGFjaXR5PSIwLjEiLz48L3N2Zz4=')] opacity-20"></div>
-      
+    <section className="w-full py-16 relative">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-12">
           <div className="inline-flex items-center px-3 py-1 bg-[#1C1D2B]/80 backdrop-blur-sm border border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-wider mb-4 shadow-[0_0_10px_rgba(0,0,0,0.3)]">

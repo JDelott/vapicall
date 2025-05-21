@@ -3,7 +3,7 @@ import { Phone } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0A0B14] text-white border-t border-[#2E2D47] py-6">
+    <footer className="text-white py-6 relative z-10">
       <div className="container mx-auto px-4 text-center">
         <div className="mb-4">
           <a 

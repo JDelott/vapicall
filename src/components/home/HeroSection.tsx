@@ -21,22 +21,7 @@ export default function HeroSection() {
 
 function MobileHeroSection() {
   return (
-    <section className="w-full bg-[#0A0B14] pt-20 pb-24 relative overflow-hidden">
-      {/* Background elements to match CTA section */}
-      <div className="absolute inset-0">
-        {/* Stars background */}
-        <div className="absolute inset-0" 
-             style={{
-               backgroundImage: 'radial-gradient(1px 1px at 50px 50px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1px 1px at 100px 100px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1.5px 1.5px at 150px 150px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1px 1px at 200px 200px, rgba(255,255,255,0.3) 100%, transparent)',
-               backgroundSize: '250px 250px',
-             }}>
-        </div>
-        
-        {/* Gradient planets to match CTA section */}
-        <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-[#4B2D83] to-[#B83280] opacity-20 blur-xl"></div>
-        <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#00F5A0] opacity-10 blur-xl"></div>
-      </div>
-      
+    <section className="w-full pt-20 pb-24 relative overflow-hidden">
       <div className="relative z-10 container mx-auto px-6">
         {/* Tech Badge */}
         <div className="flex justify-center mb-8">
@@ -102,30 +87,7 @@ function MobileHeroSection() {
 
 function DesktopHeroSection() {
   return (
-    <section className="w-full bg-[#0A0B14] pt-16 pb-20 sm:pt-20 sm:pb-24 md:pt-28 md:pb-0 lg:pt-32 lg:pb-0 relative overflow-hidden">
-      {/* Space background with stars and gradients - darker version */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#070810] via-[#0C0D1D] to-[#0A0B14]"></div>
-      
-      {/* Stars background with reduced opacity */}
-      <div className="absolute inset-0 opacity-50" 
-        style={{ 
-          backgroundImage: `radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.15) 1px, transparent 1px), 
-                            radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
-                            radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
-                            radial-gradient(circle at 15% 85%, rgba(255, 255, 255, 0.12) 0.5px, transparent 0.5px),
-                            radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.12) 0.5px, transparent 0.5px)`,
-          backgroundSize: '100px 100px, 120px 120px, 80px 80px, 50px 50px, 60px 60px'
-        }}
-      ></div>
-      
-      {/* Subtle nebula effects */}
-      <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-b from-[#00F5A0]/3 via-transparent to-transparent opacity-20 blur-3xl"></div>
-      <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-gradient-to-t from-[#B83280]/3 via-transparent to-transparent opacity-20 blur-3xl"></div>
-      <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 bg-gradient-to-tr from-[#4B2D83]/3 via-transparent to-transparent opacity-10 blur-3xl"></div>
-      
-      {/* Darker grid overlay */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0gNDAgMCBMIDAgMCAwIDQwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyRTJENDciIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIiBvcGFjaXR5PSIwLjEiLz48L3N2Zz4=')] opacity-20"></div>
-      
+    <section className="w-full pt-16 pb-20 sm:pt-20 sm:pb-24 md:pt-28 md:pb-0 lg:pt-32 lg:pb-0 relative overflow-hidden">
       <div className="relative z-10 container mx-auto px-4 sm:px-6 md:px-8">
         <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-20 items-center">
           <div className="max-w-xl mx-auto lg:mx-0">

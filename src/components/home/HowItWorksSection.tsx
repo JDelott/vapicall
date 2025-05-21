@@ -2,22 +2,7 @@ import { Phone, Search, MessageSquare } from "lucide-react";
 
 export default function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="w-full bg-[#0A0B14] py-20 relative overflow-hidden">
-      {/* Cosmic background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Star field */}
-        <div className="absolute inset-0 opacity-60" 
-             style={{
-               backgroundImage: 'radial-gradient(1px 1px at 25px 25px, rgba(255,255,255,0.15) 100%, transparent), radial-gradient(1px 1px at 50px 50px, rgba(255,255,255,0.2) 100%, transparent), radial-gradient(2px 2px at 125px 125px, rgba(255,255,255,0.2) 100%, transparent), radial-gradient(1px 1px at 75px 75px, rgba(255,255,255,0.1) 100%, transparent)',
-               backgroundSize: '100px 100px'
-             }}>
-        </div>
-        
-        {/* Nebula effects */}
-        <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 rounded-full bg-gradient-to-br from-[#4B2D83]/10 to-[#B83280]/5 blur-3xl"></div>
-        <div className="absolute bottom-1/3 -right-1/4 w-1/2 h-1/2 rounded-full bg-gradient-to-tl from-[#00F5A0]/5 to-[#4B2D83]/10 blur-3xl"></div>
-      </div>
-      
+    <section id="how-it-works" className="w-full py-20 relative overflow-hidden">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-20">
           <div className="inline-block px-4 py-1 bg-[#14152A] border-2 border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-widest mb-5 shadow-[0_0_10px_rgba(0,245,160,0.1)]">

@@ -3,22 +3,7 @@ import VapiCall from "@/components/vapi/VapiCall";
 
 export default function CTASection() {
   return (
-    <section className="w-full bg-[#0A0B14] pt-16 sm:pt-24 md:pt-32 pb-8 sm:pb-16 relative overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0">
-        {/* Stars */}
-        <div className="absolute inset-0" 
-             style={{
-               backgroundImage: 'radial-gradient(1px 1px at 50px 50px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1px 1px at 100px 100px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1.5px 1.5px at 150px 150px, rgba(255,255,255,0.3) 100%, transparent), radial-gradient(1px 1px at 200px 200px, rgba(255,255,255,0.3) 100%, transparent)',
-               backgroundSize: '250px 250px',
-             }}>
-        </div>
-        
-        {/* Gradient planet */}
-        <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-[#4B2D83] to-[#B83280] opacity-20 blur-xl"></div>
-        <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-[#00F5A0] opacity-10 blur-xl"></div>
-      </div>
-      
+    <section className="w-full pt-16 sm:pt-24 md:pt-32 pb-8 sm:pb-16 relative overflow-hidden">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="bg-[#14152A] border border-[#2E2D47] rounded-xl overflow-hidden">
           {/* Top glow line */}
