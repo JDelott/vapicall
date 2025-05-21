@@ -12,7 +12,15 @@ interface ConversationEntry {
   content: string;
 }
 
-export default function VapiCall({ onTranscriptUpdate }: { onTranscriptUpdate?: (text: string) => void }) {
+export default function VapiCall({ 
+  onTranscriptUpdate, 
+  onCallEnd,
+  onCallStart 
+}: { 
+  onTranscriptUpdate?: (text: string) => void,
+  onCallEnd?: () => void,
+  onCallStart?: () => void 
+}) {
   const vapiClientRef = useRef<Vapi | null>(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -42,6 +50,7 @@ export default function VapiCall({ onTranscriptUpdate }: { onTranscriptUpdate?: 
   }, [transcript, onTranscriptUpdate]);
 
   // Initialize Vapi client
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Clean up previous client if exists
     if (vapiClientRef.current) {
@@ -63,26 +72,27 @@ export default function VapiCall({ onTranscriptUpdate }: { onTranscriptUpdate?: 
           
           // Basic event handlers
           client.on('call-start', () => {
-            console.log("Call started");
             setCallStatus('Call connected');
             setIsCallActive(true);
           });
           
           client.on('call-end', () => {
-            console.log("Call ended");
             setCallStatus('Call ended');
             setIsCallActive(false);
             setIsSpeaking(false);
+            
+            // Call the onCallEnd prop if provided
+            if (onCallEnd) {
+              onCallEnd();
+            }
           });
           
           client.on('speech-start', () => {
-            console.log("Speech started");
             setCallStatus('Assistant is speaking');
             setIsSpeaking(true);
           });
           
           client.on('speech-end', () => {
-            console.log("Speech ended");
             setCallStatus('Listening...');
             setIsSpeaking(false);
           });
@@ -110,15 +120,14 @@ export default function VapiCall({ onTranscriptUpdate }: { onTranscriptUpdate?: 
             }
           });
           
-          client.on('error', (error) => {
-            console.error("Vapi error:", error);
+          client.on('error', () => {
             setCallStatus('Error occurred');
             setIsCallActive(false);
             setIsSpeaking(false);
           });
           
-        } catch (error) {
-          console.error("Failed to initialize Vapi client:", error);
+        } catch (e) {
+          console.error("Failed to initialize Vapi client:", e);
         }
       }
     }
@@ -143,59 +152,60 @@ export default function VapiCall({ onTranscriptUpdate }: { onTranscriptUpdate?: 
       return;
     }
     
+    // Call the onCallStart callback
+    if (onCallStart) {
+      onCallStart();
+    }
+    
+    setIsCallActive(true);
     setCallStatus('Connecting...');
     const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
     
     if (!assistantId) {
       setCallStatus('Assistant ID not configured');
+      setIsCallActive(false);
       return;
     }
     
     try {
       await vapiClientRef.current.start(assistantId);
-      console.log("Call start requested");
-    } catch (error) {
-      console.error("Failed to start call:", error);
+    } catch {
       setCallStatus('Failed to start call');
+      setIsCallActive(false);
     }
   };
 
   // Stop call function
   const handleStopCall = () => {
-    console.log("Stop call requested, client ref:", vapiClientRef.current);
-    
     // First attempt - standard way
     if (vapiClientRef.current) {
       try {
         vapiClientRef.current.stop();
-        console.log("Call stop requested via standard method");
-      } catch (error) {
-        console.error("Failed to stop call via standard method:", error);
+      } catch {
+        // Silent catch
       }
-    } else {
-      console.error("Client reference is null");
     }
     
     // Second attempt - force reinitialize the client
     const apiKey = process.env.NEXT_PUBLIC_VAPI_API_KEY;
     if (apiKey) {
       try {
-        console.log("Attempting to create new client and stop");
         const tempClient = new Vapi(apiKey);
         tempClient.stop();
-        console.log("Call stop requested via temp client");
-      } catch (error) {
-        console.error("Failed to stop via temp client:", error);
+      } catch {
+        // Silent catch
       }
     }
     
-    // Force UI update to show call ended
+    // Force UI update regardless
     setIsCallActive(false);
     setIsSpeaking(false);
     setCallStatus('Call ended (forced)');
     
-    // Keep transcript in state - don't reset it
-    // DO NOT RESET THE TRANSCRIPT HERE
+    // Call the onCallEnd prop if provided
+    if (onCallEnd) {
+      onCallEnd();
+    }
   };
 
   // Toggle mute function
@@ -205,8 +215,8 @@ export default function VapiCall({ onTranscriptUpdate }: { onTranscriptUpdate?: 
     try {
       vapiClientRef.current.setMuted(!isMuted);
       setIsMuted(!isMuted);
-    } catch (error) {
-      console.error("Failed to toggle mute:", error);
+    } catch {
+      // Silent catch
     }
   };
 

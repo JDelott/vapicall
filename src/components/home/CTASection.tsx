@@ -1,21 +1,39 @@
 import Link from "next/link";
 import VapiCall from "@/components/vapi/VapiCall";
-import { useState, useEffect } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState,  } from "react";
+import { ChevronDown, ChevronUp, Copy, Check } from "lucide-react";
+import useTranscriptSummary from "@/services/vapiTranscriptService";
 
 export default function CTASection() {
   const [showTranscript, setShowTranscript] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  
-  // Add debugging to see if transcript updates
-  useEffect(() => {
-    console.log("CTASection transcript:", transcript);
-  }, [transcript]);
+  const { transcript, summary, updateTranscript, endCall, isSummarizing, reset } = useTranscriptSummary();
+  const [copied, setCopied] = useState(false);
   
   // Function to handle transcript updates
   const handleTranscriptUpdate = (text: string) => {
     console.log("Received transcript update:", text);
-    setTranscript(text);
+    updateTranscript(text);
+  };
+  
+  // Function to handle call ending
+  const handleCallEnd = () => {
+    console.log('Call ended, final transcript length:', transcript.length);
+    endCall();
+  };
+  
+  // Function to handle call start
+  const handleCallStart = () => {
+    // Reset the transcript service when a new call starts
+    reset();
+  };
+  
+  // Function to copy summary to clipboard
+  const copyToClipboard = () => {
+    if (summary) {
+      navigator.clipboard.writeText(summary);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
   
   return (
@@ -52,8 +70,53 @@ export default function CTASection() {
               
               {/* Display VapiCall component - centered with proper margins */}
               <div className="mx-auto max-w-[280px] sm:max-w-sm md:max-w-md w-full">
-                <VapiCall onTranscriptUpdate={handleTranscriptUpdate} />
+                <VapiCall 
+                  onTranscriptUpdate={handleTranscriptUpdate} 
+                  onCallEnd={handleCallEnd}
+                  onCallStart={handleCallStart}
+                />
               </div>
+              
+              {/* Summary section - only visible when summary exists */}
+              {isSummarizing ? (
+                <div className="mt-4 bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-semibold text-[#00F5A0]">Generating Summary...</p>
+                  </div>
+                  <div className="whitespace-pre-line text-xs text-gray-300 bg-[#1C1D2B] p-2 rounded border border-[#2E2D47] flex items-center justify-center h-20">
+                    <div className="animate-pulse flex space-x-2">
+                      <div className="h-2 w-2 bg-[#00F5A0] rounded-full"></div>
+                      <div className="h-2 w-2 bg-[#00F5A0] rounded-full animation-delay-200"></div>
+                      <div className="h-2 w-2 bg-[#00F5A0] rounded-full animation-delay-400"></div>
+                    </div>
+                  </div>
+                </div>
+              ) : summary ? (
+                <div className="mt-4 bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-semibold text-[#00F5A0]">Conversation Summary</p>
+                    <button 
+                      onClick={copyToClipboard}
+                      className="text-xs flex items-center text-gray-400 hover:text-[#00F5A0] transition-colors"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="h-3 w-3 mr-1" />
+                          <span>Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-3 w-3 mr-1" />
+                          <span>Copy</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <div className="whitespace-pre-line text-xs text-gray-300 bg-[#1C1D2B] p-2 rounded border border-[#2E2D47] max-h-[300px] overflow-auto">
+                    {summary}
+                  </div>
+                </div>
+              ) : null}
               
               {/* Transcription toggle button */}
               <div className="mt-4 text-center">
@@ -64,21 +127,21 @@ export default function CTASection() {
                   {showTranscript ? (
                     <>
                       <ChevronUp className="h-3 w-3 mr-1" />
-                      Hide Transcription
+                      Hide Full Transcript
                     </>
                   ) : (
                     <>
                       <ChevronDown className="h-3 w-3 mr-1" />
-                      Show Transcription
+                      Show Full Transcript
                     </>
                   )}
                 </button>
               </div>
               
-              {/* Transcription dropdown */}
+              {/* Transcription dropdown - now just showing the transcript */}
               {showTranscript && (
                 <div className="mt-2 bg-[#0A0B14] border border-[#2E2D47] rounded-md p-3 max-h-40 overflow-y-auto text-xs text-gray-300">
-                  <p className="text-xs font-semibold text-gray-400 mb-2">Live Conversation Transcript</p>
+                  <p className="text-xs font-semibold text-gray-400 mb-2">Full Transcript</p>
                   <div className="whitespace-pre-line">
                     {transcript || "Use the Call button above to start a conversation. The transcript will appear here as you speak with the AI."}
                   </div>
