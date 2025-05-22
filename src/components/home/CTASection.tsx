@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ChevronDown, ChevronUp, Copy, Check, Clock, MessageSquare, Image, Send, Activity, VolumeX } from "lucide-react";
 import useTranscriptSummary from "@/services/vapiTranscriptService";
 import ImageUploader from "@/components/vapi/ImageUploader";
@@ -15,6 +15,35 @@ export default function CTASection() {
   const [isInjectingDescription, setIsInjectingDescription] = useState(false);
   const vapiCallRef = useRef<VapiCallRefType>(null);
   
+  // Add state for call status and duration
+  const [isCallActive, setIsCallActive] = useState(false);
+  const [callDuration, setCallDuration] = useState(0);
+  const durationTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Format duration as mm:ss
+  const formatDuration = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+  
+  // Set up and clear the duration timer
+  useEffect(() => {
+    if (isCallActive) {
+      durationTimerRef.current = setInterval(() => {
+        setCallDuration(prev => prev + 1);
+      }, 1000);
+    } else if (durationTimerRef.current) {
+      clearInterval(durationTimerRef.current);
+    }
+    
+    return () => {
+      if (durationTimerRef.current) {
+        clearInterval(durationTimerRef.current);
+      }
+    };
+  }, [isCallActive]);
+  
   // Function to handle transcript updates
   const handleTranscriptUpdate = (text: string) => {
     console.log("Received transcript update:", text);
@@ -24,6 +53,7 @@ export default function CTASection() {
   // Function to handle call ending
   const handleCallEnd = () => {
     console.log('Call ended, final transcript length:', transcript.length);
+    setIsCallActive(false);
     endCall();
   };
   
@@ -31,6 +61,8 @@ export default function CTASection() {
   const handleCallStart = () => {
     // Reset the transcript service when a new call starts
     reset();
+    setIsCallActive(true);
+    setCallDuration(0);
   };
   
   // Function to copy summary to clipboard
@@ -106,23 +138,27 @@ export default function CTASection() {
                   {/* Status pill */}
                   <div className="inline-flex items-center bg-[#14152A] px-2 py-1 rounded-full border border-[#2E2D47]">
                     <Activity className="w-3 h-3 text-[#00F5A0] mr-1" />
-                    <span className="text-xs text-white">{transcript ? "Completed" : "No calls yet"}</span>
+                    <span className="text-xs text-white">
+                      {isCallActive ? "In Progress" : (callDuration > 0 ? "Completed" : "No calls yet")}
+                    </span>
                   </div>
                   
                   {/* Duration pill */}
                   <div className="inline-flex items-center bg-[#14152A] px-2 py-1 rounded-full border border-[#2E2D47]">
                     <Clock className="w-3 h-3 text-[#00F5A0] mr-1" />
-                    <span className="text-xs text-white">{transcript ? "2:35" : "--:--"}</span>
+                    <span className="text-xs text-white">
+                      {callDuration > 0 ? formatDuration(callDuration) : "--:--"}
+                    </span>
                   </div>
                   
                   {/* Voice Status pill */}
                   <div className="inline-flex items-center bg-[#14152A] px-2 py-1 rounded-full border border-[#2E2D47]">
-                    {transcript ? (
-                      <VolumeX className="w-3 h-3 text-red-400 mr-1" />
-                    ) : (
+                    {isCallActive ? (
                       <span className="w-2 h-2 bg-[#00F5A0] rounded-full mr-1"></span>
+                    ) : (
+                      <VolumeX className="w-3 h-3 text-red-400 mr-1" />
                     )}
-                    <span className="text-xs text-white">Voice {transcript ? "Ended" : "Active"}</span>
+                    <span className="text-xs text-white">Voice {isCallActive ? "Active" : "Ended"}</span>
                   </div>
                 </div>
               </div>
