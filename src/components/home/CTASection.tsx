@@ -143,7 +143,7 @@ export default function CTASection() {
                   className="w-full flex items-center justify-between text-sm text-gray-300 hover:text-[#00F5A0] transition-colors p-2 rounded-md hover:bg-[#1C1D2B]"
                 >
                   <span className="flex items-center">
-                    <Image className="w-4 h-4 mr-2 text-[#00F5A0]" />
+                    <Image className="w-4 h-4 mr-2 text-[#00F5A0]" aria-hidden="true" />
                     Image Processing
                   </span>
                   {showImageProcessing ? (
