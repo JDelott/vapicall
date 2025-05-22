@@ -1,15 +1,23 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { Phone, PhoneOff, Mic, MicOff } from 'lucide-react';
+import { Phone, PhoneOff, Mic, MicOff, Send } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Vapi from "@vapi-ai/web";
 import Avatar3D from './Avatar3D';
+import ImageUploader from './ImageUploader';
 
 // Add proper type for conversation entries
 interface ConversationEntry {
   role: string;
   content: string;
+}
+
+// Define a type for Vapi messages
+interface VapiMessage {
+  type: string;
+  conversation?: ConversationEntry[];
+  [key: string]: unknown;
 }
 
 export default function VapiCall({ 
@@ -23,45 +31,23 @@ export default function VapiCall({
 }) {
   const vapiClientRef = useRef<Vapi | null>(null);
   const [isCallActive, setIsCallActive] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [transcript, setTranscript] = useState<string>('');
-  const [callStatus, setCallStatus] = useState<string>('Ready to call');
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [callStatus, setCallStatus] = useState('Ready to start call');
+  const [imageDescription, setImageDescription] = useState<string | null>(null);
+  const [isInjectingDescription, setIsInjectingDescription] = useState(false);
+  const isInitializedRef = useRef(false);
 
-  // Check for mobile on mount and window resize
+  // Handle image description from Claude
+  const handleImageDescription = (description: string) => {
+    setImageDescription(description);
+  };
+
+  // Initialize Vapi client - only once on mount
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
+    // Skip if already initialized
+    if (isInitializedRef.current) return;
     
-    if (typeof window !== 'undefined') {
-      checkMobile();
-      window.addEventListener('resize', checkMobile);
-      return () => window.removeEventListener('resize', checkMobile);
-    }
-  }, []);
-
-  // Update parent component when transcript changes
-  useEffect(() => {
-    if (onTranscriptUpdate) {
-      onTranscriptUpdate(transcript);
-    }
-  }, [transcript, onTranscriptUpdate]);
-
-  // Initialize Vapi client
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    // Clean up previous client if exists
-    if (vapiClientRef.current) {
-      try {
-        vapiClientRef.current.stop();
-      } catch (e) {
-        console.error("Failed to clean up previous client:", e);
-      }
-      vapiClientRef.current = null;
-    }
-
     if (typeof window !== 'undefined') {
       const apiKey = process.env.NEXT_PUBLIC_VAPI_API_KEY;
       if (apiKey) {
@@ -69,81 +55,111 @@ export default function VapiCall({
           console.log("Initializing Vapi client");
           const client = new Vapi(apiKey);
           vapiClientRef.current = client;
+          isInitializedRef.current = true;
           
-          // Basic event handlers
-          client.on('call-start', () => {
-            setCallStatus('Call connected');
-            setIsCallActive(true);
-          });
-          
-          client.on('call-end', () => {
-            setCallStatus('Call ended');
-            setIsCallActive(false);
-            setIsSpeaking(false);
-            
-            // Call the onCallEnd prop if provided
-            if (onCallEnd) {
-              onCallEnd();
-            }
-          });
-          
-          client.on('speech-start', () => {
-            setCallStatus('Assistant is speaking');
-            setIsSpeaking(true);
-          });
-          
-          client.on('speech-end', () => {
-            setCallStatus('Listening...');
-            setIsSpeaking(false);
-          });
-          
-          client.on('message', (msg) => {
-            console.log("Vapi message received:", msg);
-            
-            if (msg && typeof msg === 'object') {
-              // Handle conversation updates which contain the transcript
-              if (msg.type === 'conversation-update' && Array.isArray(msg.conversation)) {
-                // Filter out system messages and only keep user/assistant exchanges
-                const filteredConversation = msg.conversation
-                  .filter((entry: ConversationEntry) => entry.role !== 'system')
-                  .map((entry: ConversationEntry) => `${entry.role}: ${entry.content}`)
-                  .join('\n\n');
-                
-                // Update the transcript
-                setTranscript(filteredConversation);
-                
-                // Also pass to parent component if callback exists
-                if (onTranscriptUpdate) {
-                  onTranscriptUpdate(filteredConversation);
-                }
-              }
-            }
-          });
-          
-          client.on('error', () => {
-            setCallStatus('Error occurred');
-            setIsCallActive(false);
-            setIsSpeaking(false);
-          });
-          
+          // Set up event handlers in a separate useEffect
         } catch (e) {
           console.error("Failed to initialize Vapi client:", e);
         }
       }
     }
 
-    // Cleanup function
+    // Cleanup function - only on unmount
     return () => {
       if (vapiClientRef.current) {
         try {
-          console.log("Cleaning up Vapi client");
+          console.log("Cleaning up Vapi client on unmount");
           vapiClientRef.current.stop();
+          vapiClientRef.current = null;
+          isInitializedRef.current = false;
         } catch (e) {
           console.error("Error during cleanup:", e);
         }
       }
     };
-  }, []); // Empty dependency array to only initialize once
+  }, []); // Empty deps means this only runs on mount/unmount
+
+  // Set up event handlers (can be re-run safely)
+  useEffect(() => {
+    if (!vapiClientRef.current) return;
+    
+    // Handler functions
+    const handleCallStart = () => {
+      setCallStatus('Call connected');
+      setIsCallActive(true);
+    };
+    
+    const handleCallEnd = () => {
+      setCallStatus('Call ended');
+      setIsCallActive(false);
+      setIsSpeaking(false);
+      
+      // Call the onCallEnd prop if provided
+      if (onCallEnd) {
+        onCallEnd();
+      }
+    };
+    
+    const handleSpeechStart = () => {
+      setCallStatus('Assistant is speaking');
+      setIsSpeaking(true);
+    };
+    
+    const handleSpeechEnd = () => {
+      setCallStatus('Listening...');
+      setIsSpeaking(false);
+    };
+    
+    const handleMessage = (msg: VapiMessage) => {
+      console.log("Vapi message received:", msg);
+      
+      if (msg && typeof msg === 'object') {
+        // Handle conversation updates which contain the transcript
+        if (msg.type === 'conversation-update' && Array.isArray(msg.conversation)) {
+          // Filter out system messages and only keep user/assistant exchanges
+          const filteredConversation = msg.conversation
+            .filter((entry: ConversationEntry) => entry.role !== 'system')
+            .map((entry: ConversationEntry) => `${entry.role}: ${entry.content}`)
+            .join('\n\n');
+          
+          // Only pass to parent component if callback exists
+          if (onTranscriptUpdate) {
+            onTranscriptUpdate(filteredConversation);
+          }
+        }
+      }
+    };
+    
+    const handleError = () => {
+      setCallStatus('Error occurred');
+      setIsCallActive(false);
+      setIsSpeaking(false);
+    };
+    
+    // Add event listeners
+    const client = vapiClientRef.current;
+    client.on('call-start', handleCallStart);
+    client.on('call-end', handleCallEnd);
+    client.on('speech-start', handleSpeechStart);
+    client.on('speech-end', handleSpeechEnd);
+    client.on('message', handleMessage);
+    client.on('error', handleError);
+    
+    // Return cleanup that doesn't destroy the client
+    return () => {
+      if (client) {
+        // Only remove event listeners, don't destroy client
+        if (typeof client.off === 'function') {
+          client.off('call-start', handleCallStart);
+          client.off('call-end', handleCallEnd);
+          client.off('speech-start', handleSpeechStart);
+          client.off('speech-end', handleSpeechEnd);
+          client.off('message', handleMessage);
+          client.off('error', handleError);
+        }
+      }
+    };
+  }, [onCallEnd, onTranscriptUpdate]);
 
   // Start call function
   const handleStartCall = async () => {
@@ -169,7 +185,8 @@ export default function VapiCall({
     
     try {
       await vapiClientRef.current.start(assistantId);
-    } catch {
+    } catch (error) {
+      console.error("Failed to start call:", error);
       setCallStatus('Failed to start call');
       setIsCallActive(false);
     }
@@ -177,34 +194,22 @@ export default function VapiCall({
 
   // Stop call function
   const handleStopCall = () => {
-    // First attempt - standard way
-    if (vapiClientRef.current) {
-      try {
-        vapiClientRef.current.stop();
-      } catch {
-        // Silent catch
+    if (!vapiClientRef.current) return;
+    
+    try {
+      vapiClientRef.current.stop();
+      
+      // Force UI update
+      setIsCallActive(false);
+      setIsSpeaking(false);
+      setCallStatus('Call ended');
+      
+      // Call the onCallEnd prop if provided
+      if (onCallEnd) {
+        onCallEnd();
       }
-    }
-    
-    // Second attempt - force reinitialize the client
-    const apiKey = process.env.NEXT_PUBLIC_VAPI_API_KEY;
-    if (apiKey) {
-      try {
-        const tempClient = new Vapi(apiKey);
-        tempClient.stop();
-      } catch {
-        // Silent catch
-      }
-    }
-    
-    // Force UI update regardless
-    setIsCallActive(false);
-    setIsSpeaking(false);
-    setCallStatus('Call ended (forced)');
-    
-    // Call the onCallEnd prop if provided
-    if (onCallEnd) {
-      onCallEnd();
+    } catch (error) {
+      console.error("Error stopping call:", error);
     }
   };
 
@@ -220,69 +225,79 @@ export default function VapiCall({
     }
   };
 
-  // Mobile-optimized layout
-  if (isMobile) {
-    return (
-      <div className="w-full bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg flex flex-col">
-        {/* Status bar */}
-        <div className="bg-[#181A33] px-3 py-2 flex items-center justify-between">
-          <div className="flex items-center">
-            <div className={`h-2 w-2 rounded-full ${isCallActive ? 'bg-[#00F5A0] animate-pulse' : 'bg-gray-500'} mr-2`}></div>
-            <span className="text-white text-xs">{callStatus}</span>
-          </div>
-          
-          {isSpeaking && (
-            <div className="bg-[#00F5A0]/90 text-[#14152A] text-xs py-0.5 px-2 rounded-full animate-pulse">
-              Speaking
-            </div>
-          )}
-        </div>
-        
-        {/* Avatar - centered container for mobile */}
-        <div className="w-full h-[260px] relative overflow-hidden bg-gradient-to-b from-[#1C1D2B] to-[#0A0B14]">
-          <Avatar3D 
-            isSpeaking={isSpeaking} 
-            upperBodyOnly={true} 
-          />
-        </div>
-        
-        {/* Controls bar - improved styling */}
-        <div className="p-4 bg-[#181A33]">
-          {!isCallActive ? (
-            <Button 
-              onClick={handleStartCall}
-              className="w-full bg-[#1C1D2B] hover:bg-[#00F5A0] hover:text-[#14152A] text-[#00F5A0] py-3 font-medium rounded-lg shadow-sm"
-            >
-              <Phone className="mr-2 h-4 w-4" />
-              <span>Start Call</span>
-            </Button>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              <Button 
-                onClick={handleStopCall}
-                className="bg-[#1C1D2B] hover:bg-[#B83280] text-[#B83280] hover:text-white py-3 font-medium rounded-lg shadow-sm"
-              >
-                <PhoneOff className="mr-2 h-4 w-4" />
-                <span>End Call</span>
-              </Button>
-              
-              <Button 
-                onClick={handleToggleMute}
-                className={`bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'} py-3 font-medium rounded-lg shadow-sm`}
-              >
-                {isMuted ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
-                <span>{isMuted ? 'Unmute' : 'Mute'}</span>
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
+  // Use add-message type instead of say for injecting image description
+  const injectImageDescription = async () => {
+    if (!imageDescription || !vapiClientRef.current || !isCallActive) return;
+    
+    setIsInjectingDescription(true);
+    
+    try {
+      // Use add-message instead of say command
+      vapiClientRef.current.send({
+        type: "add-message" as const,
+        message: {
+          role: "user",
+          content: `I'm looking at an image and here's what it shows: ${imageDescription}`
+        }
+      });
+      
+      // Clear the description
+      setImageDescription(null);
+      
+      // Make sure microphone is unmuted
+      setTimeout(() => {
+        try {
+          if (vapiClientRef.current) {
+            // Force reconnect the microphone
+            vapiClientRef.current.setMuted(true);
+            setTimeout(() => {
+              if (vapiClientRef.current) {
+                vapiClientRef.current.setMuted(false);
+                setIsMuted(false);
+                console.log("Microphone reconnected and unmuted");
+              }
+            }, 100);
+          }
+        } catch (error) {
+          console.error("Error restoring microphone:", error);
+        } finally {
+          setIsInjectingDescription(false);
+        }
+      }, 500);
+    } catch (error) {
+      console.error('Failed to inject image description:', error);
+      setIsInjectingDescription(false);
+    }
+  };
 
   // Desktop layout
   return (
     <div className="mx-auto w-full max-w-4xl bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg p-4 flex flex-col">
+      {/* Image uploader section - always visible */}
+      <div className="mb-4">
+        <div className="border border-[#2E2D47] rounded-lg p-4 bg-[#1A1B2E]">
+          <h3 className="text-white text-sm font-medium mb-3">Image Processing (Claude)</h3>
+          <ImageUploader onDescriptionGenerated={handleImageDescription} />
+        </div>
+        
+        {/* Show inject button if there's a description and call is active */}
+        {imageDescription && isCallActive && (
+          <div className="mt-3">
+            <Button
+              onClick={injectImageDescription}
+              disabled={isInjectingDescription}
+              className="w-full bg-[#00F5A0] text-[#14152A] hover:bg-[#00F5A0]/80 flex items-center justify-center"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              {isInjectingDescription ? 'Sending to VAPI...' : 'Send Image Description to VAPI'}
+            </Button>
+            <p className="text-xs text-gray-400 mt-1 text-center">
+              After sending, you can speak normally to continue the conversation
+            </p>
+          </div>
+        )}
+      </div>
+      
       {/* Avatar container */}
       <div className="w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] relative bg-gradient-to-b from-[#1C1D2B] to-[#0A0B14] rounded-lg overflow-hidden">
         <Avatar3D isSpeaking={isSpeaking} upperBodyOnly={false} />
