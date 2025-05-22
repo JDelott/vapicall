@@ -23,6 +23,18 @@ export async function POST(request: NextRequest) {
 
     console.log('Server: Calling Claude API for image processing');
     
+    // Extract the correct mime type from the base64 string
+    const mediaTypeMatch = image.match(/^data:(image\/[a-zA-Z+]+);base64,/);
+    if (!mediaTypeMatch) {
+      return NextResponse.json(
+        { error: 'Invalid image format or encoding' },
+        { status: 400 }
+      );
+    }
+    
+    const mediaType = mediaTypeMatch[1];
+    const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
+    
     // Call the Anthropic Claude API with the image
     const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -46,8 +58,8 @@ export async function POST(request: NextRequest) {
                 type: 'image',
                 source: {
                   type: 'base64',
-                  media_type: 'image/jpeg',
-                  data: image.replace(/^data:image\/\w+;base64,/, '')
+                  media_type: mediaType,
+                  data: base64Data
                 }
               }
             ]

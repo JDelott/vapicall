@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { Phone, PhoneOff, Mic, MicOff, Send } from 'lucide-react';
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import { Phone, PhoneOff, Mic, MicOff } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Vapi from "@vapi-ai/web";
 import Avatar3D from './Avatar3D';
-import ImageUploader from './ImageUploader';
 
 // Add proper type for conversation entries
 interface ConversationEntry {
@@ -20,28 +19,72 @@ interface VapiMessage {
   [key: string]: unknown;
 }
 
-export default function VapiCall({ 
+// Add a ref type for external access to component methods
+export interface VapiCallRefType {
+  injectImageDescription: (description: string) => Promise<void>;
+  isCallActive: () => boolean;
+}
+
+interface VapiCallProps {
+  onTranscriptUpdate?: (text: string) => void,
+  onCallEnd?: () => void,
+  onCallStart?: () => void,
+}
+
+const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({ 
   onTranscriptUpdate, 
   onCallEnd,
   onCallStart 
-}: { 
-  onTranscriptUpdate?: (text: string) => void,
-  onCallEnd?: () => void,
-  onCallStart?: () => void 
-}) {
+}, ref) => {
   const vapiClientRef = useRef<Vapi | null>(null);
   const [isCallActive, setIsCallActive] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [callStatus, setCallStatus] = useState('Ready to start call');
-  const [imageDescription, setImageDescription] = useState<string | null>(null);
-  const [isInjectingDescription, setIsInjectingDescription] = useState(false);
   const isInitializedRef = useRef(false);
 
-  // Handle image description from Claude
-  const handleImageDescription = (description: string) => {
-    setImageDescription(description);
-  };
+  // Expose functions to parent component
+  useImperativeHandle(ref, () => ({
+    injectImageDescription: async (description: string) => {
+      if (!description || !vapiClientRef.current || !isCallActive) {
+        console.log("Cannot inject: description, client, or call inactive");
+        return;
+      }
+      
+      try {
+        // Use add-message instead of say command
+        vapiClientRef.current.send({
+          type: "add-message" as const,
+          message: {
+            role: "user",
+            content: `I'm looking at an image and here's what it shows: ${description}`
+          }
+        });
+        
+        // Make sure microphone is unmuted
+        setTimeout(() => {
+          try {
+            if (vapiClientRef.current) {
+              // Force reconnect the microphone
+              vapiClientRef.current.setMuted(true);
+              setTimeout(() => {
+                if (vapiClientRef.current) {
+                  vapiClientRef.current.setMuted(false);
+                  setIsMuted(false);
+                  console.log("Microphone reconnected and unmuted");
+                }
+              }, 100);
+            }
+          } catch (error) {
+            console.error("Error restoring microphone:", error);
+          }
+        }, 500);
+      } catch (error) {
+        console.error('Failed to inject image description:', error);
+      }
+    },
+    isCallActive: () => isCallActive
+  }));
 
   // Initialize Vapi client - only once on mount
   useEffect(() => {
@@ -225,131 +268,70 @@ export default function VapiCall({
     }
   };
 
-  // Use add-message type instead of say for injecting image description
-  const injectImageDescription = async () => {
-    if (!imageDescription || !vapiClientRef.current || !isCallActive) return;
-    
-    setIsInjectingDescription(true);
-    
-    try {
-      // Use add-message instead of say command
-      vapiClientRef.current.send({
-        type: "add-message" as const,
-        message: {
-          role: "user",
-          content: `I'm looking at an image and here's what it shows: ${imageDescription}`
-        }
-      });
-      
-      // Clear the description
-      setImageDescription(null);
-      
-      // Make sure microphone is unmuted
-      setTimeout(() => {
-        try {
-          if (vapiClientRef.current) {
-            // Force reconnect the microphone
-            vapiClientRef.current.setMuted(true);
-            setTimeout(() => {
-              if (vapiClientRef.current) {
-                vapiClientRef.current.setMuted(false);
-                setIsMuted(false);
-                console.log("Microphone reconnected and unmuted");
-              }
-            }, 100);
-          }
-        } catch (error) {
-          console.error("Error restoring microphone:", error);
-        } finally {
-          setIsInjectingDescription(false);
-        }
-      }, 500);
-    } catch (error) {
-      console.error('Failed to inject image description:', error);
-      setIsInjectingDescription(false);
-    }
-  };
-
-  // Desktop layout
   return (
-    <div className="mx-auto w-full max-w-4xl bg-[#14152A] border border-[#2E2D47] rounded-lg overflow-hidden shadow-lg p-4 flex flex-col">
-      {/* Image uploader section - always visible */}
-      <div className="mb-4">
-        <div className="border border-[#2E2D47] rounded-lg p-4 bg-[#1A1B2E]">
-          <h3 className="text-white text-sm font-medium mb-3">Image Processing (Claude)</h3>
-          <ImageUploader onDescriptionGenerated={handleImageDescription} />
-        </div>
-        
-        {/* Show inject button if there's a description and call is active */}
-        {imageDescription && isCallActive && (
-          <div className="mt-3">
-            <Button
-              onClick={injectImageDescription}
-              disabled={isInjectingDescription}
-              className="w-full bg-[#00F5A0] text-[#14152A] hover:bg-[#00F5A0]/80 flex items-center justify-center"
-            >
-              <Send className="w-4 h-4 mr-2" />
-              {isInjectingDescription ? 'Sending to VAPI...' : 'Send Image Description to VAPI'}
-            </Button>
-            <p className="text-xs text-gray-400 mt-1 text-center">
-              After sending, you can speak normally to continue the conversation
-            </p>
-          </div>
-        )}
-      </div>
-      
-      {/* Avatar container */}
-      <div className="w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] relative bg-gradient-to-b from-[#1C1D2B] to-[#0A0B14] rounded-lg overflow-hidden">
-        <Avatar3D isSpeaking={isSpeaking} upperBodyOnly={false} />
-        
+    <div className="w-full bg-[#14152A] border border-[#2E2D47] rounded-xl overflow-hidden shadow-md">
+      <div className="flex flex-col h-full">
         {/* Status indicator */}
-        <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-          <div className="flex items-center bg-[#14152A]/80 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
-            <div className={`h-2 w-2 rounded-full ${isCallActive ? 'bg-[#00F5A0] animate-pulse' : 'bg-gray-500'} mr-2`}></div>
-            <span className="text-white text-sm">{callStatus}</span>
-          </div>
-          
-          {isSpeaking && (
-            <div className="bg-[#00F5A0]/90 backdrop-blur-sm text-[#14152A] text-xs py-1 px-3 rounded-full shadow-md animate-pulse">
-              Speaking
-            </div>
-          )}
+        <div className="mb-4 flex items-center">
+          <div className={`w-2 h-2 rounded-full mr-2 ${
+            isCallActive ? (isSpeaking ? 'bg-yellow-400 animate-pulse' : 'bg-[#00F5A0]') : 'bg-gray-500'
+          }`}></div>
+          <p className="text-sm text-gray-400">{callStatus}</p>
         </div>
-      </div>
-      
-      {/* Controls section */}
-      <div className="mt-5">
-        {/* Call controls */}
-        <div className="flex space-x-4">
+        
+        {/* Avatar container with fixed height */}
+        <div className="flex-grow flex items-center justify-center h-[300px]">
+          <Avatar3D isSpeaking={isSpeaking} />
+        </div>
+        
+        {/* Control buttons */}
+        <div className="mt-auto">
           {!isCallActive ? (
-            <Button 
+            <Button
               onClick={handleStartCall}
-              className="flex-1 bg-[#1C1D2B] hover:bg-[#00F5A0] hover:text-[#14152A] text-[#00F5A0] py-3 font-medium rounded-lg shadow-sm"
+              className="w-full bg-[#00F5A0] text-[#14152A] hover:bg-[#00F5A0]/90 transition-colors flex items-center justify-center py-3 font-medium"
             >
-              <Phone className="mr-2 h-4 w-4" />
+              <Phone className="w-4 h-4 mr-2" />
               Start Call
             </Button>
           ) : (
-            <>
-              <Button 
-                onClick={handleStopCall}
-                className="flex-1 bg-[#1C1D2B] hover:bg-[#B83280] hover:text-white text-[#B83280] py-3 font-medium rounded-lg shadow-sm"
-              >
-                <PhoneOff className="mr-2 h-4 w-4" />
-                End Call
-              </Button>
-              
-              <Button 
+            <div className="flex gap-4">
+              <Button
                 onClick={handleToggleMute}
-                className={`flex-1 bg-[#1C1D2B] ${isMuted ? 'text-[#B83280]' : 'text-[#00F5A0]'} py-3 font-medium rounded-lg shadow-sm`}
+                variant="outline"
+                className={`flex-1 py-2 ${
+                  isMuted 
+                    ? 'bg-[#1C1D2B] text-gray-400 border-gray-500' 
+                    : 'bg-[#1C1D2B] text-[#00F5A0] border-[#00F5A0]'
+                } hover:bg-[#1C1D2B] transition-colors flex items-center justify-center`}
               >
-                {isMuted ? <MicOff className="mr-2 h-4 w-4" /> : <Mic className="mr-2 h-4 w-4" />}
-                {isMuted ? 'Unmute' : 'Mute'}
+                {isMuted ? (
+                  <>
+                    <MicOff className="w-4 h-4 mr-1.5" />
+                    Unmute
+                  </>
+                ) : (
+                  <>
+                    <Mic className="w-4 h-4 mr-1.5" />
+                    Mute
+                  </>
+                )}
               </Button>
-            </>
+              <Button
+                onClick={handleStopCall}
+                className="flex-1 py-2 bg-red-500/90 hover:bg-red-500 text-white transition-colors flex items-center justify-center"
+              >
+                <PhoneOff className="w-4 h-4 mr-1.5" />
+                End
+              </Button>
+            </div>
           )}
         </div>
       </div>
     </div>
   );
-}
+});
+
+VapiCall.displayName = "VapiCall";
+
+export default VapiCall;
