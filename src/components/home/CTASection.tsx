@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ChevronDown, ChevronUp, Copy, Check, Clock, MessageSquare, Image, Send,  } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Check, Clock, MessageSquare, Image, Send, Activity, VolumeX } from "lucide-react";
 import useTranscriptSummary from "@/services/vapiTranscriptService";
 import ImageUploader from "@/components/vapi/ImageUploader";
 import VapiCall, { VapiCallRefType } from "@/components/vapi/VapiCall";
@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button";
 export default function CTASection() {
   const [showTranscript, setShowTranscript] = useState(false);
   const [showImageProcessing, setShowImageProcessing] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
   const { transcript, summary, updateTranscript, endCall, isSummarizing, reset } = useTranscriptSummary();
   const [copied, setCopied] = useState(false);
   const [imageDescription, setImageDescription] = useState<string | null>(null);
@@ -76,11 +77,11 @@ export default function CTASection() {
   };
   
   return (
-    <section className="w-full py-12 sm:py-16 bg-[#0A0B14]">
+    <section className="w-full py-20 sm:py-28 md:py-32 relative z-10">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Dashboard Header */}
-        <div className="mb-6 text-center md:text-left">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+        <div className="mb-10 text-center md:text-left">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
             AI Assistant Dashboard
           </h2>
           <p className="text-sm text-gray-400 max-w-2xl mx-auto md:mx-0">
@@ -89,33 +90,44 @@ export default function CTASection() {
         </div>
         
         {/* Dashboard Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5">
           {/* AI Assistant Card with Image Processing dropdown */}
-          <div className="md:col-span-3 bg-[#14152A] border border-[#2E2D47] rounded-xl shadow-lg">
-            <div className="p-3 border-b border-[#2E2D47] bg-[#1C1D2B]">
-              <div className="flex items-center justify-between">
+          <div className="bg-[#14152A]/80 backdrop-blur-sm border border-[#2E2D47] rounded-xl shadow-lg">
+            <div className="p-3 border-b border-[#2E2D47] bg-[#1C1D2B]/90">
+              {/* Responsive Header */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-3 sm:space-y-0">
                 <h3 className="text-white font-semibold flex items-center">
                   <MessageSquare className="w-4 h-4 mr-2 text-[#00F5A0]" />
                   AI Voice Assistant
                 </h3>
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="bg-[#1C1D2B] px-2 py-1 rounded-md text-xs border border-[#2E2D47]">
-                      <div className="text-gray-400">Status: <span className="text-white">{transcript ? "Completed" : "No calls yet"}</span></div>
-                    </div>
-                    <div className="bg-[#1C1D2B] px-2 py-1 rounded-md text-xs border border-[#2E2D47]">
-                      <div className="text-gray-400">Duration: <span className="text-white flex items-center">
-                        <Clock className="w-3 h-3 mr-1 text-[#00F5A0]" inline-size="12" />
-                        {transcript ? "2:35" : "--:--"}
-                      </span></div>
-                    </div>
+                
+                {/* Status Indicators - Redesigned for better mobile handling */}
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                  {/* Status pill */}
+                  <div className="inline-flex items-center bg-[#14152A] px-2 py-1 rounded-full border border-[#2E2D47]">
+                    <Activity className="w-3 h-3 text-[#00F5A0] mr-1" />
+                    <span className="text-xs text-white">{transcript ? "Completed" : "No calls yet"}</span>
                   </div>
-                  <div className="bg-[#0A0B14] px-2 py-1 rounded-md text-xs text-gray-400">
-                    Voice Enabled
+                  
+                  {/* Duration pill */}
+                  <div className="inline-flex items-center bg-[#14152A] px-2 py-1 rounded-full border border-[#2E2D47]">
+                    <Clock className="w-3 h-3 text-[#00F5A0] mr-1" />
+                    <span className="text-xs text-white">{transcript ? "2:35" : "--:--"}</span>
+                  </div>
+                  
+                  {/* Voice Status pill */}
+                  <div className="inline-flex items-center bg-[#14152A] px-2 py-1 rounded-full border border-[#2E2D47]">
+                    {transcript ? (
+                      <VolumeX className="w-3 h-3 text-red-400 mr-1" />
+                    ) : (
+                      <span className="w-2 h-2 bg-[#00F5A0] rounded-full mr-1"></span>
+                    )}
+                    <span className="text-xs text-white">Voice {transcript ? "Ended" : "Active"}</span>
                   </div>
                 </div>
               </div>
             </div>
+            
             <div className="p-4">
               <VapiCall 
                 ref={vapiCallRef}
@@ -193,88 +205,100 @@ export default function CTASection() {
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-          
-          {/* Summary Card */}
-          <div className="md:col-span-3 bg-[#14152A] border border-[#2E2D47] rounded-xl shadow-lg">
-            <div className="p-3 border-b border-[#2E2D47] bg-[#1C1D2B]">
-              <div className="flex items-center justify-between">
-                <h3 className="text-white font-semibold flex items-center">
-                  <MessageSquare className="w-4 h-4 mr-2 text-[#00F5A0]" />
-                  Conversation Summary
-                </h3>
+              
+              {/* Conversation Summary Toggle Button */}
+              <div className="mt-4 border-t border-[#2E2D47] pt-3">
                 <button
-                  onClick={() => setShowTranscript(!showTranscript)}
-                  className="flex items-center text-xs text-gray-400 hover:text-[#00F5A0] transition-colors bg-[#0A0B14] px-2 py-1 rounded-md"
+                  onClick={() => setShowSummary(!showSummary)}
+                  className="w-full flex items-center justify-between text-sm text-gray-300 hover:text-[#00F5A0] transition-colors p-2 rounded-md hover:bg-[#1C1D2B]"
                 >
-                  {showTranscript ? (
-                    <>
-                      <ChevronUp className="h-3 w-3 mr-1" />
-                      Hide Transcript
-                    </>
+                  <span className="flex items-center">
+                    <MessageSquare className="w-4 h-4 mr-2 text-[#00F5A0]" />
+                    Conversation Summary
+                  </span>
+                  {showSummary ? (
+                    <ChevronUp className="h-4 w-4" />
                   ) : (
-                    <>
-                      <ChevronDown className="h-3 w-3 mr-1" />
-                      Show Transcript
-                    </>
+                    <ChevronDown className="h-4 w-4" />
                   )}
                 </button>
               </div>
-            </div>
-            
-            <div className="p-4">
-              {isSummarizing ? (
-                <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-4 h-24">
-                  <p className="text-xs font-semibold text-[#00F5A0] mb-2">Generating Summary...</p>
-                  <div className="flex justify-center p-4">
-                    <div className="flex space-x-2">
-                      <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse"></div>
-                      <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse delay-75"></div>
-                      <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse delay-150"></div>
+              
+              {/* Collapsible Conversation Summary Section */}
+              {showSummary && (
+                <div className="mt-3 p-4 bg-[#1C1D2B] rounded-lg border border-[#2E2D47] transition-all duration-300 ease-in-out">
+                  {isSummarizing ? (
+                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 h-[100px] flex flex-col justify-center items-center">
+                      <p className="text-xs font-semibold text-[#00F5A0] mb-3">Generating Summary...</p>
+                      <div className="flex space-x-2">
+                        <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse"></div>
+                        <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse delay-75"></div>
+                        <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse delay-150"></div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ) : summary ? (
-                <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-4 mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-xs font-semibold text-[#00F5A0]">AI Generated Summary</p>
-                    <button 
-                      onClick={copyToClipboard}
-                      className="text-xs flex items-center text-gray-400 hover:text-[#00F5A0] transition-colors"
+                  ) : summary ? (
+                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-semibold text-[#00F5A0]">AI Generated Summary</p>
+                        <button 
+                          onClick={copyToClipboard}
+                          className="text-xs flex items-center text-gray-400 hover:text-[#00F5A0] transition-colors"
+                        >
+                          {copied ? (
+                            <>
+                              <Check className="h-3 w-3 mr-1" />
+                              <span>Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3 w-3 mr-1" />
+                              <span>Copy</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <div className="whitespace-pre-line text-sm text-gray-300 max-h-[150px] overflow-y-auto">
+                        {summary}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 h-[100px] flex items-center justify-center">
+                      <p className="text-sm text-gray-500">No summary available yet</p>
+                    </div>
+                  )}
+                  
+                  {/* Transcript Toggle */}
+                  <div className="flex justify-between items-center mb-2 mt-4">
+                    <p className="text-xs font-medium text-gray-300">Full Conversation Transcript</p>
+                    <button
+                      onClick={() => setShowTranscript(!showTranscript)}
+                      className="flex items-center text-xs text-gray-400 hover:text-[#00F5A0] transition-colors"
                     >
-                      {copied ? (
+                      {showTranscript ? (
                         <>
-                          <Check className="h-3 w-3 mr-1" />
-                          <span>Copied!</span>
+                          <ChevronUp className="h-3 w-3 mr-1" />
+                          <span>Hide</span>
                         </>
                       ) : (
                         <>
-                          <Copy className="h-3 w-3 mr-1" />
-                          <span>Copy</span>
+                          <ChevronDown className="h-3 w-3 mr-1" />
+                          <span>Show</span>
                         </>
                       )}
                     </button>
                   </div>
-                  <div className="whitespace-pre-line text-sm text-gray-300">
-                    {summary}
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-4 h-24 flex items-center justify-center">
-                  <p className="text-sm text-gray-500">No summary available yet</p>
-                </div>
-              )}
-              
-              {showTranscript && (
-                <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-lg p-4">
-                  <p className="text-xs font-semibold text-[#00F5A0] mb-2">Full Conversation Transcript</p>
-                  {transcript ? (
-                    <div className="whitespace-pre-line text-xs text-gray-300">
-                      {transcript}
+                  
+                  {/* Transcript Content */}
+                  {showTranscript && (
+                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4">
+                      {transcript ? (
+                        <div className="whitespace-pre-line text-xs text-gray-300 max-h-[200px] overflow-y-auto">
+                          {transcript}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-gray-400">No conversation recorded yet.</p>
+                      )}
                     </div>
-                  ) : (
-                    <p className="text-xs text-gray-400">No conversation recorded yet.</p>
                   )}
                 </div>
               )}

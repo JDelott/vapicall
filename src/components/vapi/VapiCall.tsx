@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { Phone, PhoneOff, Mic, MicOff } from 'lucide-react';
-import Button from '@/components/ui/Button';
+import { Phone, PhoneOff, Mic, MicOff,  } from 'lucide-react';
+
 import Vapi from "@vapi-ai/web";
 import Avatar3D from './Avatar3D';
 
@@ -269,65 +269,86 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
   };
 
   return (
-    <div className="w-full bg-[#14152A] border border-[#2E2D47] rounded-xl overflow-hidden shadow-md">
-      <div className="flex flex-col h-full">
-        {/* Status indicator */}
-        <div className="mb-4 flex items-center">
-          <div className={`w-2 h-2 rounded-full mr-2 ${
+    <div className="w-full overflow-hidden">
+      {/* 3D Avatar Container - Improved shape with rounded corners */}
+      <div className="relative bg-[#14152A] rounded-2xl overflow-hidden shadow-inner border border-[#2E2D47] mb-3">
+        {/* Status indicator as a subtle badge */}
+        <div className="absolute top-3 left-3 z-10 flex items-center bg-[#14152A]/70 backdrop-blur-sm py-1 px-2 rounded-full border border-[#2E2D47]">
+          <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
             isCallActive ? (isSpeaking ? 'bg-yellow-400 animate-pulse' : 'bg-[#00F5A0]') : 'bg-gray-500'
           }`}></div>
-          <p className="text-sm text-gray-400">{callStatus}</p>
+          <p className="text-xs text-gray-300">{callStatus}</p>
         </div>
         
-        {/* Avatar container with fixed height */}
-        <div className="flex-grow flex items-center justify-center h-[300px]">
-          <Avatar3D isSpeaking={isSpeaking} />
-        </div>
-        
-        {/* Control buttons */}
-        <div className="mt-auto">
-          {!isCallActive ? (
-            <Button
-              onClick={handleStartCall}
-              className="w-full bg-[#00F5A0] text-[#14152A] hover:bg-[#00F5A0]/90 transition-colors flex items-center justify-center py-3 font-medium"
-            >
-              <Phone className="w-4 h-4 mr-2" />
-              Start Call
-            </Button>
-          ) : (
-            <div className="flex gap-4">
-              <Button
-                onClick={handleToggleMute}
-                variant="outline"
-                className={`flex-1 py-2 ${
-                  isMuted 
-                    ? 'bg-[#1C1D2B] text-gray-400 border-gray-500' 
-                    : 'bg-[#1C1D2B] text-[#00F5A0] border-[#00F5A0]'
-                } hover:bg-[#1C1D2B] transition-colors flex items-center justify-center`}
-              >
-                {isMuted ? (
-                  <>
-                    <MicOff className="w-4 h-4 mr-1.5" />
-                    Unmute
-                  </>
-                ) : (
-                  <>
-                    <Mic className="w-4 h-4 mr-1.5" />
-                    Mute
-                  </>
-                )}
-              </Button>
-              <Button
-                onClick={handleStopCall}
-                className="flex-1 py-2 bg-red-500/90 hover:bg-red-500 text-white transition-colors flex items-center justify-center"
-              >
-                <PhoneOff className="w-4 h-4 mr-1.5" />
-                End
-              </Button>
-            </div>
-          )}
+        {/* Avatar container with better proportions and subtle circular backdrop */}
+        <div className="h-[320px] w-full flex items-center justify-center">
+          <div className="relative h-full w-full">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full bg-[#1C1D2B]/30 backdrop-blur-sm"></div>
+            <Avatar3D isSpeaking={isSpeaking} />
+            
+            {/* Subtle glow effect when speaking */}
+            {isSpeaking && (
+              <div className="absolute inset-0 bg-gradient-radial from-[#00F5A0]/5 to-transparent opacity-70 pointer-events-none"></div>
+            )}
+          </div>
         </div>
       </div>
+      
+      {/* Control buttons with improved proportions and layout */}
+      <div className="flex justify-center items-center space-x-3 mb-2">
+        {!isCallActive ? (
+          <button
+            onClick={handleStartCall}
+            className="bg-[#00F5A0] text-[#14152A] hover:bg-[#00E1C7] transition-all rounded-md shadow-sm flex items-center justify-center h-9 px-4 font-medium text-xs"
+          >
+            <Phone className="w-3.5 h-3.5 mr-1.5" />
+            <span>Start Call</span>
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={handleToggleMute}
+              className={`h-9 px-3 rounded-md flex items-center justify-center transition-colors ${
+                isMuted 
+                  ? 'bg-[#1C1D2B] text-gray-400 border border-gray-700' 
+                  : 'bg-[#1C1D2B] text-[#00F5A0] border border-[#00F5A0]/30 hover:bg-[#1C1D2B]/80'
+              }`}
+            >
+              {isMuted ? (
+                <>
+                  <MicOff className="w-3.5 h-3.5 mr-1.5" />
+                  <span className="text-xs">Unmute</span>
+                </>
+              ) : (
+                <>
+                  <Mic className="w-3.5 h-3.5 mr-1.5" />
+                  <span className="text-xs">Mute</span>
+                </>
+              )}
+            </button>
+            
+            <button
+              onClick={handleStopCall}
+              className="h-9 px-4 bg-red-500/90 hover:bg-red-600 text-white transition-colors rounded-md shadow-sm flex items-center justify-center"
+            >
+              <PhoneOff className="w-3.5 h-3.5 mr-1.5" />
+              <span className="text-xs">End Call</span>
+            </button>
+          </>
+        )}
+      </div>
+      
+      {/* Audio status indicator - more subtle */}
+      {isCallActive && (
+        <div className="flex justify-center">
+          <div className="flex items-center justify-center space-x-1">
+            <div className="w-1 h-1 rounded-full bg-[#00F5A0] animate-pulse"></div>
+            <div className="w-1 h-1 rounded-full bg-[#00F5A0] animate-pulse delay-75"></div>
+            <div className="w-1 h-1 rounded-full bg-[#00F5A0] animate-pulse delay-150"></div>
+            <span className="text-xs text-gray-500 ml-1">{isSpeaking ? 'listening...' : 'ready'}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 });
