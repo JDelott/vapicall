@@ -41,8 +41,8 @@ export default function FeaturesSection() {
           </p>
         </div>
         
-        {/* Features Grid - moved above animation */}
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4 mb-16">
+        {/* Features Grid - back to original spacing */}
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature, index) => (
             <div 
               key={index} 
@@ -66,8 +66,8 @@ export default function FeaturesSection() {
           ))}
         </div>
         
-        {/* Enhanced use case showcase section - now below the grid */}
-        <div className="bg-[#14152A]/70 backdrop-blur-sm border border-[#2E2D47] rounded-lg overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+        {/* Enhanced use case showcase section - back to original spacing */}
+        <div className="mt-16 bg-[#14152A]/70 backdrop-blur-sm border border-[#2E2D47] rounded-lg overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left side - Content */}
             <div className="p-6 md:p-8 relative">
