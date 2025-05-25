@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import { Phone, PhoneOff, Mic, MicOff,  } from 'lucide-react';
+import { Phone, PhoneOff, Mic, MicOff, User, Activity } from 'lucide-react';
 
 import Vapi from "@vapi-ai/web";
 import Avatar3D from './Avatar3D';
+import SoundwaveVisualization from './SoundwaveVisualization';
 
 // Add proper type for conversation entries
 interface ConversationEntry {
@@ -42,6 +43,10 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
   const [isMuted, setIsMuted] = useState(false);
   const [callStatus, setCallStatus] = useState('Ready to start call');
   const isInitializedRef = useRef(false);
+  
+  // Add new state for display mode and volume
+  const [displayMode, setDisplayMode] = useState<'avatar' | 'soundwave'>('soundwave');
+  const [volumeLevel, setVolumeLevel] = useState(0);
 
   // Expose functions to parent component
   useImperativeHandle(ref, () => ({
@@ -136,6 +141,7 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
       setCallStatus('Call ended');
       setIsCallActive(false);
       setIsSpeaking(false);
+      setVolumeLevel(0);
       
       // Call the onCallEnd prop if provided
       if (onCallEnd) {
@@ -144,13 +150,18 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
     };
     
     const handleSpeechStart = () => {
-      setCallStatus('Assistant is speaking');
+      // Don't change status text, just set speaking state
       setIsSpeaking(true);
     };
     
     const handleSpeechEnd = () => {
-      setCallStatus('Listening...');
+      // Don't change status text, just set speaking state
       setIsSpeaking(false);
+    };
+    
+    // Add volume level handler
+    const handleVolumeLevel = (volume: number) => {
+      setVolumeLevel(volume);
     };
     
     const handleMessage = (msg: VapiMessage) => {
@@ -177,6 +188,7 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
       setCallStatus('Error occurred');
       setIsCallActive(false);
       setIsSpeaking(false);
+      setVolumeLevel(0);
     };
     
     // Add event listeners
@@ -185,6 +197,7 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
     client.on('call-end', handleCallEnd);
     client.on('speech-start', handleSpeechStart);
     client.on('speech-end', handleSpeechEnd);
+    client.on('volume-level', handleVolumeLevel);
     client.on('message', handleMessage);
     client.on('error', handleError);
     
@@ -197,6 +210,7 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
           client.off('call-end', handleCallEnd);
           client.off('speech-start', handleSpeechStart);
           client.off('speech-end', handleSpeechEnd);
+          client.off('volume-level', handleVolumeLevel);
           client.off('message', handleMessage);
           client.off('error', handleError);
         }
@@ -270,7 +284,7 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
 
   return (
     <div className="w-full overflow-hidden">
-      {/* 3D Avatar Container - Improved shape with rounded corners */}
+      {/* Display Container */}
       <div className="relative bg-[#14152A] rounded-2xl overflow-hidden shadow-inner border border-[#2E2D47] mb-3">
         {/* Status indicator as a subtle badge */}
         <div className="absolute top-3 left-3 z-10 flex items-center bg-[#14152A]/70 backdrop-blur-sm py-1 px-2 rounded-full border border-[#2E2D47]">
@@ -280,22 +294,58 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
           <p className="text-xs text-gray-300">{callStatus}</p>
         </div>
         
-        {/* Avatar container with better proportions and subtle circular backdrop */}
-        <div className="h-[320px] w-full flex items-center justify-center">
-          <div className="relative h-full w-full">
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full bg-[#1C1D2B]/30 backdrop-blur-sm"></div>
-            <Avatar3D isSpeaking={isSpeaking} />
-            
-            {/* Subtle glow effect when speaking */}
-            {isSpeaking && (
-              <div className="absolute inset-0 bg-gradient-radial from-[#00F5A0]/5 to-transparent opacity-70 pointer-events-none"></div>
-            )}
+        {/* Display Mode Toggle - Floating in top-right */}
+        <div className="absolute top-3 right-3 z-10">
+          <div className="bg-[#14152A]/80 backdrop-blur-sm rounded-lg p-0.5 border border-[#2E2D47]/50">
+            <button
+              onClick={() => setDisplayMode('avatar')}
+              className={`p-1.5 rounded-md transition-all ${
+                displayMode === 'avatar'
+                  ? 'bg-[#00F5A0]/20 text-[#00F5A0]'
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+              title="Avatar View"
+            >
+              <User className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setDisplayMode('soundwave')}
+              className={`p-1.5 rounded-md transition-all ${
+                displayMode === 'soundwave'
+                  ? 'bg-[#00F5A0]/20 text-[#00F5A0]'
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+              title="Soundwave View"
+            >
+              <Activity className="w-3.5 h-3.5" />
+            </button>
           </div>
+        </div>
+        
+        {/* Content container */}
+        <div className="h-[320px] w-full">
+          {displayMode === 'avatar' ? (
+            <div className="relative h-full w-full flex items-center justify-center">
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full bg-[#1C1D2B]/30 backdrop-blur-sm"></div>
+              <Avatar3D isSpeaking={isSpeaking} />
+              
+              {/* Subtle glow effect when speaking */}
+              {isSpeaking && (
+                <div className="absolute inset-0 bg-gradient-radial from-[#00F5A0]/5 to-transparent opacity-70 pointer-events-none"></div>
+              )}
+            </div>
+          ) : (
+            <SoundwaveVisualization 
+              isSpeaking={isSpeaking} 
+              volumeLevel={volumeLevel}
+              isCallActive={isCallActive}
+            />
+          )}
         </div>
       </div>
       
       {/* Control buttons with improved proportions and layout */}
-      <div className="flex justify-center items-center space-x-3 mb-2">
+      <div className="flex justify-center items-center space-x-3">
         {!isCallActive ? (
           <button
             onClick={handleStartCall}
@@ -337,18 +387,6 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
           </>
         )}
       </div>
-      
-      {/* Audio status indicator - more subtle */}
-      {isCallActive && (
-        <div className="flex justify-center">
-          <div className="flex items-center justify-center space-x-1">
-            <div className="w-1 h-1 rounded-full bg-[#00F5A0] animate-pulse"></div>
-            <div className="w-1 h-1 rounded-full bg-[#00F5A0] animate-pulse delay-75"></div>
-            <div className="w-1 h-1 rounded-full bg-[#00F5A0] animate-pulse delay-150"></div>
-            <span className="text-xs text-gray-500 ml-1">{isSpeaking ? 'listening...' : 'ready'}</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 });

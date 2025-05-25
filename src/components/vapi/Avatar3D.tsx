@@ -544,13 +544,6 @@ export default function Avatar3D({ isSpeaking, currentPhoneme, upperBodyOnly = f
           maxPolarAngle={Math.PI/2.2}
         />
       </Canvas>
-      
-      {/* Status indicator */}
-      {isSpeaking && (
-        <div className="absolute bottom-4 left-4 bg-[#00F5A0] text-[#14152A] text-xs py-1 px-3 rounded-full animate-pulse">
-          Speaking
-        </div>
-      )}
     </div>
   );
 }
