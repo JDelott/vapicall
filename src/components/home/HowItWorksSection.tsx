@@ -2,7 +2,7 @@ import { Phone, Search, MessageSquare } from "lucide-react";
 
 export default function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="w-full py-32 relative overflow-hidden">
+    <section id="how-it-works" className="w-full py-20 relative overflow-hidden">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-20">
           <div className="inline-block px-4 py-1 bg-[#14152A] border-2 border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-widest mb-5 shadow-[0_0_10px_rgba(0,245,160,0.1)]">
@@ -19,7 +19,7 @@ export default function HowItWorksSection() {
         </div>
         
         {/* 3 Steps in cosmic style */}
-        <div className="grid md:grid-cols-3 gap-10 mb-32 relative">
+        <div className="grid md:grid-cols-3 gap-10 mb-20 relative">
           {/* Connector line */}
           <div className="hidden md:block absolute top-16 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#2E2D47] to-transparent z-0"></div>
           
@@ -103,7 +103,7 @@ export default function HowItWorksSection() {
         </div>
         
         {/* Optional Enhancement Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <div className="inline-flex items-center px-3 py-1 bg-[#1C1D2B]/80 backdrop-blur-sm border border-[#2E2D47] rounded-md text-[#B83280] text-xs font-mono tracking-wider mb-4 shadow-[0_0_10px_rgba(0,0,0,0.3)]">
             OPTIONAL ENHANCEMENT
           </div>
@@ -118,7 +118,7 @@ export default function HowItWorksSection() {
         </div>
 
         {/* Interactive Flow Visualization */}
-        <div className="relative mb-32">
+        <div className="relative mb-20">
           {/* Animated background container */}
           <div className="absolute inset-0 overflow-hidden rounded-xl">
             <div className="absolute inset-0 opacity-5"
