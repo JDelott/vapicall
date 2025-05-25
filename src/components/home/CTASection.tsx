@@ -146,7 +146,7 @@ export default function CTASection() {
   };
   
   return (
-    <section className="w-full py-20 sm:py-28 md:py-32 relative z-10">
+    <section className="w-full pt-32 sm:pt-40 md:pt-48 pb-20 sm:pb-28 md:pb-32 relative z-10">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Dashboard Header */}
         <div className="mb-10 text-center md:text-left">
@@ -216,6 +216,7 @@ export default function CTASection() {
                   className="w-full flex items-center justify-between text-sm text-gray-300 hover:text-[#00F5A0] transition-colors p-2 rounded-md hover:bg-[#1C1D2B]"
                 >
                   <span className="flex items-center">
+                    {/* eslint-disable-next-line jsx-a11y/alt-text */}
                     <Image className="w-4 h-4 mr-2 text-[#00F5A0]" aria-hidden="true" />
                     Image Processing
                   </span>

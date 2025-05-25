@@ -41,7 +41,8 @@ export default function FeaturesSection() {
           </p>
         </div>
         
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        {/* Features Grid - moved above animation */}
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4 mb-16">
           {features.map((feature, index) => (
             <div 
               key={index} 
@@ -65,17 +66,17 @@ export default function FeaturesSection() {
           ))}
         </div>
         
-        {/* Use case showcase section */}
-        <div className="mt-16 bg-[#14152A]/70 backdrop-blur-sm border border-[#2E2D47] rounded-lg overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+        {/* Enhanced use case showcase section - now below the grid */}
+        <div className="bg-[#14152A]/70 backdrop-blur-sm border border-[#2E2D47] rounded-lg overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left side - Content */}
             <div className="p-6 md:p-8 relative">
               <div className="inline-flex items-center px-3 py-1 bg-[#1C1D2B]/80 backdrop-blur-sm border border-[#2E2D47] rounded-md text-[#B83280] text-xs font-mono tracking-wider mb-4 shadow-[0_0_10px_rgba(0,0,0,0.3)]">
-                REAL-TIME INFORMATION
+                ENHANCED WITH CONTEXT
               </div>
               
               <h3 className="text-xl font-bold text-white mb-4">
-                Search the Web by Voice
+                Optional Document Upload
               </h3>
               
               <p className="text-gray-300 mb-6 text-sm">
@@ -84,11 +85,12 @@ export default function FeaturesSection() {
               
               <div className="space-y-4 mb-6">
                 {[
-                  "Get real-time information on any topic",
-                  "Break language barriers with instant translation",
-                  "Protect yourself from scams and fraud",
-                  "Get expert advice on finance and travel",
-                  "Learn complex topics in simple terms"
+                  "Get help with forms and legal documents",
+                  "Translate restaurant menus and signs", 
+                  "Understand medical reports and prescriptions",
+                  "Analyze receipts and financial statements",
+                  "Get explanations of complex content",
+                  "Navigate foreign paperwork while traveling"
                 ].map((item, i) => (
                   <div key={i} className="flex items-start">
                     <div className="mt-1 flex-shrink-0 h-3 w-3 rounded-sm bg-[#B83280] mr-3"></div>
@@ -99,17 +101,17 @@ export default function FeaturesSection() {
               
               {/* Example usage */}
               <div className="bg-[#0A0B14]/80 rounded-lg p-4 border border-[#2E2D47] mt-4">
-                <h4 className="text-sm font-medium text-white mb-2">Example Queries:</h4>
+                <h4 className="text-sm font-medium text-white mb-2">Example Conversations:</h4>
                 <ul className="space-y-2 text-sm">
-                  <li className="text-gray-400">&ldquo;What are the breaking developments in AI regulation today?&rdquo;</li>
-                  <li className="text-gray-400">&ldquo;Can you help me order food in Spanish at this restaurant?&rdquo;</li>
-                  <li className="text-gray-400">&ldquo;Is this email from my bank asking for my password legitimate?&rdquo;</li>
-                  <li className="text-gray-400">&ldquo;What&apos;s the best way to invest $10,000 for retirement?&rdquo;</li>
-                  <li className="text-gray-400">&ldquo;Explain quantum computing like I&apos;m a high school student&rdquo;</li>
-                  <li className="text-gray-400">&ldquo;What&apos;s the cheapest way to get from New York to Tokyo next month?&rdquo;</li>
+                  <li className="text-gray-400">&ldquo;I uploaded a French menu - can you help me order something vegetarian?&rdquo;</li>
+                  <li className="text-gray-400">&ldquo;This insurance form is confusing - what does section 3 mean?&rdquo;</li>
+                  <li className="text-gray-400">&ldquo;Can you explain this medical report in simple terms?&rdquo;</li>
+                  <li className="text-gray-400">&ldquo;Help me understand this contract before I sign it&rdquo;</li>
                 </ul>
               </div>
             </div>
+            
+            {/* Right side - Phone call visualization */}
             <div className="bg-[#0A0B14]/90 p-6 flex items-center justify-center relative overflow-hidden">
               {/* Background dots */}
               <div className="absolute inset-0 opacity-20" 
