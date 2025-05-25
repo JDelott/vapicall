@@ -31,7 +31,7 @@ function MobileHeroSection() {
         </div>
         
         {/* Main Content - angular design */}
-        <div className="bg-[#14152A]/90 backdrop-blur-md p-6 border-l-4 border-[#00F5A0] rounded-r-md shadow-[0_4px_20px_rgba(0,0,0,0.4)] mb-8 relative overflow-hidden">
+        <div className="p-6 border-l-4 border-[#00F5A0] rounded-r-md mb-8 relative overflow-hidden">
           {/* Headline - ultra simple version */}
           <h1 className="text-5xl font-bold leading-[1.15] mb-5">
             <span className="block mb-1 text-white relative z-10">
