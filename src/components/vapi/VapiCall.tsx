@@ -321,7 +321,7 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
           {displayMode === 'avatar' ? (
             <div className="relative h-full w-full flex items-center justify-center">
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full bg-[#1C1D2B]/30 backdrop-blur-sm"></div>
-              <Avatar3D isSpeaking={isSpeaking} />
+              <Avatar3D isSpeaking={isSpeaking} upperBodyOnly={true} />
               
               {/* Subtle glow effect when speaking */}
               {isSpeaking && (

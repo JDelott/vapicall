@@ -146,8 +146,8 @@ function AvatarModel({
   const getModelSettings = () => {
     if (upperBodyOnly) {
       return { 
-        scale: 1.0, 
-        position: [0, -1.5, 0] as [number, number, number] 
+        scale: 2.5,  // Keep manageable scale
+        position: [0, -4.1, 0] as [number, number, number]  // Move model up from -4.2 to -4.1
       };
     } else if (screenWidth < 640) {
       return { 
@@ -1013,8 +1013,8 @@ export default function Avatar3D({ isSpeaking, currentPhoneme, upperBodyOnly = f
   const getCameraSettings = () => {
     if (upperBodyOnly) {
       return { 
-        position: [0, 0.5, 2.2] as [number, number, number], 
-        fov: 28
+        position: [0, 0.0, 1.4] as [number, number, number],  // Bring camera back to neutral level
+        fov: 45  // Good field of view for close-up
       };
     } else if (dimensions.width < 640) {
       return { 
