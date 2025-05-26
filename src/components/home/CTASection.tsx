@@ -46,13 +46,11 @@ export default function CTASection() {
   
   // Function to handle transcript updates
   const handleTranscriptUpdate = (text: string) => {
-    console.log("Received transcript update:", text);
     updateTranscript(text);
   };
   
   // Function to handle call ending
   const handleCallEnd = () => {
-    console.log('Call ended, final transcript length:', transcript.length);
     setIsCallActive(false);
     endCall();
   };
@@ -78,7 +76,7 @@ export default function CTASection() {
   const handleImageDescription = (description: string) => {
     setImageDescription(description);
     if (description) {
-      console.log("Image processed by AI:", description.substring(0, 100) + "...");
+      // Image processed successfully
     } else {
       setImageDescription(null);
     }
@@ -93,7 +91,6 @@ export default function CTASection() {
     setIsInjectingDescription(true);
     
     if (!vapiCallRef.current.isCallActive()) {
-      console.log("Call is not active, cannot send image description");
       setIsInjectingDescription(false);
       return;
     }

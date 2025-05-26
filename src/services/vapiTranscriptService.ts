@@ -25,13 +25,11 @@ export default function useTranscriptSummary() {
         finalTranscriptRef.current = transcript;
         
         setIsSummarizing(true);
-        console.log('Call ended, generating summary...');
         
         try {
           // Get summary from Claude
           const result = await generateSummaryWithClaude(finalTranscriptRef.current);
           setSummary(result);
-          console.log('Summary generated successfully');
         } catch (error) {
           console.error('Error generating summary:', error);
           setSummary('Failed to generate summary. Please try again.');
@@ -54,7 +52,6 @@ export default function useTranscriptSummary() {
   // Mark call as ended, which triggers summary generation
   const endCall = () => {
     if (!callEnded) {
-      console.log('Call marked as ended, transcript length:', transcript.length);
       // Reset the summarization flag for a new call
       hasSummarized.current = false;
       setCallEnded(true);

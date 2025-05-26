@@ -52,7 +52,6 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
   useImperativeHandle(ref, () => ({
     injectImageDescription: async (description: string) => {
       if (!description || !vapiClientRef.current || !isCallActive) {
-        console.log("Cannot inject: description, client, or call inactive");
         return;
       }
       
@@ -76,7 +75,6 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
                 if (vapiClientRef.current) {
                   vapiClientRef.current.setMuted(false);
                   setIsMuted(false);
-                  console.log("Microphone reconnected and unmuted");
                 }
               }, 100);
             }
@@ -100,7 +98,6 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
       const apiKey = process.env.NEXT_PUBLIC_VAPI_API_KEY;
       if (apiKey) {
         try {
-          console.log("Initializing Vapi client");
           const client = new Vapi(apiKey);
           vapiClientRef.current = client;
           isInitializedRef.current = true;
@@ -116,7 +113,6 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
     return () => {
       if (vapiClientRef.current) {
         try {
-          console.log("Cleaning up Vapi client on unmount");
           vapiClientRef.current.stop();
           vapiClientRef.current = null;
           isInitializedRef.current = false;
@@ -165,8 +161,6 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
     };
     
     const handleMessage = (msg: VapiMessage) => {
-      console.log("Vapi message received:", msg);
-      
       if (msg && typeof msg === 'object') {
         // Handle conversation updates which contain the transcript
         if (msg.type === 'conversation-update' && Array.isArray(msg.conversation)) {
