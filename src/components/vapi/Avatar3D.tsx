@@ -1013,7 +1013,7 @@ function AvatarModel({
         object={scene} 
         scale={scale}
         position={position}
-        rotation={[0, 0, 0]}
+        rotation={[0, 0.1, 0]}
       />
     </group>
   );
