@@ -259,39 +259,39 @@ function AvatarModel({
       case Viseme.Silent:
         return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Ah:
-        return { jawOpen: 0.4, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.2, mouthWide: 0.1, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Ae:
-        return { jawOpen: 0.35, mouthWide: 0.6, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.15, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Ay:
-        return { jawOpen: 0.25, mouthWide: 0.4, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.1, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Eh:
-        return { jawOpen: 0.2, mouthWide: 0.5, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.1, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Ee:
-        return { jawOpen: 0.1, mouthWide: 0.7, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.05, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Oh:
-        return { jawOpen: 0.25, mouthWide: 0.1, lipsPursed: 0.5, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.1, mouthWide: 0.1, lipsPursed: 0.2, lowerLip: 0, upperLip: 0 };
       case Viseme.Oo:
-        return { jawOpen: 0.15, mouthWide: 0, lipsPursed: 0.8, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.05, mouthWide: 0, lipsPursed: 0.4, lowerLip: 0, upperLip: 0 };
       case Viseme.Er:
-        return { jawOpen: 0.18, mouthWide: 0.3, lipsPursed: 0.2, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.08, mouthWide: 0.15, lipsPursed: 0.1, lowerLip: 0, upperLip: 0 };
       case Viseme.Mb:
         return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0.8, upperLip: 0.8 };
       case Viseme.Fv:
-        return { jawOpen: 0.05, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0.6, upperLip: 0 };
+        return { jawOpen: 0.025, mouthWide: 0.1, lipsPursed: 0, lowerLip: 0.6, upperLip: 0 };
       case Viseme.Th:
-        return { jawOpen: 0.08, mouthWide: 0.3, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.04, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Td:
-        return { jawOpen: 0.12, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.06, mouthWide: 0.1, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Sh:
-        return { jawOpen: 0.15, mouthWide: 0.3, lipsPursed: 0.4, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.08, mouthWide: 0.15, lipsPursed: 0.2, lowerLip: 0, upperLip: 0 };
       case Viseme.Ss:
-        return { jawOpen: 0.08, mouthWide: 0.4, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.04, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Kg:
-        return { jawOpen: 0.15, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.08, mouthWide: 0.1, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Wy:
-        return { jawOpen: 0.1, mouthWide: 0, lipsPursed: 0.6, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.05, mouthWide: 0, lipsPursed: 0.3, lowerLip: 0, upperLip: 0 };
       case Viseme.Hh:
-        return { jawOpen: 0.12, mouthWide: 0.3, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return { jawOpen: 0.04, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       default:
         return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
     }
@@ -346,109 +346,109 @@ function AvatarModel({
     }));
   };
 
-  // Enhanced expression configuration with MORE cheerful defaults
+  // Enhanced expression configuration with MUCH MORE VISIBLE eyebrow movements
   const getExpressionConfig = (expression: ExpressionType, intensity: number) => {
     const baseIntensity = intensity * 0.8;
     
     switch (expression) {
       case ExpressionType.Warm_Smile:
         return {
-          smile: baseIntensity * 0.8, // Increased from 0.6
-          cheekRaise: baseIntensity * 0.5, // Increased from 0.4
-          eyebrowRaise: baseIntensity * 0.5, // Increased from 0.3
+          smile: baseIntensity * 0.6,
+          cheekRaise: baseIntensity * 0.4,
+          eyebrowRaise: baseIntensity * 0.4, // Increased from 0.2
           noseFlare: 0,
-          eyeSquint: baseIntensity * 0.3, // Increased from 0.2
-          lipCornerPull: baseIntensity * 0.4, // Increased from 0.3
+          eyeSquint: baseIntensity * 0.1,
+          lipCornerPull: baseIntensity * 0.2,
           headTilt: baseIntensity * 0.05,
         };
       case ExpressionType.Concentration:
         return {
-          smile: 0.2, // Increased from 0.1 to be more cheerful
-          cheekRaise: 0.1, // Added subtle cheek raise
-          eyebrowRaise: baseIntensity * 1.2, // Increased from 1.0
+          smile: 0.1,
+          cheekRaise: 0.1,
+          eyebrowRaise: baseIntensity * 0.8, // Increased from 0.5
           noseFlare: baseIntensity * 0.5,
           eyeSquint: baseIntensity * 0.7,
-          lipCornerPull: -baseIntensity * 0.1, // Less negative
+          lipCornerPull: -baseIntensity * 0.1,
           headTilt: -baseIntensity * 0.02,
         };
       case ExpressionType.Emphasis:
         return {
-          smile: baseIntensity * 0.5, // Increased from 0.3
-          cheekRaise: baseIntensity * 0.5, // Increased from 0.4
-          eyebrowRaise: baseIntensity * 1.4, // Increased from 1.2
+          smile: baseIntensity * 0.4,
+          cheekRaise: baseIntensity * 0.4,
+          eyebrowRaise: baseIntensity * 0.9, // Increased from 0.6
           noseFlare: baseIntensity * 0.3,
           eyeSquint: 0,
-          lipCornerPull: baseIntensity * 0.3, // Increased from 0.2
+          lipCornerPull: baseIntensity * 0.2,
           headTilt: baseIntensity * 0.08,
         };
       case ExpressionType.Thoughtful:
         return {
-          smile: baseIntensity * 0.3, // Increased from 0.2
-          cheekRaise: 0.1, // Added subtle cheek raise
-          eyebrowRaise: baseIntensity * 0.8, // Increased from 0.6
+          smile: baseIntensity * 0.2,
+          cheekRaise: 0.1,
+          eyebrowRaise: baseIntensity * 0.6, // Increased from 0.35
           noseFlare: 0,
           eyeSquint: baseIntensity * 0.5,
-          lipCornerPull: baseIntensity * 0.1, // Made positive instead of negative
+          lipCornerPull: baseIntensity * 0.1,
           headTilt: baseIntensity * 0.1,
         };
       case ExpressionType.Engaged:
         return {
-          smile: baseIntensity * 0.6, // Increased from 0.4
-          cheekRaise: baseIntensity * 0.4, // Increased from 0.3
-          eyebrowRaise: baseIntensity * 1.0, // Increased from 0.8
+          smile: baseIntensity * 0.5,
+          cheekRaise: baseIntensity * 0.3,
+          eyebrowRaise: baseIntensity * 0.7, // Increased from 0.4
           noseFlare: 0,
-          eyeSquint: baseIntensity * 0.3, // Increased from 0.2
-          lipCornerPull: baseIntensity * 0.35, // Increased from 0.25
+          eyeSquint: baseIntensity * 0.2,
+          lipCornerPull: baseIntensity * 0.25,
           headTilt: baseIntensity * 0.05,
         };
       case ExpressionType.Surprise:
         return {
-          smile: baseIntensity * 0.4, // Increased from 0.2
-          cheekRaise: baseIntensity * 0.4, // Increased from 0.3
-          eyebrowRaise: baseIntensity * 1.8, // Increased from 1.5
+          smile: baseIntensity * 0.3,
+          cheekRaise: baseIntensity * 0.3,
+          eyebrowRaise: baseIntensity * 1.2, // Increased from 0.8
           noseFlare: baseIntensity * 0.4,
-          eyeSquint: -baseIntensity * 0.2, // Less negative
-          lipCornerPull: baseIntensity * 0.2, // Made positive
+          eyeSquint: -baseIntensity * 0.2,
+          lipCornerPull: baseIntensity * 0.2,
           headTilt: -baseIntensity * 0.05,
         };
       case ExpressionType.Concern:
         return {
-          smile: baseIntensity * 0.15, // Increased from 0.05
-          cheekRaise: 0.05, // Added subtle cheek raise
-          eyebrowRaise: baseIntensity * 1.0, // Increased from 0.8
+          smile: baseIntensity * 0.1,
+          cheekRaise: 0.05,
+          eyebrowRaise: baseIntensity * 0.7, // Increased from 0.45
           noseFlare: baseIntensity * 0.3,
           eyeSquint: baseIntensity * 0.6,
-          lipCornerPull: -baseIntensity * 0.2, // Less negative
+          lipCornerPull: -baseIntensity * 0.2,
           headTilt: baseIntensity * 0.08,
         };
       case ExpressionType.Confident:
         return {
-          smile: baseIntensity * 0.6, // Increased from 0.4
-          cheekRaise: baseIntensity * 0.3, // Increased from 0.2
-          eyebrowRaise: baseIntensity * 0.6, // Increased from 0.4
+          smile: baseIntensity * 0.5,
+          cheekRaise: baseIntensity * 0.2,
+          eyebrowRaise: baseIntensity * 0.4, // Increased from 0.25
           noseFlare: 0,
-          eyeSquint: baseIntensity * 0.3,
-          lipCornerPull: baseIntensity * 0.3, // Increased from 0.2
+          eyeSquint: baseIntensity * 0.2,
+          lipCornerPull: baseIntensity * 0.2,
           headTilt: -baseIntensity * 0.02,
         };
       case ExpressionType.Listening:
         return {
-          smile: baseIntensity * 0.4, // Increased from 0.25
-          cheekRaise: baseIntensity * 0.2, // Increased from 0.1
-          eyebrowRaise: baseIntensity * 0.7, // Increased from 0.5
+          smile: baseIntensity * 0.3,
+          cheekRaise: baseIntensity * 0.1,
+          eyebrowRaise: baseIntensity * 0.5, // Increased from 0.3
           noseFlare: 0,
-          eyeSquint: baseIntensity * 0.4,
-          lipCornerPull: baseIntensity * 0.2, // Increased from 0.1
+          eyeSquint: baseIntensity * 0.3,
+          lipCornerPull: baseIntensity * 0.1,
           headTilt: baseIntensity * 0.12,
         };
       default: // Neutral
         return {
-          smile: 0.25, // Increased from 0.15 for more default smile
-          cheekRaise: 0.1, // Increased from 0.05
-          eyebrowRaise: 0.1, // Added subtle eyebrow raise by default
+          smile: 0.15,
+          cheekRaise: 0.05,
+          eyebrowRaise: 0.15, // Increased from 0.08
           noseFlare: 0,
           eyeSquint: 0,
-          lipCornerPull: 0.1, // Increased from 0.05
+          lipCornerPull: 0.1,
           headTilt: 0,
         };
       }
@@ -509,16 +509,30 @@ function AvatarModel({
     );
   };
 
-  // Enhanced micro-expression updates with MORE eyebrow animation
+  // Enhanced micro-expression updates with MUCH MORE VISIBLE eyebrow animation
   const updateMicroExpressions = (time: number) => {
-    // More pronounced and varied eyebrow movements
-    const eyebrowVariation = Math.sin(time * 1.1) * 0.4; // Increased from 0.3
-    const eyebrowAsymmetry = Math.sin(time * 0.8) * 0.2; // Added asymmetry
-    setEyebrowState(prev => ({
-      ...prev,
-      targetLeft: eyebrowVariation * 1.0 + eyebrowAsymmetry, // Increased from 0.8
-      targetRight: eyebrowVariation * 0.8 - eyebrowAsymmetry, // More variation
-    }));
+    // Much more visible eyebrow movements
+    const eyebrowVariation = Math.sin(time * 1.1) * 0.25; // Increased from 0.15
+    const eyebrowAsymmetry = Math.sin(time * 0.8) * 0.15; // Increased from 0.08
+    
+    if (isSpeaking) {
+      // Much more visible eyebrow movements during speech
+      const speechEyebrowIntensity = Math.sin(time * 2.1) * 0.2; // Increased from 0.12
+      const speechAsymmetry = Math.sin(time * 1.7) * 0.12; // Increased from 0.06
+      
+      setEyebrowState(prev => ({
+        ...prev,
+        targetLeft: eyebrowVariation * 1.2 + eyebrowAsymmetry + speechEyebrowIntensity, // Much more visible
+        targetRight: eyebrowVariation * 1.0 - eyebrowAsymmetry + speechAsymmetry, // Much more visible
+      }));
+    } else {
+      // Much more visible idle eyebrow movements
+      setEyebrowState(prev => ({
+        ...prev,
+        targetLeft: eyebrowVariation * 0.8 + eyebrowAsymmetry * 1.2, // Much more visible
+        targetRight: eyebrowVariation * 0.7 - eyebrowAsymmetry * 1.2, // Much more visible
+      }));
+    }
     
     // Enhanced cheek movements during speech - more cheerful
     if (isSpeaking) {
@@ -577,8 +591,8 @@ function AvatarModel({
     
     // Smooth transitions for all micro-expressions (same as before)
     setEyebrowState(prev => ({
-      left: THREE.MathUtils.lerp(prev.left, prev.targetLeft, 0.1),
-      right: THREE.MathUtils.lerp(prev.right, prev.targetRight, 0.1),
+      left: THREE.MathUtils.lerp(prev.left, prev.targetLeft, 0.15),
+      right: THREE.MathUtils.lerp(prev.right, prev.targetRight, 0.15),
       targetLeft: prev.targetLeft,
       targetRight: prev.targetRight,
     }));
@@ -640,14 +654,14 @@ function AvatarModel({
       
       // Much more subtle body movements - reduced pivoting
       group.current.rotation.y = Math.sin(time * 0.3) * 0.002 + headMovement.turn; // Reduced from 0.005
-      group.current.rotation.x = headMovement.nod * 0.3; // Reduced multiplier from 1.0
-      group.current.rotation.z = headMovement.tilt * 0.3; // Reduced multiplier from 1.0
+      group.current.rotation.x = headMovement.nod * 0.02; // Reduced multiplier from 0.08
+      group.current.rotation.z = headMovement.tilt * 0.015; // Reduced multiplier from 0.06
       
       // Apply even more subtle head movements to head bone if available
       if (headBone.current) {
-        headBone.current.rotation.x += headMovement.nod * 0.2; // Reduced from 0.5
-        headBone.current.rotation.z += headMovement.tilt * 0.2; // Reduced from 0.5
-        headBone.current.rotation.y += headMovement.turn * 0.1; // Reduced from 0.3
+        headBone.current.rotation.x += headMovement.nod * 0.1; // Reduced from 0.2
+        headBone.current.rotation.z += headMovement.tilt * 0.1; // Reduced from 0.2
+        headBone.current.rotation.y += headMovement.turn * 0.01; // Reduced from 0.04
       }
       
       if (isSpeaking) {
@@ -702,10 +716,19 @@ function AvatarModel({
                 expressionConfig.smile + lipState.cornerPull);
               setMorphTarget(['cheekRaise', 'cheek_raise', 'cheekPuff'], 
                 expressionConfig.cheekRaise + cheekState.left);
-              setMorphTarget(['eyebrowUp', 'eyebrow_up', 'browUp', 'eyebrowRaise'], 
-                expressionConfig.eyebrowRaise + eyebrowState.left);
-              setMorphTarget(['eyebrowDown', 'eyebrow_down', 'browDown'], 
-                Math.max(0, -expressionConfig.eyebrowRaise));
+
+              // Use the ACTUAL available eyebrow morph targets with MUCH MORE VISIBLE values
+              setMorphTarget(['browInnerUp'], 
+                Math.max(0, Math.min(0.8, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.4))); // Much more visible
+              setMorphTarget(['browOuterUpLeft'], 
+                Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.35))); // Much more visible
+              setMorphTarget(['browOuterUpRight'], 
+                Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.right) * 0.35))); // Much more visible
+              setMorphTarget(['browDownLeft'], 
+                Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25))); // Much more visible
+              setMorphTarget(['browDownRight'], 
+                Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25))); // Much more visible
+
               setMorphTarget(['noseFlare', 'nose_flare', 'nostrilFlare'], 
                 expressionConfig.noseFlare + noseState.flare);
               setMorphTarget(['eyeSquint', 'eye_squint', 'squint'], 
@@ -853,10 +876,14 @@ function AvatarModel({
               applyMorphIfExists('mouth_smile', expressionConfig.smile + lipState.cornerPull);
               applyMorphIfExists('cheekRaise', expressionConfig.cheekRaise + cheekState.left);
               applyMorphIfExists('cheek_raise', expressionConfig.cheekRaise + cheekState.right);
-              applyMorphIfExists('eyebrowUp', expressionConfig.eyebrowRaise + eyebrowState.left);
-              applyMorphIfExists('eyebrow_up', expressionConfig.eyebrowRaise + eyebrowState.right);
-              applyMorphIfExists('eyebrowDown', Math.max(0, -expressionConfig.eyebrowRaise));
-              applyMorphIfExists('eyebrow_down', Math.max(0, -expressionConfig.eyebrowRaise));
+
+              // Use the ACTUAL available eyebrow morph targets with MUCH MORE VISIBLE values
+              applyMorphIfExists('browInnerUp', Math.max(0, Math.min(0.8, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.4))); // Much more visible
+              applyMorphIfExists('browOuterUpLeft', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.35))); // Much more visible
+              applyMorphIfExists('browOuterUpRight', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.right) * 0.35))); // Much more visible
+              applyMorphIfExists('browDownLeft', Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25))); // Much more visible
+              applyMorphIfExists('browDownRight', Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25))); // Much more visible
+
               applyMorphIfExists('noseFlare', expressionConfig.noseFlare + noseState.flare);
               applyMorphIfExists('nose_flare', expressionConfig.noseFlare + noseState.flare);
               applyMorphIfExists('eyeSquint', expressionConfig.eyeSquint + eyeState.squint);
@@ -931,10 +958,14 @@ function AvatarModel({
             resetMorphTarget('mouth_smile', expressionConfig.smile + lipState.cornerPull);
             resetMorphTarget('cheekRaise', expressionConfig.cheekRaise + cheekState.left);
             resetMorphTarget('cheek_raise', expressionConfig.cheekRaise + cheekState.right);
-            resetMorphTarget('eyebrowUp', expressionConfig.eyebrowRaise + eyebrowState.left);
-            resetMorphTarget('eyebrow_up', expressionConfig.eyebrowRaise + eyebrowState.right);
-            resetMorphTarget('eyebrowDown', Math.max(0, -expressionConfig.eyebrowRaise));
-            resetMorphTarget('eyebrow_down', Math.max(0, -expressionConfig.eyebrowRaise));
+
+            // Use the ACTUAL available eyebrow morph targets with MUCH MORE VISIBLE values for idle
+            resetMorphTarget('browInnerUp', Math.max(0, Math.min(0.8, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.4)));
+            resetMorphTarget('browOuterUpLeft', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.35)));
+            resetMorphTarget('browOuterUpRight', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.right) * 0.35)));
+            resetMorphTarget('browDownLeft', Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25)));
+            resetMorphTarget('browDownRight', Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25)));
+
             resetMorphTarget('noseFlare', expressionConfig.noseFlare + noseState.flare);
             resetMorphTarget('nose_flare', expressionConfig.noseFlare + noseState.flare);
             resetMorphTarget('eyeSquint', expressionConfig.eyeSquint + eyeState.squint);
