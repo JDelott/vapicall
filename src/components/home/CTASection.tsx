@@ -149,11 +149,16 @@ export default function CTASection() {
     <section className="w-full py-20 sm:py-28 md:py-32 relative z-10">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Dashboard Header */}
-        <div className="mb-10 text-center md:text-left">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-            AI Assistant Dashboard
+        <div className="mb-10 text-center">
+          <div className="inline-flex items-center px-3 py-1 bg-[#1C1D2B]/80 backdrop-blur-sm border border-[#2E2D47] rounded-md text-[#00F5A0] text-xs font-mono tracking-wider mb-4 shadow-[0_0_10px_rgba(0,0,0,0.3)]">
+            <span className="mr-1.5">⚡</span> DASHBOARD
+          </div>
+          
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3 leading-tight">
+            AI Assistant <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00F5A0] to-[#00F5A0]">Dashboard</span>
           </h2>
-          <p className="text-sm text-gray-400 max-w-2xl mx-auto md:mx-0">
+          
+          <p className="text-gray-300 max-w-2xl mx-auto text-sm sm:text-base">
             Experience natural voice conversation with our AI assistant through your browser or phone.
           </p>
         </div>
