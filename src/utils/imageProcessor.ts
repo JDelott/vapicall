@@ -1,7 +1,7 @@
 // Client-side utility for calling our image processing API route
 export async function processImageWithClaude(imageBase64: string): Promise<string> {
   try {
-    console.log('Sending image to process API...');
+   
     
     const response = await fetch('/api/processImage', {
       method: 'POST',
@@ -18,7 +18,7 @@ export async function processImageWithClaude(imageBase64: string): Promise<strin
     }
     
     const data = await response.json();
-    console.log('Description received from API');
+   
     
     if (!data.description) {
       return 'No description was generated';
