@@ -88,7 +88,7 @@ function AvatarModel({
   const expressionClock = useMemo(() => new THREE.Clock(), []);
   const headMovementClock = useMemo(() => new THREE.Clock(), []);
   
-  // State for mouth animation
+  // Remove the unused state variables and keep it simple
   const [currentMouthShape, setCurrentMouthShape] = useState(MouthShape.Closed);
   const [nextShapeChangeTime, setNextShapeChangeTime] = useState(0);
   const [transitionSpeed, setTransitionSpeed] = useState(0.3);
@@ -170,14 +170,25 @@ function AvatarModel({
     targetTension: 0,
   });
   
+  // Enhanced word gap tracking with anticipatory movement and better reactivity
+  const [wordGapState, setWordGapState] = useState({
+    lastPhoneme: '',
+    silenceFrames: 0,
+    isInPause: false,
+    pauseIntensity: 0,
+    anticipatoryMovement: 0,
+    phonemeHistory: [] as string[],
+    nextPhonemePrep: 0,
+  });
+  
   const { scene, nodes } = useGLTF('/3dModelGuy.glb');
   
   // Get appropriate model scale and position based on screen size
   const getModelSettings = () => {
     if (upperBodyOnly) {
       return { 
-        scale: 2.5,  // Keep manageable scale
-        position: [0, -4.1, 0] as [number, number, number]  // Move model up from -4.2 to -4.1
+        scale: 2.5,
+        position: [0, -4.1, 0] as [number, number, number]
       };
     } else if (screenWidth < 640) {
       return { 
@@ -244,7 +255,7 @@ function AvatarModel({
       headMovementClock.start();
       setNextShapeChangeTime(0.1 + Math.random() * 0.1);
       setNextBlinkTime(2 + Math.random() * 3);
-      setNextExpressionTime(1 + Math.random() * 3); // More frequent expression changes
+      setNextExpressionTime(1 + Math.random() * 3);
       
     } catch (error) {
       console.error("Error setting up avatar model:", error);
@@ -283,50 +294,189 @@ function AvatarModel({
     return Viseme.Silent;
   };
   
-  // Realistic mouth configurations
-  const getJawConfigForViseme = (viseme: Viseme) => {
+  // Much faster and more reactive word gap tracking
+  const updateWordGapTracking = (phoneme: string) => {
+    const currentViseme = getVisemeFromPhoneme(phoneme);
+    const isCurrentlySilent = currentViseme === Viseme.Silent || !phoneme || phoneme === '' || phoneme === 'SP' || phoneme === 'SIL';
+    
+    setWordGapState(prev => {
+      const newState = { ...prev };
+      
+      // Track phoneme history for better anticipation
+      if (phoneme !== prev.lastPhoneme) {
+        newState.phonemeHistory = [...prev.phonemeHistory.slice(-3), phoneme]; // Keep last 4 phonemes
+        newState.lastPhoneme = phoneme;
+        
+        // Calculate anticipatory movement based on upcoming phoneme - more aggressive
+        if (!isCurrentlySilent) {
+          const upcomingViseme = getVisemeFromPhoneme(phoneme);
+          newState.anticipatoryMovement = getAnticipationForViseme(upcomingViseme) * 1.2; // Increased anticipation
+        }
+      }
+      
+      // EXTREMELY sensitive silence tracking for instant response
+      if (isCurrentlySilent) {
+        newState.silenceFrames++;
+      } else {
+        newState.silenceFrames = 0; // Reset immediately when sound detected
+      }
+      
+      // INSTANT pause detection - like real speech
+      const isShortPause = newState.silenceFrames >= 1 && newState.silenceFrames <= 2;  // Even faster detection
+      const isMediumPause = newState.silenceFrames >= 3 && newState.silenceFrames <= 6;
+      const isLongPause = newState.silenceFrames >= 7;
+      
+      newState.isInPause = isShortPause || isMediumPause || isLongPause;
+      
+      // More responsive pause intensities
+      let targetIntensity = 0;
+      if (isShortPause) {
+        targetIntensity = 0.1; // Very quick syllable breaks
+      } else if (isMediumPause) {
+        targetIntensity = 0.3; // Quick word breaks
+      } else if (isLongPause) {
+        targetIntensity = 0.6; // Sentence breaks
+      }
+      
+      // INSTANT pause intensity transitions for active speech
+      if (newState.isInPause) {
+        newState.pauseIntensity = THREE.MathUtils.lerp(newState.pauseIntensity, targetIntensity, 0.5);
+      } else {
+        newState.pauseIntensity = THREE.MathUtils.lerp(newState.pauseIntensity, 0, 0.7); // Faster recovery
+      }
+      
+      // Faster decay of anticipatory movement
+      newState.anticipatoryMovement = THREE.MathUtils.lerp(newState.anticipatoryMovement, 0, 0.3);
+      
+      return newState;
+    });
+  };
+
+  // Enhanced anticipation values for faster response
+  const getAnticipationForViseme = (viseme: Viseme): number => {
     switch (viseme) {
-      case Viseme.Silent:
-        return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Ah:
-        return { jawOpen: 0.2, mouthWide: 0.1, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
       case Viseme.Ae:
-        return { jawOpen: 0.15, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-      case Viseme.Ay:
-        return { jawOpen: 0.1, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-      case Viseme.Eh:
-        return { jawOpen: 0.1, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-      case Viseme.Ee:
-        return { jawOpen: 0.05, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return 1.0; // Big mouth opening coming - prepare jaw quickly
       case Viseme.Oh:
-        return { jawOpen: 0.1, mouthWide: 0.1, lipsPursed: 0.2, lowerLip: 0, upperLip: 0 };
       case Viseme.Oo:
-        return { jawOpen: 0.05, mouthWide: 0, lipsPursed: 0.4, lowerLip: 0, upperLip: 0 };
-      case Viseme.Er:
-        return { jawOpen: 0.08, mouthWide: 0.15, lipsPursed: 0.1, lowerLip: 0, upperLip: 0 };
+        return 0.8; // Rounded mouth coming - prepare lips quickly
       case Viseme.Mb:
-        return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0.8, upperLip: 0.8 };
+        return 1.2; // Lip closure coming - prepare very quickly
       case Viseme.Fv:
-        return { jawOpen: 0.025, mouthWide: 0.1, lipsPursed: 0, lowerLip: 0.6, upperLip: 0 };
-      case Viseme.Th:
-        return { jawOpen: 0.04, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-      case Viseme.Td:
-        return { jawOpen: 0.06, mouthWide: 0.1, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-      case Viseme.Sh:
-        return { jawOpen: 0.08, mouthWide: 0.15, lipsPursed: 0.2, lowerLip: 0, upperLip: 0 };
-      case Viseme.Ss:
-        return { jawOpen: 0.04, mouthWide: 0.2, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-      case Viseme.Kg:
-        return { jawOpen: 0.08, mouthWide: 0.1, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-      case Viseme.Wy:
-        return { jawOpen: 0.05, mouthWide: 0, lipsPursed: 0.3, lowerLip: 0, upperLip: 0 };
-      case Viseme.Hh:
-        return { jawOpen: 0.04, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return 0.9; // Lip-teeth contact coming
+      case Viseme.Ee:
+        return 0.7; // Wide mouth coming
       default:
-        return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        return 0.5; // General preparation
     }
   };
-  
+
+  // Much faster and more reactive mouth configurations
+  const getJawConfigForViseme = (viseme: Viseme, pauseIntensity: number = 0, anticipation: number = 0) => {
+    const baseConfig = (() => {
+      switch (viseme) {
+        case Viseme.Silent:
+          return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        case Viseme.Ah:
+          return { jawOpen: 0.35, mouthWide: 0.25, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        case Viseme.Ae:
+          return { jawOpen: 0.3, mouthWide: 0.35, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        case Viseme.Ay:
+          return { jawOpen: 0.22, mouthWide: 0.3, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        case Viseme.Eh:
+          return { jawOpen: 0.22, mouthWide: 0.3, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        case Viseme.Ee:
+          return { jawOpen: 0.12, mouthWide: 0.35, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+        case Viseme.Oh:
+          return { jawOpen: 0.22, mouthWide: 0.15, lipsPursed: 0.4, lowerLip: 0, upperLip: 0 };
+        case Viseme.Oo:
+          return { jawOpen: 0.15, mouthWide: 0, lipsPursed: 0.6, lowerLip: 0, upperLip: 0 };
+        case Viseme.Er:
+          return { jawOpen: 0.18, mouthWide: 0.25, lipsPursed: 0.2, lowerLip: 0, upperLip: 0 };
+        
+        // POLISHED CONSONANTS - More distinct and natural
+        case Viseme.Mb: // M, B, P - Complete lip closure
+          return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 1.0, upperLip: 1.0 };
+        
+        case Viseme.Fv: // F, V - Lower lip to upper teeth
+          return { jawOpen: 0.06, mouthWide: 0.12, lipsPursed: 0, lowerLip: 0.95, upperLip: 0.1 }; // Slight upper lip involvement
+        
+        case Viseme.Th: // TH, DH - Tongue tip visible between teeth
+          return { jawOpen: 0.08, mouthWide: 0.18, lipsPursed: 0, lowerLip: 0.15, upperLip: 0.1 }; // Slight lip parting for tongue
+        
+        case Viseme.Td: // T, D, N, L - Tongue to alveolar ridge
+          return { jawOpen: 0.12, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0.05, upperLip: 0.05 }; // Minimal lip involvement
+        
+        case Viseme.Sh: // SH, ZH, CH, JH - Lip rounding with slight protrusion
+          return { jawOpen: 0.16, mouthWide: 0.18, lipsPursed: 0.4, lowerLip: 0.1, upperLip: 0.1 }; // More defined lip shape
+        
+        case Viseme.Ss: // S, Z - Slight smile position for sibilants
+          return { jawOpen: 0.08, mouthWide: 0.32, lipsPursed: 0, lowerLip: 0, upperLip: 0 }; // Clean sibilant position
+        
+        case Viseme.Kg: // K, G, NG - Back of tongue, neutral lips
+          return { jawOpen: 0.16, mouthWide: 0.12, lipsPursed: 0, lowerLip: 0, upperLip: 0 }; // Slightly more open
+        
+        case Viseme.Wy: // W, Y - Strong lip rounding for W
+          return { jawOpen: 0.1, mouthWide: 0, lipsPursed: 0.65, lowerLip: 0.2, upperLip: 0.2 }; // More pronounced rounding
+        
+        case Viseme.Hh: // HH - Slight opening, relaxed
+          return { jawOpen: 0.1, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 }; // Cleaner H sound
+        
+        default:
+          return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+      }
+    })();
+    
+    // Much more aggressive anticipatory movement for faster response
+    if (anticipation > 0) {
+      const anticipationFactor = anticipation * 0.5; // Increased from 0.3
+      baseConfig.jawOpen += anticipationFactor * 0.15; // Increased from 0.1
+      baseConfig.mouthWide += anticipationFactor * 0.1; // Increased from 0.05
+      
+      // Prepare for specific upcoming movements more aggressively
+      if (viseme === Viseme.Mb || viseme === Viseme.Fv) {
+        baseConfig.lowerLip += anticipationFactor * 0.3; // Increased from 0.2
+      }
+      if (viseme === Viseme.Oh || viseme === Viseme.Oo || viseme === Viseme.Wy) {
+        baseConfig.lipsPursed += anticipationFactor * 0.25; // Increased from 0.15
+      }
+    }
+    
+    // Faster pause modifications - less interference with speech
+    if (pauseIntensity > 0) {
+      const time = Date.now() * 0.001;
+      const breathingCycle = Math.sin(time * 2.2) * 0.5 + 0.5; // Faster breathing
+      const microMovement = Math.sin(time * 6) * 0.015; // Faster micro-movements
+      
+      // Smaller rest position changes to not interfere with speech
+      let restPosition = 0.01 + breathingCycle * 0.008 + microMovement;
+      
+      // Much less aggressive pause modifications
+      if (pauseIntensity < 0.2) {
+        restPosition *= 1.1; // Minimal change for quick syllable breaks
+      } else if (pauseIntensity < 0.5) {
+        restPosition *= 0.95; // Small change for word breaks
+      } else {
+        restPosition *= 0.7; // Moderate change for sentence breaks
+      }
+      
+      // Much less aggressive blending - don't slow down speech
+      const jawBlend = pauseIntensity * 0.6; // Reduced from 0.9
+      const wideBlend = pauseIntensity * 0.4; // Reduced from 0.7
+      const pursedBlend = pauseIntensity * 0.7; // Reduced from 0.95
+      const lipBlend = pauseIntensity * 0.8; // Reduced from 0.98
+      
+      baseConfig.jawOpen = THREE.MathUtils.lerp(baseConfig.jawOpen, restPosition, jawBlend);
+      baseConfig.mouthWide = THREE.MathUtils.lerp(baseConfig.mouthWide, restPosition * 0.3, wideBlend);
+      baseConfig.lipsPursed = THREE.MathUtils.lerp(baseConfig.lipsPursed, 0, pursedBlend);
+      baseConfig.lowerLip = THREE.MathUtils.lerp(baseConfig.lowerLip, 0, lipBlend);
+      baseConfig.upperLip = THREE.MathUtils.lerp(baseConfig.upperLip, 0, lipBlend);
+    }
+    
+    return baseConfig;
+  };
+
   // Get jaw rotation based on mouth shape
   const getJawRotationForShape = (shape: MouthShape): number => {
     switch (shape) {
@@ -344,24 +494,24 @@ function AvatarModel({
   const updateHeadMovement = (time: number) => {
     if (isSpeaking) {
       // Much more subtle head movements during speech
-      const emphasisWave = Math.sin(time * 1.2) * 0.3; // Reduced from 0.8
-      const nodWave = Math.sin(time * 0.9) * 0.2; // Reduced from 0.6
-      const tiltWave = Math.sin(time * 0.7) * 0.15; // Reduced from 0.5
+      const emphasisWave = Math.sin(time * 1.2) * 0.3;
+      const nodWave = Math.sin(time * 0.9) * 0.2;
+      const tiltWave = Math.sin(time * 0.7) * 0.15;
       
       setHeadMovement(prev => ({
         ...prev,
-        targetNod: nodWave * 0.02, // Reduced from 0.08
-        targetTilt: tiltWave * 0.015, // Reduced from 0.06
-        targetTurn: emphasisWave * 0.01, // Reduced from 0.04
+        targetNod: nodWave * 0.02,
+        targetTilt: tiltWave * 0.015,
+        targetTurn: emphasisWave * 0.01,
       }));
     } else {
       // Very subtle idle head movements
-      const idleWave = Math.sin(time * 0.3) * 0.1; // Reduced from 0.3
+      const idleWave = Math.sin(time * 0.3) * 0.1;
       setHeadMovement(prev => ({
         ...prev,
-        targetNod: idleWave * 0.005, // Reduced from 0.02
-        targetTilt: Math.sin(time * 0.4) * 0.008, // Reduced from 0.03
-        targetTurn: Math.sin(time * 0.2) * 0.005, // Reduced from 0.02
+        targetNod: idleWave * 0.005,
+        targetTilt: Math.sin(time * 0.4) * 0.008,
+        targetTurn: Math.sin(time * 0.2) * 0.005,
       }));
     }
     
@@ -426,84 +576,7 @@ function AvatarModel({
           templeTension: baseIntensity * 0.4,
         };
       
-      case ExpressionType.Skeptical:
-        return {
-          smile: baseIntensity * 0.1,
-          cheekRaise: 0,
-          eyebrowRaise: baseIntensity * 0.6, // Asymmetric eyebrow raise
-          noseFlare: baseIntensity * 0.2,
-          eyeSquint: baseIntensity * 0.5,
-          lipCornerPull: baseIntensity * 0.2,
-          headTilt: baseIntensity * 0.12,
-          foreheadWrinkle: baseIntensity * 0.3,
-          foreheadRaise: baseIntensity * 0.4,
-          jawClench: 0,
-          templeTension: baseIntensity * 0.2,
-        };
-      
-      case ExpressionType.Curious:
-        return {
-          smile: baseIntensity * 0.3,
-          cheekRaise: baseIntensity * 0.2,
-          eyebrowRaise: baseIntensity * 0.8,
-          noseFlare: 0,
-          eyeSquint: 0,
-          lipCornerPull: baseIntensity * 0.1,
-          headTilt: baseIntensity * 0.1,
-          foreheadWrinkle: 0,
-          foreheadRaise: baseIntensity * 0.6,
-          jawClench: 0,
-          templeTension: 0,
-        };
-      
-      case ExpressionType.Determined:
-        return {
-          smile: baseIntensity * 0.2,
-          cheekRaise: baseIntensity * 0.1,
-          eyebrowRaise: baseIntensity * 0.3,
-          noseFlare: baseIntensity * 0.3,
-          eyeSquint: baseIntensity * 0.6,
-          lipCornerPull: baseIntensity * 0.1,
-          headTilt: -baseIntensity * 0.03,
-          foreheadWrinkle: baseIntensity * 0.4,
-          foreheadRaise: 0,
-          jawClench: baseIntensity * 0.5,
-          templeTension: baseIntensity * 0.3,
-        };
-      
-      case ExpressionType.Excited:
-      return { 
-          smile: baseIntensity * 0.8,
-          cheekRaise: baseIntensity * 0.7,
-          eyebrowRaise: baseIntensity * 0.9,
-          noseFlare: baseIntensity * 0.2,
-          eyeSquint: baseIntensity * 0.3,
-          lipCornerPull: baseIntensity * 0.4,
-          headTilt: baseIntensity * 0.06,
-          foreheadWrinkle: 0,
-          foreheadRaise: baseIntensity * 0.5,
-          jawClench: 0,
-          templeTension: 0,
-        };
-      
-      case ExpressionType.Empathetic:
-        return {
-          smile: baseIntensity * 0.4,
-          cheekRaise: baseIntensity * 0.3,
-          eyebrowRaise: baseIntensity * 0.5,
-          noseFlare: 0,
-          eyeSquint: baseIntensity * 0.3,
-          lipCornerPull: baseIntensity * 0.2,
-          headTilt: baseIntensity * 0.08,
-          foreheadWrinkle: baseIntensity * 0.2,
-          foreheadRaise: baseIntensity * 0.3,
-          jawClench: 0,
-          templeTension: 0,
-        };
-      
-      // ... add other expressions with similar detailed configurations
-      
-      default: // Neutral
+      default: // Neutral and others
         return {
           smile: 0.1,
           cheekRaise: 0.05,
@@ -525,7 +598,7 @@ function AvatarModel({
     if (time > nextBlinkTime && !isBlinking) {
       setIsBlinking(true);
       setBlinkDuration(0.08 + Math.random() * 0.12);
-      setBlinkIntensity(0.8 + Math.random() * 0.4); // Variable blink intensity
+      setBlinkIntensity(0.8 + Math.random() * 0.4);
       
       const baseInterval = isSpeaking ? 1.5 : 3.5;
       setNextBlinkTime(time + baseInterval + Math.random() * 2);
@@ -540,7 +613,6 @@ function AvatarModel({
   const updateExpressions = (time: number) => {
     if (time > nextExpressionTime) {
       if (isSpeaking) {
-        // More sophisticated expression selection based on speech context
         const speakingExpressions = [
           ExpressionType.Warm_Smile,
           ExpressionType.Emphasis,
@@ -554,32 +626,11 @@ function AvatarModel({
           ExpressionType.Empathetic,
         ];
         
-        // Weight expressions based on current phoneme or speaking intensity
-        let weightedExpressions = speakingExpressions;
-        if (currentPhoneme) {
-          const viseme = getVisemeFromPhoneme(currentPhoneme);
-          // Adjust expression weights based on phoneme type
-          if ([Viseme.Ah, Viseme.Oh, Viseme.Oo].includes(viseme)) {
-            weightedExpressions = [
-              ...speakingExpressions,
-              ExpressionType.Joy, // Repeat for higher probability
-              ExpressionType.Warm_Smile,
-            ];
-          } else if ([Viseme.Ss, Viseme.Sh, Viseme.Th].includes(viseme)) {
-            weightedExpressions = [
-              ...speakingExpressions,
-              ExpressionType.Concentration,
-              ExpressionType.Determined,
-            ];
-          }
-        }
-        
-        const randomExpression = weightedExpressions[Math.floor(Math.random() * weightedExpressions.length)];
+        const randomExpression = speakingExpressions[Math.floor(Math.random() * speakingExpressions.length)];
         setCurrentExpression(randomExpression);
         setTargetExpressionIntensity(0.6 + Math.random() * 0.6);
         setNextExpressionTime(time + 1.2 + Math.random() * 2.5);
       } else {
-        // Enhanced idle expressions
         const idleExpressions = [
           ExpressionType.Neutral,
           ExpressionType.Warm_Smile,
@@ -596,51 +647,47 @@ function AvatarModel({
       }
     }
     
-    // Smoother transition with variable speed based on expression intensity
     const transitionSpeed = 0.03 + (targetExpressionIntensity * 0.02);
     setExpressionIntensity(prev => 
       THREE.MathUtils.lerp(prev, targetExpressionIntensity, transitionSpeed)
     );
   };
 
-  // Enhanced micro-expression updates with more facial features
+  // Enhanced micro-expression updates
   const updateMicroExpressions = (time: number) => {
-    // Much more visible eyebrow movements (existing code)
-    const eyebrowVariation = Math.sin(time * 1.1) * 0.25; // Increased from 0.15
-    const eyebrowAsymmetry = Math.sin(time * 0.8) * 0.15; // Increased from 0.08
+    const eyebrowVariation = Math.sin(time * 1.1) * 0.25;
+    const eyebrowAsymmetry = Math.sin(time * 0.8) * 0.15;
     
     if (isSpeaking) {
-      // Much more visible eyebrow movements during speech
-      const speechEyebrowIntensity = Math.sin(time * 2.1) * 0.2; // Increased from 0.12
-      const speechAsymmetry = Math.sin(time * 1.7) * 0.12; // Increased from 0.06
+      const speechEyebrowIntensity = Math.sin(time * 2.1) * 0.2;
+      const speechAsymmetry = Math.sin(time * 1.7) * 0.12;
       
       setEyebrowState(prev => ({
         ...prev,
-        targetLeft: eyebrowVariation * 1.2 + eyebrowAsymmetry + speechEyebrowIntensity, // Much more visible
-        targetRight: eyebrowVariation * 1.0 - eyebrowAsymmetry + speechAsymmetry, // Much more visible
+        targetLeft: eyebrowVariation * 1.2 + eyebrowAsymmetry + speechEyebrowIntensity,
+        targetRight: eyebrowVariation * 1.0 - eyebrowAsymmetry + speechAsymmetry,
       }));
     } else {
-      // Much more visible idle eyebrow movements
       setEyebrowState(prev => ({
         ...prev,
-        targetLeft: eyebrowVariation * 0.8 + eyebrowAsymmetry * 1.2, // Much more visible
-        targetRight: eyebrowVariation * 0.7 - eyebrowAsymmetry * 1.2, // Much more visible
+        targetLeft: eyebrowVariation * 0.8 + eyebrowAsymmetry * 1.2,
+        targetRight: eyebrowVariation * 0.7 - eyebrowAsymmetry * 1.2,
       }));
     }
     
-    // Enhanced cheek movements during speech - more cheerful
+    // Enhanced cheek movements during speech
     if (isSpeaking) {
-      const cheekVariation = Math.sin(time * 1.5) * 0.5; // Increased from 0.4
+      const cheekVariation = Math.sin(time * 1.5) * 0.5;
       setCheekState(prev => ({
         ...prev,
-        targetLeft: cheekVariation * 0.8 + 0.1, // Added base cheerfulness
-        targetRight: cheekVariation * 0.7 + 0.1, // Added base cheerfulness
+        targetLeft: cheekVariation * 0.8 + 0.1,
+        targetRight: cheekVariation * 0.7 + 0.1,
       }));
     } else {
       setCheekState(prev => ({
         ...prev,
-        targetLeft: Math.sin(time * 0.5) * 0.15 + 0.05, // Increased base cheerfulness
-        targetRight: Math.sin(time * 0.6) * 0.12 + 0.05, // Increased base cheerfulness
+        targetLeft: Math.sin(time * 0.5) * 0.15 + 0.05,
+        targetRight: Math.sin(time * 0.6) * 0.12 + 0.05,
       }));
     }
     
@@ -658,27 +705,27 @@ function AvatarModel({
       }));
     }
     
-    // Eye tracking simulation with more liveliness
-    const eyeLookX = Math.sin(time * 0.8) * 0.4; // Increased from 0.3
-    const eyeLookY = Math.sin(time * 0.6) * 0.25; // Increased from 0.2
+    // Eye tracking simulation
+    const eyeLookX = Math.sin(time * 0.8) * 0.4;
+    const eyeLookY = Math.sin(time * 0.6) * 0.25;
     setEyeState(prev => ({
       ...prev,
       targetLookDirection: { x: eyeLookX, y: eyeLookY },
-      targetSquint: isSpeaking ? Math.sin(time * 1.8) * 0.3 + 0.1 : 0.05, // Added base squint for cheerfulness
+      targetSquint: isSpeaking ? Math.sin(time * 1.8) * 0.3 + 0.1 : 0.05,
     }));
     
-    // Lip corner movements - more cheerful
+    // Lip corner movements
     if (isSpeaking) {
       const lipMovement = Math.sin(time * 1.6) * 0.4;
       setLipState(prev => ({
         ...prev,
-        targetCornerPull: lipMovement * 0.6 + 0.15, // Added base smile
+        targetCornerPull: lipMovement * 0.6 + 0.15,
         targetPucker: Math.sin(time * 2.1) * 0.2,
       }));
     } else {
       setLipState(prev => ({
         ...prev,
-        targetCornerPull: 0.1, // Maintain subtle smile when idle
+        targetCornerPull: 0.1,
         targetPucker: 0,
       }));
     }
@@ -715,7 +762,7 @@ function AvatarModel({
       }));
     }
     
-    // Temple tension for concentration expressions
+    // Temple tension
     if (isSpeaking) {
       const templeVariation = Math.sin(time * 1.6) * 0.2;
       setTempleState(prev => ({
@@ -766,7 +813,6 @@ function AvatarModel({
       targetPucker: prev.targetPucker,
     }));
 
-    // Smooth transitions for new features
     setForeheadState(prev => ({
       wrinkle: THREE.MathUtils.lerp(prev.wrinkle, prev.targetWrinkle, 0.12),
       raise: THREE.MathUtils.lerp(prev.raise, prev.targetRaise, 0.1),
@@ -797,7 +843,7 @@ function AvatarModel({
     }
   }, [isSpeaking]);
   
-  // Main animation loop with reduced pivoting
+  // Much faster and more reactive main animation loop
   useFrame(() => {
     if (group.current) {
       const time = clock.getElapsedTime();
@@ -812,37 +858,68 @@ function AvatarModel({
       updateMicroExpressions(time);
       updateHeadMovement(headTime);
       
-      // Much more subtle body movements - reduced pivoting
-      group.current.rotation.y = Math.sin(time * 0.3) * 0.002 + headMovement.turn; // Reduced from 0.005
-      group.current.rotation.x = headMovement.nod * 0.02; // Reduced multiplier from 0.08
-      group.current.rotation.z = headMovement.tilt * 0.015; // Reduced multiplier from 0.06
+      // Much more subtle body movements
+      group.current.rotation.y = Math.sin(time * 0.3) * 0.002 + headMovement.turn;
+      group.current.rotation.x = headMovement.nod * 0.02;
+      group.current.rotation.z = headMovement.tilt * 0.015;
       
-      // Apply even more subtle head movements to head bone if available
+      // Apply head movements to head bone if available
       if (headBone.current) {
-        headBone.current.rotation.x += headMovement.nod * 0.1; // Reduced from 0.2
-        headBone.current.rotation.z += headMovement.tilt * 0.1; // Reduced from 0.2
-        headBone.current.rotation.y += headMovement.turn * 0.01; // Reduced from 0.04
+        headBone.current.rotation.x += headMovement.nod * 0.1;
+        headBone.current.rotation.z += headMovement.tilt * 0.1;
+        headBone.current.rotation.y += headMovement.turn * 0.01;
       }
       
       if (isSpeaking) {
-        // Use phoneme data if available for precise lip sync
+        // Update word gap tracking for much faster reactive pauses
+        updateWordGapTracking(currentPhoneme || '');
+        
+        // Use enhanced lip sync with much faster word spacing and anticipation
         if (currentPhoneme) {
-          const viseme = getVisemeFromPhoneme(currentPhoneme);
-          const { jawOpen, mouthWide, lipsPursed, lowerLip, upperLip } = getJawConfigForViseme(viseme);
+          const currentViseme = getVisemeFromPhoneme(currentPhoneme);
+          const { jawOpen, mouthWide, lipsPursed, lowerLip, upperLip } = getJawConfigForViseme(
+            currentViseme, 
+            wordGapState.pauseIntensity,
+            wordGapState.anticipatoryMovement
+          );
           
-          // Apply to jaw bone with smooth transitions
+          // Apply to jaw bone with INSTANT response for longer words
           if (jawBone.current) {
-            const targetRotation = jawOpen * 0.06;
-            const newRotation = THREE.MathUtils.lerp(
-              currentJawRotation, 
-              targetRotation, 
-              0.3
-            );
-            setCurrentJawRotation(newRotation);
-            jawBone.current.rotation.x = newRotation;
+            const targetRotation = jawOpen * 0.12; // Even more pronounced
+            
+            // INSTANT smoothing factors - no delay for active speech
+            let smoothingFactor;
+            if (wordGapState.pauseIntensity > 0.5) {
+              smoothingFactor = 0.5; // Fast for sentence breaks
+            } else if (wordGapState.pauseIntensity > 0.2) {
+              smoothingFactor = 0.85; // Very fast for word breaks
+            } else if (wordGapState.pauseIntensity > 0.05) {
+              smoothingFactor = 0.98; // Nearly instant for syllable breaks
+            } else {
+              smoothingFactor = 1.0; // COMPLETELY INSTANT for active speech
+            }
+            
+            // Instant anticipatory response
+            if (wordGapState.anticipatoryMovement > 0.3) {
+              smoothingFactor = 1.0; // Always instant when anticipating
+            }
+            
+            // For active speech, just set directly instead of lerping
+            if (smoothingFactor >= 1.0) {
+              setCurrentJawRotation(targetRotation);
+              jawBone.current.rotation.x = targetRotation;
+            } else {
+              const newRotation = THREE.MathUtils.lerp(
+                currentJawRotation, 
+                targetRotation, 
+                smoothingFactor
+              );
+              setCurrentJawRotation(newRotation);
+              jawBone.current.rotation.x = newRotation;
+            }
           }
           
-          // Apply to morph targets with enhanced precision
+          // Apply enhanced morph targets with INSTANT response
           scene.traverse((child) => {
             if (child instanceof THREE.Mesh && child.morphTargetInfluences && child.morphTargetDictionary) {
               const setMorphTarget = (names: string[], value: number) => {
@@ -850,34 +927,109 @@ function AvatarModel({
                   if (name in child.morphTargetDictionary!) {
                     const index = child.morphTargetDictionary![name];
                     if (index !== undefined && child.morphTargetInfluences) {
-                      child.morphTargetInfluences[index] = THREE.MathUtils.lerp(
-                        child.morphTargetInfluences[index], 
-                        value, 
-                        0.4
-                      );
+                      // INSTANT smoothing speeds - no delay for active speech
+                      let smoothingSpeed;
+                      if (wordGapState.pauseIntensity > 0.5) {
+                        smoothingSpeed = 0.6; // Fast for sentence breaks
+                      } else if (wordGapState.pauseIntensity > 0.2) {
+                        smoothingSpeed = 0.9; // Very fast for word breaks
+                      } else if (wordGapState.pauseIntensity > 0.05) {
+                        smoothingSpeed = 0.99; // Nearly instant for syllable breaks
+                      } else {
+                        smoothingSpeed = 1.0; // COMPLETELY INSTANT for active speech
+                      }
+                      
+                      // Instant anticipatory response
+                      if (wordGapState.anticipatoryMovement > 0.3) {
+                        smoothingSpeed = 1.0; // Always instant when anticipating
+                      }
+                      
+                      // For active speech, set directly instead of lerping
+                      if (smoothingSpeed >= 1.0) {
+                        child.morphTargetInfluences[index] = value;
+                      } else {
+                        child.morphTargetInfluences[index] = THREE.MathUtils.lerp(
+                          child.morphTargetInfluences[index], 
+                          value, 
+                          smoothingSpeed
+                        );
+                      }
                       break;
                     }
                   }
                 }
               };
               
-              // Get current expression configuration - SINGLE DECLARATION
+              // Get current expression configuration
               const expressionConfig = getExpressionConfig(currentExpression, expressionIntensity);
               
-              // Apply enhanced mouth shapes
+              // Apply enhanced mouth shapes with much faster word gap blending
               setMorphTarget(['mouthOpen', 'mouth_open', 'jawOpen', 'open'], jawOpen);
               setMorphTarget(['mouthWide', 'mouth_wide'], mouthWide);
               setMorphTarget(['lipsPursed', 'lips_pursed', 'mouthO', 'mouth_o', 'o'], lipsPursed);
               setMorphTarget(['lowerLipDown', 'lower_lip_down', 'lipLowerDown'], lowerLip);
               setMorphTarget(['upperLipUp', 'upper_lip_up', 'lipUpperUp'], upperLip);
               
+              // ENHANCED consonant-specific shapes with better definition
+              if (currentViseme === Viseme.Mb) {
+                setMorphTarget(['lipsTogether', 'lips_together', 'mouthClosed'], 1.0);
+                setMorphTarget(['mouthOpen', 'mouth_open', 'jawOpen', 'open'], 0); // Force complete closure
+                setMorphTarget(['lipPress', 'lip_press'], 0.8); // Add lip pressure if available
+              } else {
+                setMorphTarget(['lipsTogether', 'lips_together', 'mouthClosed'], 0);
+                setMorphTarget(['lipPress', 'lip_press'], 0);
+              }
+              
+              if (currentViseme === Viseme.Fv) {
+                setMorphTarget(['teethLowerLip', 'teeth_lower_lip', 'lipBite'], 1.0);
+                setMorphTarget(['upperLipRaise', 'upper_lip_raise'], 0.3); // Slight upper lip raise
+              } else {
+                setMorphTarget(['teethLowerLip', 'teeth_lower_lip', 'lipBite'], 0);
+                setMorphTarget(['upperLipRaise', 'upper_lip_raise'], 0);
+              }
+              
+              if (currentViseme === Viseme.Th) {
+                setMorphTarget(['tongueOut', 'tongue_out'], 0.8); // More pronounced tongue
+                setMorphTarget(['teethShow', 'teeth_show'], 0.6); // Show teeth if available
+              } else {
+                setMorphTarget(['tongueOut', 'tongue_out'], 0);
+                setMorphTarget(['teethShow', 'teeth_show'], 0);
+              }
+              
+              // Enhanced sibilant definition
+              if (currentViseme === Viseme.Ss) {
+                setMorphTarget(['teethTogether', 'teeth_together'], 0.7); // Teeth closer for S sounds
+                setMorphTarget(['lipCornerBack', 'lip_corner_back'], 0.4); // Slight smile for sibilants
+              } else {
+                setMorphTarget(['teethTogether', 'teeth_together'], 0);
+                setMorphTarget(['lipCornerBack', 'lip_corner_back'], 0);
+              }
+              
+              // Enhanced SH/CH sounds
+              if (currentViseme === Viseme.Sh) {
+                setMorphTarget(['lipProtrude', 'lip_protrude'], 0.6); // Lip protrusion for SH
+                setMorphTarget(['cheekSuck', 'cheek_suck'], 0.3); // Slight cheek involvement
+              } else {
+                setMorphTarget(['lipProtrude', 'lip_protrude'], 0);
+                setMorphTarget(['cheekSuck', 'cheek_suck'], 0);
+              }
+              
+              // Enhanced W sound
+              if (currentViseme === Viseme.Wy) {
+                setMorphTarget(['lipRound', 'lip_round'], 0.8); // Strong rounding for W
+                setMorphTarget(['lipForward', 'lip_forward'], 0.7); // Forward lip movement
+              } else {
+                setMorphTarget(['lipRound', 'lip_round'], 0);
+                setMorphTarget(['lipForward', 'lip_forward'], 0);
+              }
+
               // Apply enhanced facial expressions
               setMorphTarget(['mouthSmile', 'mouth_smile', 'smile'], 
                 expressionConfig.smile + lipState.cornerPull);
               setMorphTarget(['cheekRaise', 'cheek_raise', 'cheekPuff'], 
                 expressionConfig.cheekRaise + cheekState.left);
 
-              // Enhanced asymmetric eyebrow control for more realistic expressions
+              // Enhanced eyebrow control
               setMorphTarget(['browInnerUp'], 
                 Math.max(0, Math.min(0.8, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.4)));
               setMorphTarget(['browInnerUpLeft'], 
@@ -885,7 +1037,7 @@ function AvatarModel({
               setMorphTarget(['browInnerUpRight'], 
                 Math.max(0, Math.min(0.9, (expressionConfig.eyebrowRaise + eyebrowState.right) * 0.4)));
 
-              // Add expression-specific asymmetry for skeptical looks
+              // Expression-specific asymmetry
               if (currentExpression === ExpressionType.Skeptical) {
                 setMorphTarget(['browOuterUpLeft'], 
                   Math.max(0, Math.min(0.8, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.6)));
@@ -903,7 +1055,7 @@ function AvatarModel({
               setMorphTarget(['browDownRight'], 
                 Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25)));
 
-              // Apply enhanced facial expressions with new features
+              // Apply enhanced facial features
               setMorphTarget(['foreheadWrinkle', 'forehead_wrinkle', 'browWrinkle'], 
                 expressionConfig.foreheadWrinkle + foreheadState.wrinkle);
               setMorphTarget(['foreheadRaise', 'forehead_raise', 'browRaise'], 
@@ -915,13 +1067,11 @@ function AvatarModel({
               setMorphTarget(['templeTension', 'temple_tension', 'templePress'], 
                 expressionConfig.templeTension + templeState.tension);
 
-              // Enhanced cheek control with more nuanced movement
               setMorphTarget(['cheekRaiseLeft', 'cheek_raise_left'], 
                 expressionConfig.cheekRaise + cheekState.left);
               setMorphTarget(['cheekRaiseRight', 'cheek_raise_right'], 
                 expressionConfig.cheekRaise + cheekState.right);
 
-              // More sophisticated lip control
               setMorphTarget(['lipCornerPullLeft', 'lip_corner_pull_left'], 
                 (expressionConfig.lipCornerPull + lipState.cornerPull) * 1.1);
               setMorphTarget(['lipCornerPullRight', 'lip_corner_pull_right'], 
@@ -932,32 +1082,18 @@ function AvatarModel({
               setMorphTarget(['eyeSquint', 'eye_squint', 'squint'], 
                 expressionConfig.eyeSquint + eyeState.squint);
               
-              // Enhanced lip movements
               setMorphTarget(['lipCornerPull', 'lip_corner_pull', 'mouthCornerPull'], 
                 expressionConfig.lipCornerPull + lipState.cornerPull);
               setMorphTarget(['lipPucker', 'lip_pucker', 'mouthPucker'], lipState.pucker);
               
-              // Apply consonant-specific shapes
-              if (viseme === Viseme.Mb) {
-                setMorphTarget(['lipsTogether', 'lips_together', 'mouthClosed'], 1.0);
-              } else {
-                setMorphTarget(['lipsTogether', 'lips_together', 'mouthClosed'], 0);
-              }
-              
-              if (viseme === Viseme.Fv) {
-                setMorphTarget(['teethLowerLip', 'teeth_lower_lip', 'lipBite'], 0.8);
-              } else {
-                setMorphTarget(['teethLowerLip', 'teeth_lower_lip', 'lipBite'], 0);
-              }
-              
-              // Enhanced blinking with variable intensity
+              // Enhanced blinking
               if (isBlinking) {
                 setMorphTarget(['eyesClosed', 'eyes_closed', 'blink', 'eyeBlink'], blinkIntensity);
               } else {
                 setMorphTarget(['eyesClosed', 'eyes_closed', 'blink', 'eyeBlink'], 0);
               }
               
-              // Eye look direction (if supported)
+              // Eye look direction
               setMorphTarget(['eyeLookLeft', 'eye_look_left'], Math.max(0, -eyeState.lookDirection.x));
               setMorphTarget(['eyeLookRight', 'eye_look_right'], Math.max(0, eyeState.lookDirection.x));
               setMorphTarget(['eyeLookUp', 'eye_look_up'], Math.max(0, eyeState.lookDirection.y));
@@ -965,7 +1101,7 @@ function AvatarModel({
             }
           });
         } else {
-          // Enhanced fallback animation with more visible expressions
+          // Enhanced fallback animation with much more reactive word spacing
           if (lipSyncTime > nextShapeChangeTime) {
             const randomValue = Math.random();
             
@@ -983,7 +1119,7 @@ function AvatarModel({
               setTransitionSpeed(0.35);
             } else if (randomValue > 0.1) {
               setCurrentMouthShape(MouthShape.Closed);
-              setTransitionSpeed(0.3);
+              setTransitionSpeed(0.2); // Slower transition to closed for more natural pauses
             } else {
               setCurrentMouthShape(MouthShape.WideOpen);
               setTransitionSpeed(0.5);
@@ -991,7 +1127,11 @@ function AvatarModel({
             
             setTargetJawRotation(getJawRotationForShape(currentMouthShape));
             
-            const nextChangeDelay = 0.04 + Math.random() * 0.06;
+            // Better timing for more natural word spacing
+            const nextChangeDelay = currentMouthShape === MouthShape.Closed 
+              ? 0.12 + Math.random() * 0.18  // Longer pauses when closed
+              : 0.06 + Math.random() * 0.08; // Shorter transitions between sounds
+            
             setNextShapeChangeTime(lipSyncTime + nextChangeDelay);
             
             if (lipSyncTime > 1000) {
@@ -1000,7 +1140,7 @@ function AvatarModel({
             }
           }
           
-          // Smooth transitions to target jaw rotation
+          // Smooth transitions with much more reactive word spacing consideration
           const newRotation = THREE.MathUtils.lerp(
             currentJawRotation, 
             targetJawRotation, 
@@ -1008,31 +1148,51 @@ function AvatarModel({
           );
           setCurrentJawRotation(newRotation);
           
-          // Apply mouth animation with enhanced expressions
           if (jawBone.current) {
             jawBone.current.rotation.x = newRotation;
           }
           
-          // Animate morph targets with enhanced facial expressions
+          // Apply fallback morph targets with much more reactive expressions
           scene.traverse((child) => {
             if (child instanceof THREE.Mesh && child.morphTargetInfluences && child.morphTargetDictionary) {
               const applyMorphIfExists = (name: string, value: number) => {
                 if (name in child.morphTargetDictionary!) {
                   const index = child.morphTargetDictionary![name];
                   if (index !== undefined && child.morphTargetInfluences) {
-                    child.morphTargetInfluences[index] = THREE.MathUtils.lerp(
-                      child.morphTargetInfluences[index], 
-                      value, 
-                      0.25
-                    );
+                    // INSTANT smoothing speeds for fallback animation too
+                    let smoothingSpeed;
+                    if (wordGapState.pauseIntensity > 0.6) {
+                      smoothingSpeed = 0.3; // Moderate for sentence breaks
+                    } else if (wordGapState.pauseIntensity > 0.3) {
+                      smoothingSpeed = 0.7; // Fast for word breaks
+                    } else if (wordGapState.pauseIntensity > 0.1) {
+                      smoothingSpeed = 0.95; // Very fast for syllable breaks
+                    } else {
+                      smoothingSpeed = 1.0; // COMPLETELY INSTANT for active speech
+                    }
+                    
+                    // Instant boost for anticipated movements
+                    if (wordGapState.anticipatoryMovement > 0.5) {
+                      smoothingSpeed = 1.0; // Always instant when anticipating
+                    }
+                    
+                    // For active speech, set directly instead of lerping
+                    if (smoothingSpeed >= 1.0) {
+                      child.morphTargetInfluences[index] = value;
+                    } else {
+                      child.morphTargetInfluences[index] = THREE.MathUtils.lerp(
+                        child.morphTargetInfluences[index], 
+                        value, 
+                        smoothingSpeed
+                      );
+                    }
                   }
                 }
               };
               
-              // Get current expression configuration - SINGLE DECLARATION
               const expressionConfig = getExpressionConfig(currentExpression, expressionIntensity);
               
-              // Apply mouth shape values
+              // Apply mouth shape values with much more reactive word spacing
               let openValue = 0;
               let wideValue = 0;
               let pursedValue = 0;
@@ -1058,6 +1218,11 @@ function AvatarModel({
                   openValue = 0.1; 
                   wideValue = 0.5;
                   break;
+                case MouthShape.Closed:
+                  // Natural rest position with slight breathing
+                  openValue = 0.01 + Math.sin(time * 2) * 0.005;
+                  wideValue = 0.01;
+                  break;
               }
               
               applyMorphIfExists('mouthOpen', openValue);
@@ -1075,19 +1240,18 @@ function AvatarModel({
               applyMorphIfExists('cheekRaise', expressionConfig.cheekRaise + cheekState.left);
               applyMorphIfExists('cheek_raise', expressionConfig.cheekRaise + cheekState.right);
 
-              // Use the ACTUAL available eyebrow morph targets with MUCH MORE VISIBLE values
-              applyMorphIfExists('browInnerUp', Math.max(0, Math.min(0.8, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.4))); // Much more visible
-              applyMorphIfExists('browOuterUpLeft', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.35))); // Much more visible
-              applyMorphIfExists('browOuterUpRight', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.right) * 0.35))); // Much more visible
-              applyMorphIfExists('browDownLeft', Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25))); // Much more visible
-              applyMorphIfExists('browDownRight', Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25))); // Much more visible
+              // Enhanced eyebrow control
+              applyMorphIfExists('browInnerUp', Math.max(0, Math.min(0.8, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.4)));
+              applyMorphIfExists('browOuterUpLeft', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.35)));
+              applyMorphIfExists('browOuterUpRight', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.right) * 0.35)));
+              applyMorphIfExists('browDownLeft', Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25)));
+              applyMorphIfExists('browDownRight', Math.max(0, Math.min(0.4, -expressionConfig.eyebrowRaise * 0.25)));
 
               applyMorphIfExists('noseFlare', expressionConfig.noseFlare + noseState.flare);
               applyMorphIfExists('nose_flare', expressionConfig.noseFlare + noseState.flare);
               applyMorphIfExists('eyeSquint', expressionConfig.eyeSquint + eyeState.squint);
               applyMorphIfExists('eye_squint', expressionConfig.eyeSquint + eyeState.squint);
               
-              // Enhanced lip movements
               applyMorphIfExists('lipCornerPull', expressionConfig.lipCornerPull + lipState.cornerPull);
               applyMorphIfExists('lip_corner_pull', expressionConfig.lipCornerPull + lipState.cornerPull);
               applyMorphIfExists('lipPucker', lipState.pucker);
@@ -1117,9 +1281,22 @@ function AvatarModel({
           });
         }
       } else {
-        // Reset animations when not speaking but maintain enhanced expressions
+        // Reset word gap state when not speaking
+        setWordGapState({
+          lastPhoneme: '',
+          silenceFrames: 0,
+          isInPause: false,
+          pauseIntensity: 0,
+          anticipatoryMovement: 0,
+          phonemeHistory: [],
+          nextPhonemePrep: 0,
+        });
+        
+        // Enhanced idle state with natural breathing
         if (jawBone.current) {
-          jawBone.current.rotation.x = THREE.MathUtils.lerp(jawBone.current.rotation.x, 0, 0.1);
+          // Natural breathing pattern when idle
+          const breathingPattern = Math.sin(time * 1.5) * 0.008;
+          jawBone.current.rotation.x = THREE.MathUtils.lerp(jawBone.current.rotation.x, breathingPattern, 0.05);
         }
         
         scene.traverse((child) => {
@@ -1137,15 +1314,17 @@ function AvatarModel({
               }
             };
             
-            // Get current expression configuration for idle state - SINGLE DECLARATION
             const expressionConfig = getExpressionConfig(currentExpression, expressionIntensity);
             
-            // Reset mouth shapes
-            resetMorphTarget('mouthOpen', 0);
-            resetMorphTarget('mouth_open', 0);
-            resetMorphTarget('jawOpen', 0);
-            resetMorphTarget('mouthWide', 0);
-            resetMorphTarget('mouth_wide', 0);
+            // Natural breathing mouth position
+            const breathingMouth = Math.sin(time * 1.5) * 0.01 + 0.005;
+            
+            // Reset mouth shapes with subtle breathing
+            resetMorphTarget('mouthOpen', breathingMouth);
+            resetMorphTarget('mouth_open', breathingMouth);
+            resetMorphTarget('jawOpen', breathingMouth);
+            resetMorphTarget('mouthWide', breathingMouth * 0.5);
+            resetMorphTarget('mouth_wide', breathingMouth * 0.5);
             resetMorphTarget('lipsPursed', 0);
             resetMorphTarget('lips_pursed', 0);
             resetMorphTarget('mouthO', 0);
@@ -1157,24 +1336,14 @@ function AvatarModel({
             resetMorphTarget('cheekRaise', expressionConfig.cheekRaise + cheekState.left);
             resetMorphTarget('cheek_raise', expressionConfig.cheekRaise + cheekState.right);
 
-            // Apply enhanced facial expressions with new features for idle state
+            // Enhanced facial features for idle state
             resetMorphTarget('foreheadWrinkle', expressionConfig.foreheadWrinkle + foreheadState.wrinkle);
             resetMorphTarget('forehead_wrinkle', expressionConfig.foreheadWrinkle + foreheadState.wrinkle);
             resetMorphTarget('browWrinkle', expressionConfig.foreheadWrinkle + foreheadState.wrinkle);
             resetMorphTarget('foreheadRaise', expressionConfig.foreheadRaise + foreheadState.raise);
             resetMorphTarget('forehead_raise', expressionConfig.foreheadRaise + foreheadState.raise);
             resetMorphTarget('browRaise', expressionConfig.foreheadRaise + foreheadState.raise);
-            resetMorphTarget('jawClench', expressionConfig.jawClench + jawState.clench);
-            resetMorphTarget('jaw_clench', expressionConfig.jawClench + jawState.clench);
-            resetMorphTarget('mouthTense', expressionConfig.jawClench + jawState.clench);
-            resetMorphTarget('jawShift', jawState.shift);
-            resetMorphTarget('jaw_shift', jawState.shift);
-            resetMorphTarget('jawSide', jawState.shift);
-            resetMorphTarget('templeTension', expressionConfig.templeTension + templeState.tension);
-            resetMorphTarget('temple_tension', expressionConfig.templeTension + templeState.tension);
-            resetMorphTarget('templePress', expressionConfig.templeTension + templeState.tension);
 
-            // Use the ACTUAL available eyebrow morph targets with MUCH MORE VISIBLE values for idle
             resetMorphTarget('browInnerUp', Math.max(0, Math.min(0.8, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.4)));
             resetMorphTarget('browOuterUpLeft', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.left) * 0.35)));
             resetMorphTarget('browOuterUpRight', Math.max(0, Math.min(0.7, (expressionConfig.eyebrowRaise + eyebrowState.right) * 0.35)));
@@ -1186,7 +1355,6 @@ function AvatarModel({
             resetMorphTarget('eyeSquint', expressionConfig.eyeSquint + eyeState.squint);
             resetMorphTarget('eye_squint', expressionConfig.eyeSquint + eyeState.squint);
             
-            // Enhanced lip movements
             resetMorphTarget('lipCornerPull', expressionConfig.lipCornerPull + lipState.cornerPull);
             resetMorphTarget('lip_corner_pull', expressionConfig.lipCornerPull + lipState.cornerPull);
             resetMorphTarget('lipPucker', lipState.pucker);
@@ -1260,8 +1428,8 @@ export default function Avatar3D({ isSpeaking, currentPhoneme, upperBodyOnly = f
   const getCameraSettings = () => {
     if (upperBodyOnly) {
       return { 
-        position: [0, 0.0, 1.4] as [number, number, number],  // Bring camera back to neutral level
-        fov: 45  // Good field of view for close-up
+        position: [0, 0.0, 1.4] as [number, number, number],
+        fov: 45
       };
     } else if (dimensions.width < 640) {
       return { 
