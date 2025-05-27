@@ -92,8 +92,8 @@ function AvatarModel({
   const [currentMouthShape, setCurrentMouthShape] = useState(MouthShape.Closed);
   const [nextShapeChangeTime, setNextShapeChangeTime] = useState(0);
   const [transitionSpeed, setTransitionSpeed] = useState(0.3);
-  const [currentJawRotation, setCurrentJawRotation] = useState(0);
-  const [targetJawRotation, setTargetJawRotation] = useState(0);
+  const [currentJawRotation, setCurrentJawRotation] = useState({ x: 0, y: 0, z: 0 });
+  const [targetJawRotation, setTargetJawRotation] = useState({ x: 0, y: 0, z: 0 });
   
   // Enhanced blinking state
   const [nextBlinkTime, setNextBlinkTime] = useState(0);
@@ -372,121 +372,293 @@ function AvatarModel({
     }
   };
 
-  // Much faster and more reactive mouth configurations
+  // Enhanced jaw configuration with more realistic articulation
   const getJawConfigForViseme = (viseme: Viseme, pauseIntensity: number = 0, anticipation: number = 0) => {
     const baseConfig = (() => {
       switch (viseme) {
         case Viseme.Silent:
-          return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-        case Viseme.Ah:
-          return { jawOpen: 0.35, mouthWide: 0.25, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-        case Viseme.Ae:
-          return { jawOpen: 0.3, mouthWide: 0.35, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-        case Viseme.Ay:
-          return { jawOpen: 0.22, mouthWide: 0.3, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-        case Viseme.Eh:
-          return { jawOpen: 0.22, mouthWide: 0.3, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-        case Viseme.Ee:
-          return { jawOpen: 0.12, mouthWide: 0.35, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
-        case Viseme.Oh:
-          return { jawOpen: 0.22, mouthWide: 0.15, lipsPursed: 0.4, lowerLip: 0, upperLip: 0 };
-        case Viseme.Oo:
-          return { jawOpen: 0.15, mouthWide: 0, lipsPursed: 0.6, lowerLip: 0, upperLip: 0 };
-        case Viseme.Er:
-          return { jawOpen: 0.18, mouthWide: 0.25, lipsPursed: 0.2, lowerLip: 0, upperLip: 0 };
+          return { 
+            jawOpen: 0, 
+            mouthWide: 0, 
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0,
+            jawSide: 0
+          };
         
-        // POLISHED CONSONANTS - More distinct and natural
-        case Viseme.Mb: // M, B, P - Complete lip closure
-          return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 1.0, upperLip: 1.0 };
+        // ENHANCED VOWELS - More pronounced jaw movements
+        case Viseme.Ah:
+          return { 
+            jawOpen: 0.45,      // Increased from 0.35 - more dramatic opening
+            mouthWide: 0.3,     // Increased from 0.25
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0.1,    // NEW: Slight forward jaw movement for better articulation
+            jawSide: 0
+          };
+        
+        case Viseme.Ae:
+          return { 
+            jawOpen: 0.4,       // Increased from 0.3
+            mouthWide: 0.45,    // Increased from 0.35 - wider for "cat" sound
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0.05,   // Slight forward movement
+            jawSide: 0
+          };
+        
+        case Viseme.Ay:
+          return { 
+            jawOpen: 0.3,       // Increased from 0.22
+            mouthWide: 0.4,     // Increased from 0.3
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0.08,   // Forward movement for diphthong
+            jawSide: 0
+          };
+        
+        case Viseme.Eh:
+          return { 
+            jawOpen: 0.28,      // Increased from 0.22
+            mouthWide: 0.35,    // Increased from 0.3
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0.05,
+            jawSide: 0
+          };
+        
+        case Viseme.Ee:
+        return {
+            jawOpen: 0.15,      // Increased from 0.12
+            mouthWide: 0.5,     // Increased from 0.35 - much wider for "ee"
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0,
+            jawSide: 0
+          };
+        
+        case Viseme.Oh:
+        return {
+            jawOpen: 0.3,       // Increased from 0.22
+            mouthWide: 0.1,     // Reduced from 0.15 - rounder
+            lipsPursed: 0.6,    // Increased from 0.4
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0.15,   // More forward for rounded vowels
+            jawSide: 0
+          };
+        
+        case Viseme.Oo:
+        return {
+            jawOpen: 0.2,       // Increased from 0.15
+            mouthWide: 0, 
+            lipsPursed: 0.8,    // Increased from 0.6 - more pursing
+            lowerLip: 0.1,      // Slight lip involvement
+            upperLip: 0.1,
+            jawForward: 0.2,    // Strong forward movement for "oo"
+            jawSide: 0
+          };
+        
+        case Viseme.Er:
+        return {
+            jawOpen: 0.25,      // Increased from 0.18
+            mouthWide: 0.3,     // Increased from 0.25
+            lipsPursed: 0.3,    // Increased from 0.2
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0.1,
+            jawSide: 0
+          };
+        
+        // ENHANCED CONSONANTS - More realistic jaw positioning
+        case Viseme.Mb: // M, B, P - Complete lip closure with jaw positioning
+          return { 
+            jawOpen: 0,
+            mouthWide: 0, 
+            lipsPursed: 0, 
+            lowerLip: 1.0, 
+            upperLip: 1.0,
+            jawForward: 0.05,   // Slight forward for better lip contact
+            jawSide: 0
+          };
         
         case Viseme.Fv: // F, V - Lower lip to upper teeth
-          return { jawOpen: 0.06, mouthWide: 0.12, lipsPursed: 0, lowerLip: 0.95, upperLip: 0.1 }; // Slight upper lip involvement
+          return { 
+            jawOpen: 0.08,      // Increased from 0.06
+            mouthWide: 0.15,    // Increased from 0.12
+            lipsPursed: 0, 
+            lowerLip: 1.0,      // Increased from 0.95
+            upperLip: 0.15,     // Increased from 0.1
+            jawForward: 0,
+            jawSide: 0
+          };
         
         case Viseme.Th: // TH, DH - Tongue tip visible between teeth
-          return { jawOpen: 0.08, mouthWide: 0.18, lipsPursed: 0, lowerLip: 0.15, upperLip: 0.1 }; // Slight lip parting for tongue
+          return { 
+            jawOpen: 0.12,      // Increased from 0.08
+            mouthWide: 0.25,    // Increased from 0.18
+            lipsPursed: 0, 
+            lowerLip: 0.2,      // Increased from 0.15
+            upperLip: 0.15,     // Increased from 0.1
+            jawForward: 0.05,   // Forward for tongue protrusion
+            jawSide: 0
+          };
         
         case Viseme.Td: // T, D, N, L - Tongue to alveolar ridge
-          return { jawOpen: 0.12, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0.05, upperLip: 0.05 }; // Minimal lip involvement
+          return { 
+            jawOpen: 0.18,      // Increased from 0.12
+            mouthWide: 0.2,     // Increased from 0.15
+            lipsPursed: 0, 
+            lowerLip: 0.08,     // Increased from 0.05
+            upperLip: 0.08,     // Increased from 0.05
+            jawForward: 0.03,
+            jawSide: 0
+          };
         
-        case Viseme.Sh: // SH, ZH, CH, JH - Lip rounding with slight protrusion
-          return { jawOpen: 0.16, mouthWide: 0.18, lipsPursed: 0.4, lowerLip: 0.1, upperLip: 0.1 }; // More defined lip shape
+        case Viseme.Sh: // SH, ZH, CH, JH - Lip rounding with protrusion
+          return { 
+            jawOpen: 0.2,       // Increased from 0.16
+            mouthWide: 0.15,    // Reduced from 0.18 for rounding
+            lipsPursed: 0.6,    // Increased from 0.4
+            lowerLip: 0.15,     // Increased from 0.1
+            upperLip: 0.15,     // Increased from 0.1
+            jawForward: 0.12,   // Forward for lip protrusion
+            jawSide: 0
+          };
         
         case Viseme.Ss: // S, Z - Slight smile position for sibilants
-          return { jawOpen: 0.08, mouthWide: 0.32, lipsPursed: 0, lowerLip: 0, upperLip: 0 }; // Clean sibilant position
+          return { 
+            jawOpen: 0.1,       // Increased from 0.08
+            mouthWide: 0.4,     // Increased from 0.32
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0,
+            jawSide: 0
+          };
         
         case Viseme.Kg: // K, G, NG - Back of tongue, neutral lips
-          return { jawOpen: 0.16, mouthWide: 0.12, lipsPursed: 0, lowerLip: 0, upperLip: 0 }; // Slightly more open
+          return { 
+            jawOpen: 0.2,       // Increased from 0.16
+            mouthWide: 0.18,    // Increased from 0.12
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0,
+            jawSide: 0.02       // Slight side movement for velar sounds
+          };
         
         case Viseme.Wy: // W, Y - Strong lip rounding for W
-          return { jawOpen: 0.1, mouthWide: 0, lipsPursed: 0.65, lowerLip: 0.2, upperLip: 0.2 }; // More pronounced rounding
+      return { 
+            jawOpen: 0.15,      // Increased from 0.1
+            mouthWide: 0, 
+            lipsPursed: 0.8,    // Increased from 0.65
+            lowerLip: 0.3,      // Increased from 0.2
+            upperLip: 0.3,      // Increased from 0.2
+            jawForward: 0.18,   // Strong forward for W
+            jawSide: 0
+          };
         
         case Viseme.Hh: // HH - Slight opening, relaxed
-          return { jawOpen: 0.1, mouthWide: 0.15, lipsPursed: 0, lowerLip: 0, upperLip: 0 }; // Cleaner H sound
+      return { 
+            jawOpen: 0.15,      // Increased from 0.1
+            mouthWide: 0.2,     // Increased from 0.15
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0,
+            jawSide: 0
+          };
         
         default:
-          return { jawOpen: 0, mouthWide: 0, lipsPursed: 0, lowerLip: 0, upperLip: 0 };
+      return { 
+            jawOpen: 0, 
+            mouthWide: 0, 
+            lipsPursed: 0, 
+            lowerLip: 0, 
+            upperLip: 0,
+            jawForward: 0,
+            jawSide: 0
+          };
       }
     })();
     
-    // Much more aggressive anticipatory movement for faster response
+    // Enhanced anticipatory movement for faster response
     if (anticipation > 0) {
-      const anticipationFactor = anticipation * 0.5; // Increased from 0.3
-      baseConfig.jawOpen += anticipationFactor * 0.15; // Increased from 0.1
-      baseConfig.mouthWide += anticipationFactor * 0.1; // Increased from 0.05
+      const anticipationFactor = anticipation * 0.7; // Increased from 0.5
+      baseConfig.jawOpen += anticipationFactor * 0.2; // Increased from 0.15
+      baseConfig.mouthWide += anticipationFactor * 0.15; // Increased from 0.1
+      baseConfig.jawForward += anticipationFactor * 0.1; // NEW: Anticipate jaw forward movement
       
       // Prepare for specific upcoming movements more aggressively
       if (viseme === Viseme.Mb || viseme === Viseme.Fv) {
-        baseConfig.lowerLip += anticipationFactor * 0.3; // Increased from 0.2
+        baseConfig.lowerLip += anticipationFactor * 0.4; // Increased from 0.3
       }
       if (viseme === Viseme.Oh || viseme === Viseme.Oo || viseme === Viseme.Wy) {
-        baseConfig.lipsPursed += anticipationFactor * 0.25; // Increased from 0.15
+        baseConfig.lipsPursed += anticipationFactor * 0.3; // Increased from 0.25
+        baseConfig.jawForward += anticipationFactor * 0.15; // Anticipate forward movement
       }
     }
     
-    // Faster pause modifications - less interference with speech
+    // Enhanced pause modifications with better jaw positioning
     if (pauseIntensity > 0) {
       const time = Date.now() * 0.001;
-      const breathingCycle = Math.sin(time * 2.2) * 0.5 + 0.5; // Faster breathing
-      const microMovement = Math.sin(time * 6) * 0.015; // Faster micro-movements
+      const breathingCycle = Math.sin(time * 2.2) * 0.5 + 0.5;
+      const microMovement = Math.sin(time * 6) * 0.015;
       
-      // Smaller rest position changes to not interfere with speech
-      let restPosition = 0.01 + breathingCycle * 0.008 + microMovement;
+      // More natural rest position with slight jaw drop
+      let restPosition = 0.02 + breathingCycle * 0.012 + microMovement; // Increased base rest
       
-      // Much less aggressive pause modifications
+      // Better pause modifications
       if (pauseIntensity < 0.2) {
-        restPosition *= 1.1; // Minimal change for quick syllable breaks
+        restPosition *= 1.2; // Slightly more open for quick syllable breaks
       } else if (pauseIntensity < 0.5) {
-        restPosition *= 0.95; // Small change for word breaks
+        restPosition *= 1.0; // Natural for word breaks
       } else {
-        restPosition *= 0.7; // Moderate change for sentence breaks
+        restPosition *= 0.8; // Slightly closed for sentence breaks
       }
       
-      // Much less aggressive blending - don't slow down speech
-      const jawBlend = pauseIntensity * 0.6; // Reduced from 0.9
-      const wideBlend = pauseIntensity * 0.4; // Reduced from 0.7
-      const pursedBlend = pauseIntensity * 0.7; // Reduced from 0.95
-      const lipBlend = pauseIntensity * 0.8; // Reduced from 0.98
+      // More natural blending
+      const jawBlend = pauseIntensity * 0.7; // Increased from 0.6
+      const wideBlend = pauseIntensity * 0.5; // Increased from 0.4
+      const pursedBlend = pauseIntensity * 0.8; // Increased from 0.7
+      const lipBlend = pauseIntensity * 0.85; // Increased from 0.8
+      const forwardBlend = pauseIntensity * 0.6; // NEW: Blend jaw forward movement
       
       baseConfig.jawOpen = THREE.MathUtils.lerp(baseConfig.jawOpen, restPosition, jawBlend);
-      baseConfig.mouthWide = THREE.MathUtils.lerp(baseConfig.mouthWide, restPosition * 0.3, wideBlend);
+      baseConfig.mouthWide = THREE.MathUtils.lerp(baseConfig.mouthWide, restPosition * 0.4, wideBlend);
       baseConfig.lipsPursed = THREE.MathUtils.lerp(baseConfig.lipsPursed, 0, pursedBlend);
       baseConfig.lowerLip = THREE.MathUtils.lerp(baseConfig.lowerLip, 0, lipBlend);
       baseConfig.upperLip = THREE.MathUtils.lerp(baseConfig.upperLip, 0, lipBlend);
+      baseConfig.jawForward = THREE.MathUtils.lerp(baseConfig.jawForward, 0, forwardBlend); // NEW: Reset forward movement during pauses
     }
     
     return baseConfig;
   };
 
-  // Get jaw rotation based on mouth shape
-  const getJawRotationForShape = (shape: MouthShape): number => {
+  // Enhanced jaw rotation calculation with forward/side movement
+  const getJawRotationForShape = (shape: MouthShape): { x: number, y: number, z: number } => {
     switch (shape) {
-      case MouthShape.Closed: return 0;
-      case MouthShape.SlightlyOpen: return 0.03;
-      case MouthShape.Open: return 0.06;
-      case MouthShape.WideOpen: return 0.1;
-      case MouthShape.OShape: return 0.05;
-      case MouthShape.EShape: return 0.04;
-      default: return 0;
+      case MouthShape.Closed: 
+        return { x: 0, y: 0, z: 0 };
+      case MouthShape.SlightlyOpen: 
+        return { x: 0.04, y: 0, z: 0 }; // Increased from 0.03
+      case MouthShape.Open: 
+        return { x: 0.08, y: 0, z: 0 }; // Increased from 0.06
+      case MouthShape.WideOpen: 
+        return { x: 0.15, y: 0, z: 0 }; // Increased from 0.1
+      case MouthShape.OShape: 
+        return { x: 0.07, y: 0.02, z: 0 }; // Added forward movement
+      case MouthShape.EShape: 
+        return { x: 0.06, y: 0, z: 0 }; // Increased from 0.04
+      default: 
+        return { x: 0, y: 0, z: 0 };
     }
   };
 
@@ -868,7 +1040,7 @@ function AvatarModel({
   // Update mouth shape based on speaking state
   useEffect(() => {
     if (!isSpeaking) {
-      setTargetJawRotation(0);
+      setTargetJawRotation({ x: 0, y: 0, z: 0 }); // Updated to object
       setCurrentMouthShape(MouthShape.Closed);
       setCurrentExpression(ExpressionType.Neutral);
       setTargetExpressionIntensity(0.3);
@@ -917,16 +1089,27 @@ function AvatarModel({
           
           // Apply to jaw bone with INSTANT response for longer words
           if (jawBone.current) {
-            const targetRotation = jawOpen * 0.12; // Even more pronounced
+            const { jawOpen, jawForward, jawSide } = getJawConfigForViseme(
+              currentViseme, 
+              wordGapState.pauseIntensity,
+              wordGapState.anticipatoryMovement
+            );
+            
+            // Enhanced jaw rotation with 3D movement
+            const targetRotationX = jawOpen * 0.18; // Increased from 0.12 - more pronounced opening
+            const targetRotationY = jawForward * 0.1; // NEW: Forward/backward jaw movement
+            const targetRotationZ = jawSide * 0.05; // NEW: Side-to-side jaw movement
+            
+            const targetRotation = { x: targetRotationX, y: targetRotationY, z: targetRotationZ };
             
             // INSTANT smoothing factors - no delay for active speech
             let smoothingFactor;
             if (wordGapState.pauseIntensity > 0.5) {
-              smoothingFactor = 0.5; // Fast for sentence breaks
+              smoothingFactor = 0.6; // Increased from 0.5
             } else if (wordGapState.pauseIntensity > 0.2) {
-              smoothingFactor = 0.85; // Very fast for word breaks
+              smoothingFactor = 0.9; // Increased from 0.85
             } else if (wordGapState.pauseIntensity > 0.05) {
-              smoothingFactor = 0.98; // Nearly instant for syllable breaks
+              smoothingFactor = 0.99; // Increased from 0.98
             } else {
               smoothingFactor = 1.0; // COMPLETELY INSTANT for active speech
             }
@@ -936,18 +1119,24 @@ function AvatarModel({
               smoothingFactor = 1.0; // Always instant when anticipating
             }
             
-            // For active speech, just set directly instead of lerping
+            // Apply enhanced jaw movements
             if (smoothingFactor >= 1.0) {
-              setCurrentJawRotation(targetRotation);
-              jawBone.current.rotation.x = targetRotation;
+              // Direct application for instant response
+              setCurrentJawRotation(targetRotation); // Now uses 3D object
+              jawBone.current.rotation.x = targetRotation.x; // Now uses .x property
+              jawBone.current.rotation.y = targetRotation.y; // NEW: y rotation
+              jawBone.current.rotation.z = targetRotation.z; // NEW: z rotation
             } else {
-              const newRotation = THREE.MathUtils.lerp(
-                currentJawRotation, 
-                targetRotation, 
-                smoothingFactor
-              );
-              setCurrentJawRotation(newRotation);
-              jawBone.current.rotation.x = newRotation;
+              // Smooth interpolation for pauses
+              const newRotation = {
+                x: THREE.MathUtils.lerp(currentJawRotation.x, targetRotation.x, smoothingFactor),
+                y: THREE.MathUtils.lerp(currentJawRotation.y, targetRotation.y, smoothingFactor),
+                z: THREE.MathUtils.lerp(currentJawRotation.z, targetRotation.z, smoothingFactor)
+              };
+              setCurrentJawRotation(newRotation); // Now uses 3D object
+              jawBone.current.rotation.x = newRotation.x; // Now uses .x property
+              jawBone.current.rotation.y = newRotation.y; // NEW: y rotation
+              jawBone.current.rotation.z = newRotation.z; // NEW: z rotation
             }
           }
           
@@ -1234,15 +1423,17 @@ function AvatarModel({
           }
           
           // Smooth transitions with much more reactive word spacing consideration
-          const newRotation = THREE.MathUtils.lerp(
-            currentJawRotation, 
-            targetJawRotation, 
-            transitionSpeed
-          );
+          const newRotation = {
+            x: THREE.MathUtils.lerp(currentJawRotation.x, targetJawRotation.x, transitionSpeed),
+            y: THREE.MathUtils.lerp(currentJawRotation.y, targetJawRotation.y, transitionSpeed),
+            z: THREE.MathUtils.lerp(currentJawRotation.z, targetJawRotation.z, transitionSpeed)
+          };
           setCurrentJawRotation(newRotation);
           
           if (jawBone.current) {
-            jawBone.current.rotation.x = newRotation;
+            jawBone.current.rotation.x = newRotation.x;
+            jawBone.current.rotation.y = newRotation.y;
+            jawBone.current.rotation.z = newRotation.z;
           }
           
           // Apply fallback morph targets with much more reactive expressions
