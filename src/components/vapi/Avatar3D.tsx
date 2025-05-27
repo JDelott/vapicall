@@ -526,69 +526,101 @@ function AvatarModel({
     }));
   };
 
-  // Enhanced expression configuration with more detailed facial muscle control
+  // Enhanced expression configuration with REALISTIC facial muscle control
   const getExpressionConfig = (expression: ExpressionType, intensity: number) => {
-    const baseIntensity = intensity * 0.8;
+    const baseIntensity = intensity * 0.6; // Reduced from 0.8 for more subtle expressions
     
     switch (expression) {
       case ExpressionType.Warm_Smile:
         return {
-          smile: baseIntensity * 0.7,
-          cheekRaise: baseIntensity * 0.5,
-          eyebrowRaise: baseIntensity * 0.3,
+          smile: baseIntensity * 0.35, // Much more subtle - reduced from 0.7
+          cheekRaise: baseIntensity * 0.25, // Reduced from 0.5
+          eyebrowRaise: baseIntensity * 0.15, // Reduced from 0.3
           noseFlare: 0,
-          eyeSquint: baseIntensity * 0.2,
-          lipCornerPull: baseIntensity * 0.3,
-          headTilt: baseIntensity * 0.05,
+          eyeSquint: baseIntensity * 0.15, // Slight crow's feet - reduced from 0.2
+          lipCornerPull: baseIntensity * 0.2, // Much more subtle - reduced from 0.3
+          headTilt: baseIntensity * 0.02, // Reduced from 0.05
           foreheadWrinkle: 0,
-          foreheadRaise: baseIntensity * 0.1,
+          foreheadRaise: baseIntensity * 0.05, // Reduced from 0.1
           jawClench: 0,
           templeTension: 0,
+          // New realistic smile parameters with BETTER TEETH SHOWING
+          lipCornerLift: baseIntensity * 0.3, // Natural corner lift
+          upperLipRaise: baseIntensity * 0.25, // MORE upper lip raise to show teeth - increased from 0.1
+          lowerLipDepress: baseIntensity * 0.15, // MORE lower lip depression - increased from 0.05
+          mouthCornerDimple: baseIntensity * 0.2, // Natural dimpling
+          cheekAppleRaise: baseIntensity * 0.3, // Apple of cheek lift
+          teethShow: baseIntensity * 0.6, // NEW: Show teeth during smile
+          jawOpenReduction: baseIntensity * 0.3, // NEW: Reduce jaw opening during smiles
         };
       
       case ExpressionType.Joy:
         return {
-          smile: baseIntensity * 0.9,
-          cheekRaise: baseIntensity * 0.8,
-          eyebrowRaise: baseIntensity * 0.4,
-          noseFlare: baseIntensity * 0.1,
-          eyeSquint: baseIntensity * 0.4,
-          lipCornerPull: baseIntensity * 0.5,
-          headTilt: baseIntensity * 0.08,
+          smile: baseIntensity * 0.5, // More pronounced but still natural - reduced from 0.9
+          cheekRaise: baseIntensity * 0.4, // Reduced from 0.8
+          eyebrowRaise: baseIntensity * 0.2, // Reduced from 0.4
+          noseFlare: baseIntensity * 0.05, // Reduced from 0.1
+          eyeSquint: baseIntensity * 0.25, // Natural squinting - reduced from 0.4
+          lipCornerPull: baseIntensity * 0.3, // Reduced from 0.5
+          headTilt: baseIntensity * 0.04, // Reduced from 0.08
           foreheadWrinkle: 0,
-          foreheadRaise: baseIntensity * 0.2,
+          foreheadRaise: baseIntensity * 0.1, // Reduced from 0.2
           jawClench: 0,
           templeTension: 0,
+          // Enhanced joy parameters with BETTER TEETH SHOWING
+          lipCornerLift: baseIntensity * 0.45,
+          upperLipRaise: baseIntensity * 0.35, // MORE upper lip raise for joy - increased from 0.15
+          lowerLipDepress: baseIntensity * 0.25, // MORE lower lip depression - increased from 0.08
+          mouthCornerDimple: baseIntensity * 0.35,
+          cheekAppleRaise: baseIntensity * 0.5,
+          teethShow: baseIntensity * 0.8, // MORE teeth showing for joy
+          jawOpenReduction: baseIntensity * 0.4, // More jaw closure for joy
         };
       
       case ExpressionType.Concentration:
         return {
-          smile: 0.05,
-          cheekRaise: 0.1,
-          eyebrowRaise: baseIntensity * 0.2,
-          noseFlare: baseIntensity * 0.4,
-          eyeSquint: baseIntensity * 0.8,
-          lipCornerPull: -baseIntensity * 0.1,
-          headTilt: -baseIntensity * 0.02,
-          foreheadWrinkle: baseIntensity * 0.6,
+          smile: 0.02, // Very minimal - reduced from 0.05
+          cheekRaise: 0.05, // Reduced from 0.1
+          eyebrowRaise: baseIntensity * 0.1, // Reduced from 0.2
+          noseFlare: baseIntensity * 0.2, // Reduced from 0.4
+          eyeSquint: baseIntensity * 0.4, // Reduced from 0.8
+          lipCornerPull: -baseIntensity * 0.05, // Reduced from -0.1
+          headTilt: -baseIntensity * 0.01, // Reduced from -0.02
+          foreheadWrinkle: baseIntensity * 0.3, // Reduced from 0.6
           foreheadRaise: 0,
-          jawClench: baseIntensity * 0.3,
-          templeTension: baseIntensity * 0.4,
+          jawClench: baseIntensity * 0.15, // Reduced from 0.3
+          templeTension: baseIntensity * 0.2, // Reduced from 0.4
+          // Concentration parameters
+          lipCornerLift: 0,
+          upperLipRaise: 0,
+          lowerLipDepress: baseIntensity * 0.1,
+          mouthCornerDimple: 0,
+          cheekAppleRaise: 0,
+          teethShow: 0, // No teeth showing during concentration
+          jawOpenReduction: 0,
         };
       
       default: // Neutral and others
         return {
-          smile: 0.1,
-          cheekRaise: 0.05,
-          eyebrowRaise: 0.1,
+          smile: 0.05, // Very subtle resting expression - reduced from 0.1
+          cheekRaise: 0.02, // Reduced from 0.05
+          eyebrowRaise: 0.05, // Reduced from 0.1
           noseFlare: 0,
           eyeSquint: 0,
-          lipCornerPull: 0.05,
+          lipCornerPull: 0.02, // Reduced from 0.05
           headTilt: 0,
           foreheadWrinkle: 0,
           foreheadRaise: 0,
           jawClench: 0,
           templeTension: 0,
+          // Neutral parameters
+          lipCornerLift: 0.05,
+          upperLipRaise: 0,
+          lowerLipDepress: 0,
+          mouthCornerDimple: 0,
+          cheekAppleRaise: 0.02,
+          teethShow: 0, // No teeth showing in neutral
+          jawOpenReduction: 0,
         };
     }
   };
@@ -960,12 +992,73 @@ function AvatarModel({
                 }
               };
               
-              // Get current expression configuration
+              // Get current expression configuration - ONLY DECLARE ONCE
               const expressionConfig = getExpressionConfig(currentExpression, expressionIntensity);
               
-              // Apply enhanced mouth shapes with much faster word gap blending
-              setMorphTarget(['mouthOpen', 'mouth_open', 'jawOpen', 'open'], jawOpen);
-              setMorphTarget(['mouthWide', 'mouth_wide'], mouthWide);
+              // REFINED SMILE SYSTEM - Natural and realistic with BETTER TEETH SHOWING
+              // Main smile shape - much more controlled
+              setMorphTarget(['mouthSmile', 'mouth_smile', 'smile'], 
+                Math.max(0, Math.min(0.4, expressionConfig.smile))); // Capped at 0.4 instead of uncapped
+              
+              // ENHANCED teeth showing during smiles
+              setMorphTarget(['teethShow', 'teeth_show', 'showTeeth'], 
+                Math.max(0, Math.min(0.8, expressionConfig.teethShow)));
+              setMorphTarget(['upperTeethShow', 'upper_teeth_show'], 
+                Math.max(0, Math.min(0.9, expressionConfig.teethShow * 1.1))); // Upper teeth more visible
+              setMorphTarget(['lowerTeethShow', 'lower_teeth_show'], 
+                Math.max(0, Math.min(0.6, expressionConfig.teethShow * 0.7))); // Lower teeth less visible
+              
+              // ENHANCED upper lip raise to show teeth better
+              setMorphTarget(['upperLipRaise', 'upper_lip_raise', 'lipUpperUp'], 
+                Math.max(0, Math.min(0.35, expressionConfig.upperLipRaise))); // Increased from 0.2
+              
+              // ENHANCED lower lip depression to show teeth better
+              setMorphTarget(['lowerLipDepress', 'lower_lip_depress', 'lipLowerDown'], 
+                Math.max(0, Math.min(0.25, expressionConfig.lowerLipDepress))); // Increased from 0.15
+              
+              // Natural lip corner movement - the key to realistic smiles
+              setMorphTarget(['lipCornerPullLeft', 'lip_corner_pull_left', 'mouthCornerLeft'], 
+                Math.max(0, Math.min(0.35, expressionConfig.lipCornerLift * 1.1))); // Slight asymmetry
+              setMorphTarget(['lipCornerPullRight', 'lip_corner_pull_right', 'mouthCornerRight'], 
+                Math.max(0, Math.min(0.35, expressionConfig.lipCornerLift * 0.95))); // Natural asymmetry
+              
+              // Cheek involvement - natural apple of cheek lift
+              setMorphTarget(['cheekRaise', 'cheek_raise', 'cheekPuff'], 
+                Math.max(0, Math.min(0.3, expressionConfig.cheekAppleRaise))); // Much more controlled
+              setMorphTarget(['cheekRaiseLeft', 'cheek_raise_left'], 
+                Math.max(0, Math.min(0.3, expressionConfig.cheekAppleRaise * 1.05))); // Slight asymmetry
+              setMorphTarget(['cheekRaiseRight', 'cheek_raise_right'], 
+                Math.max(0, Math.min(0.3, expressionConfig.cheekAppleRaise * 0.98)));
+              
+              // Natural dimpling - adds realism
+              setMorphTarget(['mouthDimpleLeft', 'mouth_dimple_left', 'dimpleLeft'], 
+                Math.max(0, Math.min(0.25, expressionConfig.mouthCornerDimple * 1.1)));
+              setMorphTarget(['mouthDimpleRight', 'mouth_dimple_right', 'dimpleRight'], 
+                Math.max(0, Math.min(0.25, expressionConfig.mouthCornerDimple * 0.95)));
+              
+              // REDUCE jaw opening during smiles for more natural look
+              const currentMouthWide = mouthWide || 0;
+              const smileAdjustedWide = currentMouthWide * (1 - expressionConfig.smile * 0.3); // Reduce width during smiles
+              const smileAdjustedJawOpen = jawOpen * (1 - expressionConfig.jawOpenReduction); // NEW: Reduce jaw opening during smiles
+              
+              setMorphTarget(['mouthWide', 'mouth_wide'], 
+                Math.max(0, Math.min(0.4, smileAdjustedWide)));
+              setMorphTarget(['mouthOpen', 'mouth_open', 'jawOpen', 'open'], 
+                Math.max(0, Math.min(0.5, smileAdjustedJawOpen))); // Apply jaw reduction during smiles
+              
+              // Natural eye involvement - Duchenne smile effect
+              setMorphTarget(['eyeSquint', 'eye_squint', 'squint'], 
+                Math.max(0, Math.min(0.25, expressionConfig.eyeSquint + eyeState.squint)));
+              setMorphTarget(['eyeSquintLeft', 'eye_squint_left'], 
+                Math.max(0, Math.min(0.25, (expressionConfig.eyeSquint + eyeState.squint) * 1.05)));
+              setMorphTarget(['eyeSquintRight', 'eye_squint_right'], 
+                Math.max(0, Math.min(0.25, (expressionConfig.eyeSquint + eyeState.squint) * 0.98)));
+              
+              // Subtle nasolabial fold - adds realism to smiles
+              setMorphTarget(['nasolabialFold', 'nasolabial_fold', 'smileLines'], 
+                Math.max(0, Math.min(0.2, expressionConfig.smile * 0.6)));
+
+              // Apply enhanced mouth shapes with smile adjustments
               setMorphTarget(['lipsPursed', 'lips_pursed', 'mouthO', 'mouth_o', 'o'], lipsPursed);
               setMorphTarget(['lowerLipDown', 'lower_lip_down', 'lipLowerDown'], lowerLip);
               setMorphTarget(['upperLipUp', 'upper_lip_up', 'lipUpperUp'], upperLip);
@@ -1190,8 +1283,51 @@ function AvatarModel({
                 }
               };
               
+              // Get expression config - ONLY DECLARE ONCE
               const expressionConfig = getExpressionConfig(currentExpression, expressionIntensity);
               
+              // REFINED SMILE SYSTEM for fallback animation with BETTER TEETH SHOWING
+              applyMorphIfExists('mouthSmile', Math.max(0, Math.min(0.4, expressionConfig.smile)));
+              applyMorphIfExists('mouth_smile', Math.max(0, Math.min(0.4, expressionConfig.smile)));
+              
+              // Enhanced teeth showing
+              applyMorphIfExists('teethShow', Math.max(0, Math.min(0.8, expressionConfig.teethShow)));
+              applyMorphIfExists('teeth_show', Math.max(0, Math.min(0.8, expressionConfig.teethShow)));
+              applyMorphIfExists('upperTeethShow', Math.max(0, Math.min(0.9, expressionConfig.teethShow * 1.1)));
+              applyMorphIfExists('upper_teeth_show', Math.max(0, Math.min(0.9, expressionConfig.teethShow * 1.1)));
+              applyMorphIfExists('lowerTeethShow', Math.max(0, Math.min(0.6, expressionConfig.teethShow * 0.7)));
+              applyMorphIfExists('lower_teeth_show', Math.max(0, Math.min(0.6, expressionConfig.teethShow * 0.7)));
+              
+              // Enhanced lip movement for teeth showing
+              applyMorphIfExists('upperLipRaise', Math.max(0, Math.min(0.35, expressionConfig.upperLipRaise)));
+              applyMorphIfExists('upper_lip_raise', Math.max(0, Math.min(0.35, expressionConfig.upperLipRaise)));
+              applyMorphIfExists('lowerLipDepress', Math.max(0, Math.min(0.25, expressionConfig.lowerLipDepress)));
+              applyMorphIfExists('lower_lip_depress', Math.max(0, Math.min(0.25, expressionConfig.lowerLipDepress)));
+              
+              // Natural lip corner movement
+              applyMorphIfExists('lipCornerPullLeft', Math.max(0, Math.min(0.35, expressionConfig.lipCornerLift * 1.1)));
+              applyMorphIfExists('lip_corner_pull_left', Math.max(0, Math.min(0.35, expressionConfig.lipCornerLift * 1.1)));
+              applyMorphIfExists('lipCornerPullRight', Math.max(0, Math.min(0.35, expressionConfig.lipCornerLift * 0.95)));
+              applyMorphIfExists('lip_corner_pull_right', Math.max(0, Math.min(0.35, expressionConfig.lipCornerLift * 0.95)));
+              
+              // Controlled cheek involvement
+              applyMorphIfExists('cheekRaise', Math.max(0, Math.min(0.3, expressionConfig.cheekAppleRaise)));
+              applyMorphIfExists('cheek_raise', Math.max(0, Math.min(0.3, expressionConfig.cheekAppleRaise)));
+              applyMorphIfExists('cheekRaiseLeft', Math.max(0, Math.min(0.3, expressionConfig.cheekAppleRaise * 1.05)));
+              applyMorphIfExists('cheek_raise_left', Math.max(0, Math.min(0.3, expressionConfig.cheekAppleRaise * 1.05)));
+              applyMorphIfExists('cheekRaiseRight', Math.max(0, Math.min(0.3, expressionConfig.cheekAppleRaise * 0.98)));
+              applyMorphIfExists('cheek_raise_right', Math.max(0, Math.min(0.3, expressionConfig.cheekAppleRaise * 0.98)));
+              
+              // Natural dimpling
+              applyMorphIfExists('mouthDimpleLeft', Math.max(0, Math.min(0.25, expressionConfig.mouthCornerDimple * 1.1)));
+              applyMorphIfExists('mouth_dimple_left', Math.max(0, Math.min(0.25, expressionConfig.mouthCornerDimple * 1.1)));
+              applyMorphIfExists('mouthDimpleRight', Math.max(0, Math.min(0.25, expressionConfig.mouthCornerDimple * 0.95)));
+              applyMorphIfExists('mouth_dimple_right', Math.max(0, Math.min(0.25, expressionConfig.mouthCornerDimple * 0.95)));
+              
+              // Natural eye squinting
+              applyMorphIfExists('eyeSquint', Math.max(0, Math.min(0.25, expressionConfig.eyeSquint + eyeState.squint)));
+              applyMorphIfExists('eye_squint', Math.max(0, Math.min(0.25, expressionConfig.eyeSquint + eyeState.squint)));
+
               // Apply mouth shape values with much more reactive word spacing
               let openValue = 0;
               let wideValue = 0;
