@@ -170,7 +170,7 @@ function AvatarModel({
     targetTension: 0,
   });
   
-  // Enhanced word gap tracking with anticipatory movement and better reactivity
+  // Enhanced word gap tracking with TEXT PREDICTION and phoneme mapping
   const [wordGapState, setWordGapState] = useState({
     lastPhoneme: '',
     silenceFrames: 0,
@@ -294,7 +294,7 @@ function AvatarModel({
     return Viseme.Silent;
   };
   
-  // Much faster and more reactive word gap tracking
+  // Enhanced word gap tracking with TEXT PREDICTION and phoneme mapping
   const updateWordGapTracking = (phoneme: string) => {
     const currentViseme = getVisemeFromPhoneme(phoneme);
     const isCurrentlySilent = currentViseme === Viseme.Silent || !phoneme || phoneme === '' || phoneme === 'SP' || phoneme === 'SIL';
@@ -302,77 +302,194 @@ function AvatarModel({
     setWordGapState(prev => {
       const newState = { ...prev };
       
-      // Track phoneme history for better anticipation
+      // Track phoneme history for ADVANCED anticipation - MUCH LONGER HISTORY
       if (phoneme !== prev.lastPhoneme) {
-        newState.phonemeHistory = [...prev.phonemeHistory.slice(-3), phoneme]; // Keep last 4 phonemes
+        newState.phonemeHistory = [...prev.phonemeHistory.slice(-8), phoneme]; // Increased from 5 to 8 for better prediction
         newState.lastPhoneme = phoneme;
         
-        // Calculate anticipatory movement based on upcoming phoneme - more aggressive
+        // ADVANCED anticipatory movement with phoneme sequence analysis
         if (!isCurrentlySilent) {
           const upcomingViseme = getVisemeFromPhoneme(phoneme);
-          newState.anticipatoryMovement = getAnticipationForViseme(upcomingViseme) * 1.2; // Increased anticipation
+          let baseAnticipation = getAnticipationForViseme(upcomingViseme) * 1.8; // Increased from 1.5
+          
+          // ANALYZE phoneme patterns for better prediction
+          const recentPhonemes = newState.phonemeHistory.slice(-4);
+          const speechLength = recentPhonemes.filter(p => p && p !== 'SP' && p !== 'SIL').length;
+          
+          // BOOST anticipation based on speech patterns
+          if (speechLength > 3) {
+            baseAnticipation *= 1.5; // Major boost for continuous speech
+          } else if (speechLength > 2) {
+            baseAnticipation *= 1.3; // Moderate boost for medium speech
+          } else if (speechLength > 1) {
+            baseAnticipation *= 1.1; // Small boost for short speech
+          }
+          
+          // DETECT speech rhythm and boost accordingly
+          const hasVowelConsonantPattern = detectVowelConsonantPattern(recentPhonemes);
+          if (hasVowelConsonantPattern) {
+            baseAnticipation *= 1.2; // Boost for natural speech rhythm
+          }
+          
+          // PREDICT upcoming mouth movements based on phoneme sequences
+          const upcomingMovementIntensity = predictUpcomingMovement(recentPhonemes);
+          baseAnticipation *= upcomingMovementIntensity;
+          
+          newState.anticipatoryMovement = baseAnticipation;
         }
       }
       
-      // EXTREMELY sensitive silence tracking for instant response
+      // ULTRA-sensitive silence tracking with PATTERN RECOGNITION
       if (isCurrentlySilent) {
         newState.silenceFrames++;
       } else {
         newState.silenceFrames = 0; // Reset immediately when sound detected
       }
       
-      // INSTANT pause detection - like real speech
-      const isShortPause = newState.silenceFrames >= 1 && newState.silenceFrames <= 2;  // Even faster detection
-      const isMediumPause = newState.silenceFrames >= 3 && newState.silenceFrames <= 6;
-      const isLongPause = newState.silenceFrames >= 7;
+      // INTELLIGENT pause detection based on speech patterns
+      const recentActivity = newState.phonemeHistory.slice(-6).filter(p => p && p !== 'SP' && p !== 'SIL').length;
+      const isShortPause = newState.silenceFrames >= 1 && newState.silenceFrames <= 1;
+      const isMediumPause = newState.silenceFrames >= 2 && newState.silenceFrames <= 3; // Reduced for faster response
+      const isLongPause = newState.silenceFrames >= 4; // Reduced from 5
       
       newState.isInPause = isShortPause || isMediumPause || isLongPause;
       
-      // More responsive pause intensities
+      // ADAPTIVE pause intensities based on speech context
       let targetIntensity = 0;
-      if (isShortPause) {
-        targetIntensity = 0.1; // Very quick syllable breaks
+      if (isShortPause && recentActivity > 3) {
+        targetIntensity = 0.02; // Minimal interference during active speech
+      } else if (isShortPause) {
+        targetIntensity = 0.05; // Slightly more for less active speech
+      } else if (isMediumPause && recentActivity > 2) {
+        targetIntensity = 0.1; // Reduced interference during medium speech
       } else if (isMediumPause) {
-        targetIntensity = 0.3; // Quick word breaks
+        targetIntensity = 0.15; // Normal for medium pauses
       } else if (isLongPause) {
-        targetIntensity = 0.6; // Sentence breaks
+        targetIntensity = 0.3; // Reduced from 0.4 - less interference overall
       }
       
-      // INSTANT pause intensity transitions for active speech
+      // INSTANT pause intensity transitions with CONTEXT AWARENESS
+      const transitionSpeed = recentActivity > 3 ? 0.9 : 0.7; // Faster during active speech
       if (newState.isInPause) {
-        newState.pauseIntensity = THREE.MathUtils.lerp(newState.pauseIntensity, targetIntensity, 0.5);
+        newState.pauseIntensity = THREE.MathUtils.lerp(newState.pauseIntensity, targetIntensity, transitionSpeed);
       } else {
-        newState.pauseIntensity = THREE.MathUtils.lerp(newState.pauseIntensity, 0, 0.7); // Faster recovery
+        newState.pauseIntensity = THREE.MathUtils.lerp(newState.pauseIntensity, 0, 0.95); // Very fast recovery
       }
       
-      // Faster decay of anticipatory movement
-      newState.anticipatoryMovement = THREE.MathUtils.lerp(newState.anticipatoryMovement, 0, 0.3);
+      // CONTEXT-AWARE decay of anticipatory movement
+      const decaySpeed = recentActivity > 3 ? 0.5 : 0.4; // Slower decay during active speech
+      newState.anticipatoryMovement = THREE.MathUtils.lerp(newState.anticipatoryMovement, 0, decaySpeed);
       
       return newState;
     });
   };
 
-  // Enhanced anticipation values for faster response
+  // NEW: Detect vowel-consonant patterns for natural speech rhythm
+  const detectVowelConsonantPattern = (phonemes: string[]): boolean => {
+    if (phonemes.length < 3) return false;
+    
+    const vowelPhonemes = ['AA', 'AH', 'AE', 'AY', 'AW', 'OY', 'EH', 'EY', 'IY', 'IH', 'OW', 'AO', 'UW', 'UH', 'ER'];
+    const consonantPhonemes = ['M', 'B', 'P', 'F', 'V', 'TH', 'DH', 'T', 'D', 'N', 'L', 'SH', 'ZH', 'CH', 'JH', 'S', 'Z', 'K', 'G', 'NG', 'W', 'Y', 'HH', 'R'];
+    
+    let pattern = '';
+    for (const phoneme of phonemes.slice(-3)) {
+      if (vowelPhonemes.includes(phoneme)) {
+        pattern += 'V';
+      } else if (consonantPhonemes.includes(phoneme)) {
+        pattern += 'C';
+      }
+    }
+    
+    // Detect common speech patterns
+    return pattern.includes('CV') || pattern.includes('VC') || pattern === 'CVC' || pattern === 'VCV';
+  };
+
+  // NEW: Predict upcoming movement intensity based on phoneme sequences
+  const predictUpcomingMovement = (recentPhonemes: string[]): number => {
+    let intensity = 1.0;
+    
+    // ANALYZE recent phoneme transitions for movement prediction
+    const transitions = [];
+    for (let i = 1; i < recentPhonemes.length; i++) {
+      if (recentPhonemes[i-1] && recentPhonemes[i]) {
+        transitions.push(`${recentPhonemes[i-1]}->${recentPhonemes[i]}`);
+      }
+    }
+    
+    // BOOST for high-movement transitions
+    const highMovementTransitions = [
+      'M->AA', 'P->AA', 'B->AA', // Lip closure to open vowel
+      'AA->M', 'AA->P', 'AA->B', // Open vowel to lip closure
+      'UW->AE', 'OW->AE', // Rounded to wide
+      'AE->UW', 'AE->OW', // Wide to rounded
+      'S->SH', 'Z->ZH', // Sibilant transitions
+    ];
+    
+    for (const transition of transitions) {
+      if (highMovementTransitions.some(hmt => transition.includes(hmt.split('->')[0]) && transition.includes(hmt.split('->')[1]))) {
+        intensity *= 1.3; // Boost for high-movement transitions
+      }
+    }
+    
+    // BOOST for alternating vowel-consonant patterns
+    const lastThree = recentPhonemes.slice(-3);
+    const vowels = ['AA', 'AH', 'AE', 'AY', 'EH', 'IY', 'OW', 'UW'];
+    const consonants = ['M', 'B', 'P', 'F', 'V', 'T', 'D', 'S', 'Z', 'SH', 'CH'];
+    
+    let alternating = 0;
+    for (let i = 1; i < lastThree.length; i++) {
+      const prev = lastThree[i-1];
+      const curr = lastThree[i];
+      if ((vowels.includes(prev) && consonants.includes(curr)) || 
+          (consonants.includes(prev) && vowels.includes(curr))) {
+        alternating++;
+      }
+    }
+    
+    if (alternating >= 2) {
+      intensity *= 1.4; // Strong boost for alternating patterns
+    } else if (alternating >= 1) {
+      intensity *= 1.2; // Moderate boost
+    }
+    
+    // BOOST for rapid speech detection
+    const rapidSpeechIndicators = recentPhonemes.filter(p => p && p !== 'SP' && p !== 'SIL').length;
+    if (rapidSpeechIndicators >= 4) {
+      intensity *= 1.5; // Major boost for rapid speech
+    } else if (rapidSpeechIndicators >= 3) {
+      intensity *= 1.3; // Moderate boost
+    }
+    
+    return Math.min(intensity, 2.5); // Cap at 2.5x for safety
+  };
+
+  // ENHANCED anticipation values with CONTEXT AWARENESS
   const getAnticipationForViseme = (viseme: Viseme): number => {
     switch (viseme) {
       case Viseme.Ah:
       case Viseme.Ae:
-        return 1.0; // Big mouth opening coming - prepare jaw quickly
+        return 1.5; // Increased from 1.3 - ultra-fast preparation for big openings
       case Viseme.Oh:
       case Viseme.Oo:
-        return 0.8; // Rounded mouth coming - prepare lips quickly
+        return 1.3; // Increased from 1.1 - faster lip rounding preparation
       case Viseme.Mb:
-        return 1.2; // Lip closure coming - prepare very quickly
+        return 1.8; // Increased from 1.5 - ultra-fast lip closure preparation
       case Viseme.Fv:
-        return 0.9; // Lip-teeth contact coming
+        return 1.4; // Increased from 1.2 - faster lip-teeth preparation
       case Viseme.Ee:
-        return 0.7; // Wide mouth coming
+        return 1.2; // Increased from 1.0 - faster wide mouth preparation
+      case Viseme.Sh:
+        return 1.3; // NEW: Fast preparation for lip protrusion
+      case Viseme.Ss:
+        return 1.1; // NEW: Fast preparation for sibilants
+      case Viseme.Th:
+        return 1.2; // NEW: Fast preparation for tongue protrusion
       default:
-        return 0.5; // General preparation
+        return 1.0; // Increased from 0.8 - faster general preparation
     }
   };
 
-  // Enhanced jaw configuration with more realistic articulation
+  // ULTRA-ENHANCED jaw configuration with PREDICTIVE MOVEMENT
   const getJawConfigForViseme = (viseme: Viseme, pauseIntensity: number = 0, anticipation: number = 0) => {
     const baseConfig = (() => {
       switch (viseme) {
@@ -589,54 +706,62 @@ function AvatarModel({
       }
     })();
     
-    // Enhanced anticipatory movement for faster response
+    // ULTRA-AGGRESSIVE anticipatory movement with PREDICTIVE ENHANCEMENT
     if (anticipation > 0) {
-      const anticipationFactor = anticipation * 0.7; // Increased from 0.5
-      baseConfig.jawOpen += anticipationFactor * 0.2; // Increased from 0.15
-      baseConfig.mouthWide += anticipationFactor * 0.15; // Increased from 0.1
-      baseConfig.jawForward += anticipationFactor * 0.1; // NEW: Anticipate jaw forward movement
+      const anticipationFactor = anticipation * 1.2; // Increased from 0.9 - maximum aggression
+      baseConfig.jawOpen += anticipationFactor * 0.3; // Increased from 0.25
+      baseConfig.mouthWide += anticipationFactor * 0.25; // Increased from 0.2
+      baseConfig.jawForward += anticipationFactor * 0.2; // Increased from 0.15
       
-      // Prepare for specific upcoming movements more aggressively
+      // ULTRA-aggressive preparation for specific movements
       if (viseme === Viseme.Mb || viseme === Viseme.Fv) {
-        baseConfig.lowerLip += anticipationFactor * 0.4; // Increased from 0.3
+        baseConfig.lowerLip += anticipationFactor * 0.6; // Increased from 0.5
+        baseConfig.upperLip += anticipationFactor * 0.3; // NEW: Upper lip preparation
       }
       if (viseme === Viseme.Oh || viseme === Viseme.Oo || viseme === Viseme.Wy) {
-        baseConfig.lipsPursed += anticipationFactor * 0.3; // Increased from 0.25
-        baseConfig.jawForward += anticipationFactor * 0.15; // Anticipate forward movement
+        baseConfig.lipsPursed += anticipationFactor * 0.5; // Increased from 0.4
+        baseConfig.jawForward += anticipationFactor * 0.25; // Increased from 0.2
+      }
+      if (viseme === Viseme.Ah || viseme === Viseme.Ae) {
+        baseConfig.jawOpen += anticipationFactor * 0.2; // Extra jaw opening preparation
+        baseConfig.mouthWide += anticipationFactor * 0.15; // Extra width preparation
+      }
+      if (viseme === Viseme.Ee) {
+        baseConfig.mouthWide += anticipationFactor * 0.3; // Extra wide preparation for "ee"
       }
     }
     
-    // Enhanced pause modifications with better jaw positioning
+    // MINIMAL pause modifications with CONTEXT AWARENESS
     if (pauseIntensity > 0) {
       const time = Date.now() * 0.001;
-      const breathingCycle = Math.sin(time * 2.2) * 0.5 + 0.5;
-      const microMovement = Math.sin(time * 6) * 0.015;
+      const breathingCycle = Math.sin(time * 2.5) * 0.5 + 0.5; // Faster breathing
+      const microMovement = Math.sin(time * 8) * 0.01; // Faster micro-movements
       
-      // More natural rest position with slight jaw drop
-      let restPosition = 0.02 + breathingCycle * 0.012 + microMovement; // Increased base rest
+      // MINIMAL rest position changes - prioritize speech speed
+      let restPosition = 0.01 + breathingCycle * 0.005 + microMovement; // Reduced base rest
       
-      // Better pause modifications
-      if (pauseIntensity < 0.2) {
-        restPosition *= 1.2; // Slightly more open for quick syllable breaks
-      } else if (pauseIntensity < 0.5) {
-        restPosition *= 1.0; // Natural for word breaks
+      // CONTEXT-AWARE pause modifications
+      if (pauseIntensity < 0.1) {
+        restPosition *= 1.02; // Minimal change for micro-pauses
+      } else if (pauseIntensity < 0.3) {
+        restPosition *= 0.99; // Tiny change for short pauses
       } else {
-        restPosition *= 0.8; // Slightly closed for sentence breaks
+        restPosition *= 0.9; // Moderate change only for longer pauses
       }
       
-      // More natural blending
-      const jawBlend = pauseIntensity * 0.7; // Increased from 0.6
-      const wideBlend = pauseIntensity * 0.5; // Increased from 0.4
-      const pursedBlend = pauseIntensity * 0.8; // Increased from 0.7
-      const lipBlend = pauseIntensity * 0.85; // Increased from 0.8
-      const forwardBlend = pauseIntensity * 0.6; // NEW: Blend jaw forward movement
+      // ULTRA-minimal blending - maximum speech priority
+      const jawBlend = pauseIntensity * 0.2; // Reduced from 0.4
+      const wideBlend = pauseIntensity * 0.15; // Reduced from 0.3
+      const pursedBlend = pauseIntensity * 0.3; // Reduced from 0.5
+      const lipBlend = pauseIntensity * 0.4; // Reduced from 0.6
+      const forwardBlend = pauseIntensity * 0.2; // Reduced from 0.4
       
       baseConfig.jawOpen = THREE.MathUtils.lerp(baseConfig.jawOpen, restPosition, jawBlend);
-      baseConfig.mouthWide = THREE.MathUtils.lerp(baseConfig.mouthWide, restPosition * 0.4, wideBlend);
+      baseConfig.mouthWide = THREE.MathUtils.lerp(baseConfig.mouthWide, restPosition * 0.2, wideBlend);
       baseConfig.lipsPursed = THREE.MathUtils.lerp(baseConfig.lipsPursed, 0, pursedBlend);
       baseConfig.lowerLip = THREE.MathUtils.lerp(baseConfig.lowerLip, 0, lipBlend);
       baseConfig.upperLip = THREE.MathUtils.lerp(baseConfig.upperLip, 0, lipBlend);
-      baseConfig.jawForward = THREE.MathUtils.lerp(baseConfig.jawForward, 0, forwardBlend); // NEW: Reset forward movement during pauses
+      baseConfig.jawForward = THREE.MathUtils.lerp(baseConfig.jawForward, 0, forwardBlend);
     }
     
     return baseConfig;
@@ -1171,48 +1296,50 @@ function AvatarModel({
               wordGapState.anticipatoryMovement
             );
             
-            // Enhanced jaw rotation with 3D movement
-            const targetRotationX = jawOpen * 0.18; // Increased from 0.12 - more pronounced opening
-            const targetRotationY = jawForward * 0.1; // NEW: Forward/backward jaw movement
-            const targetRotationZ = jawSide * 0.05; // NEW: Side-to-side jaw movement
+            // ULTRA-enhanced jaw rotation with maximum responsiveness
+            const targetRotationX = jawOpen * 0.25; // Increased from 0.22 - maximum pronunciation
+            const targetRotationY = jawForward * 0.15; // Increased from 0.12
+            const targetRotationZ = jawSide * 0.1; // Increased from 0.07
             
             const targetRotation = { x: targetRotationX, y: targetRotationY, z: targetRotationZ };
             
-            // INSTANT smoothing factors - no delay for active speech
+            // MAXIMUM-SPEED smoothing factors with CONTEXT AWARENESS
             let smoothingFactor;
-            if (wordGapState.pauseIntensity > 0.5) {
-              smoothingFactor = 0.6; // Increased from 0.5
-            } else if (wordGapState.pauseIntensity > 0.2) {
-              smoothingFactor = 0.9; // Increased from 0.85
-            } else if (wordGapState.pauseIntensity > 0.05) {
-              smoothingFactor = 0.99; // Increased from 0.98
+            const speechActivity = wordGapState.phonemeHistory.filter(p => p && p !== 'SP' && p !== 'SIL').length;
+            
+            if (speechActivity > 4) {
+              smoothingFactor = 1.0; // INSTANT for very active speech
+            } else if (speechActivity > 2) {
+              smoothingFactor = 1.0; // INSTANT for active speech
+            } else if (wordGapState.pauseIntensity > 0.3) {
+              smoothingFactor = 0.9; // Very fast even during longer pauses
+            } else if (wordGapState.pauseIntensity > 0.1) {
+              smoothingFactor = 0.98; // Nearly instant for short pauses
             } else {
               smoothingFactor = 1.0; // COMPLETELY INSTANT for active speech
             }
             
-            // Instant anticipatory response
-            if (wordGapState.anticipatoryMovement > 0.3) {
+            // ALWAYS instant for ANY anticipatory movement
+            if (wordGapState.anticipatoryMovement > 0.05) { // Reduced threshold from 0.1
               smoothingFactor = 1.0; // Always instant when anticipating
             }
             
-            // Apply enhanced jaw movements
+            // Apply with MAXIMUM responsiveness
             if (smoothingFactor >= 1.0) {
-              // Direct application for instant response
-              setCurrentJawRotation(targetRotation); // Now uses 3D object
-              jawBone.current.rotation.x = targetRotation.x; // Now uses .x property
-              jawBone.current.rotation.y = targetRotation.y; // NEW: y rotation
-              jawBone.current.rotation.z = targetRotation.z; // NEW: z rotation
+              setCurrentJawRotation(targetRotation);
+              jawBone.current.rotation.x = targetRotation.x;
+              jawBone.current.rotation.y = targetRotation.y;
+              jawBone.current.rotation.z = targetRotation.z;
             } else {
-              // Smooth interpolation for pauses
               const newRotation = {
                 x: THREE.MathUtils.lerp(currentJawRotation.x, targetRotation.x, smoothingFactor),
                 y: THREE.MathUtils.lerp(currentJawRotation.y, targetRotation.y, smoothingFactor),
                 z: THREE.MathUtils.lerp(currentJawRotation.z, targetRotation.z, smoothingFactor)
               };
-              setCurrentJawRotation(newRotation); // Now uses 3D object
-              jawBone.current.rotation.x = newRotation.x; // Now uses .x property
-              jawBone.current.rotation.y = newRotation.y; // NEW: y rotation
-              jawBone.current.rotation.z = newRotation.z; // NEW: z rotation
+              setCurrentJawRotation(newRotation);
+              jawBone.current.rotation.x = newRotation.x;
+              jawBone.current.rotation.y = newRotation.y;
+              jawBone.current.rotation.z = newRotation.z;
             }
           }
           
@@ -1224,24 +1351,30 @@ function AvatarModel({
                   if (name in child.morphTargetDictionary!) {
                     const index = child.morphTargetDictionary![name];
                     if (index !== undefined && child.morphTargetInfluences) {
-                      // INSTANT smoothing speeds - no delay for active speech
+                      // ULTRA-FAST smoothing speeds - INSTANT response for continuous speech
                       let smoothingSpeed;
                       if (wordGapState.pauseIntensity > 0.5) {
-                        smoothingSpeed = 0.6; // Fast for sentence breaks
+                        smoothingSpeed = 0.8; // Increased from 0.6 - faster even during sentence breaks
                       } else if (wordGapState.pauseIntensity > 0.2) {
-                        smoothingSpeed = 0.9; // Very fast for word breaks
+                        smoothingSpeed = 0.95; // Increased from 0.9 - very fast for word breaks
                       } else if (wordGapState.pauseIntensity > 0.05) {
-                        smoothingSpeed = 0.99; // Nearly instant for syllable breaks
+                        smoothingSpeed = 1.0; // INSTANT for syllable breaks
                       } else {
                         smoothingSpeed = 1.0; // COMPLETELY INSTANT for active speech
                       }
                       
-                      // Instant anticipatory response
-                      if (wordGapState.anticipatoryMovement > 0.3) {
+                      // ALWAYS instant for any anticipatory movement
+                      if (wordGapState.anticipatoryMovement > 0.1) { // Reduced threshold from 0.3
                         smoothingSpeed = 1.0; // Always instant when anticipating
                       }
                       
-                      // For active speech, set directly instead of lerping
+                      // FORCE instant response for longer words/sentences
+                      const isLongSpeech = wordGapState.phonemeHistory.length > 2; // Detect longer speech
+                      if (isLongSpeech) {
+                        smoothingSpeed = 1.0; // Force instant for longer speech
+                      }
+                      
+                      // Apply with INSTANT response for active speech
                       if (smoothingSpeed >= 1.0) {
                         child.morphTargetInfluences[index] = value;
                       } else {
