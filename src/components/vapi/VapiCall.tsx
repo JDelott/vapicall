@@ -280,8 +280,8 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
     <div className="w-full overflow-hidden">
       {/* Display Container */}
       <div className="relative bg-[#14152A] rounded-2xl overflow-hidden shadow-inner border border-[#2E2D47] mb-3">
-        {/* Status indicator as a subtle badge */}
-        <div className="absolute top-3 left-3 z-10 flex items-center bg-[#14152A]/70 backdrop-blur-sm py-1 px-2 rounded-full border border-[#2E2D47]">
+        {/* Status indicator moved to bottom to avoid overlapping avatar head */}
+        <div className="absolute bottom-3 left-3 z-10 flex items-center bg-[#14152A]/70 backdrop-blur-sm py-1 px-2 rounded-full border border-[#2E2D47]">
           <div className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
             isCallActive ? (isSpeaking ? 'bg-yellow-400 animate-pulse' : 'bg-[#00F5A0]') : 'bg-gray-500'
           }`}></div>
