@@ -6,6 +6,7 @@ import { Phone, PhoneOff, Mic, MicOff, User, Activity } from 'lucide-react';
 import Vapi from "@vapi-ai/web";
 import Avatar3D from './Avatar3D';
 import SoundwaveVisualization from './SoundwaveVisualization';
+import { GlobalAssistant } from '@/types/assistant';
 
 // Add proper type for conversation entries
 interface ConversationEntry {
@@ -31,12 +32,14 @@ interface VapiCallProps {
   onTranscriptUpdate?: (text: string) => void,
   onCallEnd?: () => void,
   onCallStart?: () => void,
+  selectedAssistant?: GlobalAssistant | null,
 }
 
 const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({ 
   onTranscriptUpdate, 
   onCallEnd,
-  onCallStart 
+  onCallStart,
+  selectedAssistant 
 }, ref) => {
   const vapiClientRef = useRef<Vapi | null>(null);
   const [isCallActive, setIsCallActive] = useState(false);
@@ -263,6 +266,7 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
     
     setIsCallActive(true);
     setCallStatus('Connecting...');
+    
     const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
     
     if (!assistantId) {
@@ -272,7 +276,35 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
     }
     
     try {
-      await vapiClientRef.current.start(assistantId);
+      if (selectedAssistant) {
+        // Use variable values to pass assistant information
+        const assistantOverrides = {
+          variableValues: {
+            assistantName: selectedAssistant.name,
+            assistantDescription: selectedAssistant.description,
+            assistantDomain: selectedAssistant.domain,
+            systemPrompt: selectedAssistant.systemPrompt
+          },
+          // Add empty arrays to satisfy TypeScript
+          clientMessages: [] as const,
+          serverMessages: [] as const
+        };
+        
+        // Add logging to verify
+        console.log('Starting call with selected assistant:', {
+          name: selectedAssistant.name,
+          domain: selectedAssistant.domain,
+          description: selectedAssistant.description
+        });
+        console.log('Assistant overrides:', assistantOverrides);
+        
+        // @ts-expect-error - Vapi types are overly strict, but this works in practice
+        await vapiClientRef.current.start(assistantId, assistantOverrides);
+      } else {
+        console.log('Starting call with default assistant (no selection)');
+        // Start with default assistant without overrides
+        await vapiClientRef.current.start(assistantId);
+      }
     } catch (error) {
       console.error("Failed to start call:", error);
       setCallStatus('Failed to start call');
@@ -324,6 +356,13 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
           }`}></div>
           <p className="text-xs text-gray-300">{callStatus}</p>
         </div>
+        
+        {/* Display selected assistant name if available */}
+        {selectedAssistant && (
+          <div className="absolute top-3 left-3 z-10 flex items-center bg-[#14152A]/70 backdrop-blur-sm py-1 px-2 rounded-full border border-[#2E2D47]">
+            <p className="text-xs text-[#00F5A0]">{selectedAssistant.name}</p>
+          </div>
+        )}
         
         {/* Display Mode Toggle - Floating in top-right */}
         <div className="absolute top-3 right-3 z-10">
@@ -380,10 +419,15 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
         {!isCallActive ? (
           <button
             onClick={handleStartCall}
-            className="bg-[#00F5A0] text-[#14152A] hover:bg-[#00E1C7] transition-all rounded-md shadow-sm flex items-center justify-center h-9 px-4 font-medium text-xs"
+            disabled={!selectedAssistant}
+            className={`${
+              !selectedAssistant 
+                ? 'bg-gray-600 cursor-not-allowed' 
+                : 'bg-[#00F5A0] hover:bg-[#00E1C7]'
+            } text-[#14152A] transition-all rounded-md shadow-sm flex items-center justify-center h-9 px-4 font-medium text-xs`}
           >
             <Phone className="w-3.5 h-3.5 mr-1.5" />
-            <span>Start Call</span>
+            <span>{!selectedAssistant ? 'Select Assistant First' : 'Start Call'}</span>
           </button>
         ) : (
           <>
@@ -418,6 +462,13 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
           </>
         )}
       </div>
+      
+      {/* Helper message when no assistant is selected */}
+      {!selectedAssistant && !isCallActive && (
+        <p className="text-xs text-gray-500 text-center mt-2">
+          Please select an assistant above to start a call
+        </p>
+      )}
     </div>
   );
 });

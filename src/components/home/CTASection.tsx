@@ -5,6 +5,8 @@ import ImageUploader from "@/components/vapi/ImageUploader";
 import VapiCall, { VapiCallRefType } from "@/components/vapi/VapiCall";
 import Button from "@/components/ui/Button";
 import TextUploader from "@/components/vapi/TextUploader";
+import AssistantSelector from "@/components/vapi/AssistantSelector";
+import { useAssistants } from "@/hooks/useAssistants";
 
 export default function CTASection() {
   const [showTranscript, setShowTranscript] = useState(false);
@@ -23,6 +25,9 @@ export default function CTASection() {
   const [isCallActive, setIsCallActive] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const durationTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Use the assistants hook
+  const { assistants, selectedAssistant, selectAssistant, loading: assistantsLoading } = useAssistants();
   
   // Format duration as mm:ss
   const formatDuration = (seconds: number): string => {
@@ -236,11 +241,22 @@ export default function CTASection() {
             </div>
             
             <div className="p-4">
+              {/* Assistant Selector */}
+              <div className="mb-4">
+                <AssistantSelector
+                  assistants={assistants}
+                  selectedAssistant={selectedAssistant}
+                  onSelectAssistant={selectAssistant}
+                  disabled={isCallActive || assistantsLoading}
+                />
+              </div>
+              
               <VapiCall 
                 ref={vapiCallRef}
                 onTranscriptUpdate={handleTranscriptUpdate} 
                 onCallEnd={handleCallEnd}
                 onCallStart={handleCallStart}
+                selectedAssistant={selectedAssistant}
               />
               
               {/* Text Processing Toggle Button */}
