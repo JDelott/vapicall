@@ -284,10 +284,7 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
             assistantDescription: selectedAssistant.description,
             assistantDomain: selectedAssistant.domain,
             systemPrompt: selectedAssistant.systemPrompt
-          },
-          // Add empty arrays to satisfy TypeScript
-          clientMessages: [] as const,
-          serverMessages: [] as const
+          }
         };
         
         // Add logging to verify
