@@ -4,10 +4,19 @@ export async function POST(request: NextRequest) {
   try {
     const { transcript } = await request.json();
     
+    console.log('Summarize API called with transcript length:', transcript?.length || 0);
+    
     if (!transcript) {
       return NextResponse.json(
         { error: 'No transcript provided' },
         { status: 400 }
+      );
+    }
+
+    // Check if transcript is meaningful
+    if (transcript.trim().length < 10) {
+      return NextResponse.json(
+        { summary: 'The conversation was too brief to generate a meaningful summary.' }
       );
     }
 
@@ -41,7 +50,8 @@ export async function POST(request: NextRequest) {
             Format it with sections like "Main Topics", "Key Points", and "Conclusion".
             Keep your summary factual and based only on what was discussed in the transcript.
             
-            TRANSCRIPT:
+            Here is the complete conversation transcript:
+            
             ${transcript}`
           }
         ]

@@ -114,43 +114,6 @@ export default function CTASection() {
     }
   };
   
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [isSendingSMS, setIsSendingSMS] = useState(false);
-  const [smsStatus, setSmsStatus] = useState<string | null>(null);
-  
-  const handleSendSummaryViaSMS = async () => {
-    if (!summary || !phoneNumber) {
-      setSmsStatus("Please provide a phone number and ensure there is a summary.");
-      return;
-    }
-
-    setIsSendingSMS(true);
-    setSmsStatus(null);
-
-    try {
-      const response = await fetch('/api/send-summary', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ phoneNumber, summary }),
-      });
-
-      const data = await response.json();
-      
-      if (response.ok) {
-        setSmsStatus("Summary sent to your phone!");
-        setPhoneNumber("");
-      } else {
-        setSmsStatus(`Error: ${data.error || 'Failed to send SMS'}`);
-      }
-    } catch {
-      setSmsStatus("Error connecting to SMS service");
-    } finally {
-      setIsSendingSMS(false);
-    }
-  };
-  
   // Handle text content from TextUploader
   const handleTextContent = (text: string) => {
     setTextContent(text || null);
@@ -492,37 +455,6 @@ export default function CTASection() {
                         </div>
                       ) : (
                         <p className="text-xs text-gray-400">No conversation recorded yet.</p>
-                      )}
-                    </div>
-                  )}
-                  
-                  {summary && (
-                    <div className="mt-4 border-t border-[#2E2D47] pt-3">
-                      <p className="text-xs font-medium text-gray-300 mb-2">Send summary to your phone:</p>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="tel"
-                          placeholder="Enter phone number"
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
-                          className="p-2 bg-[#14152A] border border-[#2E2D47] rounded-md text-sm text-gray-300 flex-grow"
-                        />
-                        <button
-                          onClick={handleSendSummaryViaSMS}
-                          disabled={isSendingSMS || !phoneNumber || !summary}
-                          className={`py-2 px-3 text-xs rounded-md transition-colors ${
-                            isSendingSMS || !phoneNumber || !summary
-                              ? 'bg-[#14152A] text-gray-500 border border-[#2E2D47] cursor-not-allowed'
-                              : 'bg-[#14152A] text-[#00F5A0] border border-[#00F5A0] hover:bg-[#00F5A0]/10'
-                          }`}
-                        >
-                          {isSendingSMS ? 'Sending...' : 'Send'}
-                        </button>
-                      </div>
-                      {smsStatus && (
-                        <p className={`text-xs mt-2 ${smsStatus?.includes('Error') ? 'text-red-400' : 'text-[#00F5A0]'}`}>
-                          {smsStatus}
-                        </p>
                       )}
                     </div>
                   )}
