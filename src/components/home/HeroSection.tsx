@@ -32,24 +32,24 @@ function MobileHeroSection() {
         
         {/* Main Content - angular design */}
         <div className="p-6 border-l-4 border-[#00F5A0] rounded-r-md mb-8 relative overflow-hidden">
-          {/* Headline - ultra simple version */}
+          {/* Headline - back to VapiCall */}
           <h1 className="text-5xl font-bold leading-[1.15] mb-5">
             <span className="block mb-1 text-white relative z-10">
               VapiCall
             </span>
           </h1>
           
-          {/* Subheading */}
+          {/* Simplified subheading */}
           <p className="text-white/90 text-md mb-6 leading-relaxed">
-            AI assistance through phone calls, plus a powerful dashboard for contextual conversations.
+            Call for quick help or use our dashboard for deeper conversations.
           </p>
           
-          {/* Feature points - bold style with matching colors */}
+          {/* Simplified feature points */}
           <div className="space-y-3.5 mb-6">
             {[
-              "Call for instant AI assistance anytime",
-              "Use dashboard for contextual conversations",
-              "Upload content & choose specialized assistants"
+              "Instant AI assistance via phone",
+              "Upload content for specialized help",
+              "No apps needed - just call or visit dashboard"
             ].map((feature, i) => (
               <div key={i} className="flex items-center">
                 <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-[#14152A] border border-[#00F5A0]/50 rounded-sm mr-3">
@@ -96,97 +96,53 @@ function DesktopHeroSection() {
             </div>
             
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-4 sm:mb-6 md:mb-8" style={{textShadow: '0 0 20px rgba(0, 0, 0, 0.5)'}}>
-              <span className="block relative z-10">AI Assistant</span> 
+              <span className="block relative z-10">Quick Help</span> 
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00F5A0] to-[#00F5A0] relative">
-                Phone & Dashboard
+                or Deep Conversations
                 <span className="absolute -inset-1 bg-gradient-to-r from-[#00F5A0]/5 to-[#B83280]/5 blur-xl opacity-30 -z-10"></span>
               </span>
             </h1>
             
-            {/* New structured content with subtle electric styling */}
-            <div className="space-y-3 sm:space-y-6 md:space-y-8 mb-6 sm:mb-8 md:mb-10 relative">
-              {/* Electric pulse effect */}
-              <div className="absolute -inset-2 bg-gradient-to-r from-[#00F5A0]/5 to-[#B83280]/5 rounded-lg blur-xl opacity-20 animate-pulse"></div>
-              
+            {/* Simplified content without cards */}
+            <div className="space-y-4 sm:space-y-6 md:space-y-8 mb-6 sm:mb-8 md:mb-10">
               {/* Tagline */}
-              <div className="bg-[#14152A]/70 backdrop-blur-sm rounded-lg p-3 sm:p-4 border-l-4 border-[#00F5A0] relative overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.3)]">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#00F5A0]/10 to-transparent rounded-bl-full"></div>
-                <p className="text-sm sm:text-base md:text-lg text-white font-medium relative z-10">
-                  Call for instant AI help, or use our dashboard for contextual conversations
-                </p>
-              </div>
+              <p className="text-sm sm:text-base md:text-lg text-white/90 font-medium">
+                Two powerful ways to access AI assistance - choose what fits your needs
+              </p>
               
-              {/* Two-column feature layout */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {/* Phone Hotline */}
-                <div className="bg-[#14152A]/70 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-[#2E2D47]/70 relative overflow-hidden group transition-all duration-300 hover:bg-[#1C1D2B]/80 shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="absolute bottom-0 left-0 h-[2px] w-full bg-[#00F5A0]/30 opacity-20 group-hover:opacity-70 transition-all duration-500"></div>
-                  
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-[#0C0D1D] border border-[#2E2D47] text-[#00F5A0] mr-2 sm:mr-3 shadow-lg group-hover:border-[#00F5A0]/50 transition-all duration-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                    </div>
-                    <div>
-                      <h3 className="text-white text-xs sm:text-sm md:text-base font-medium">Phone Hotline</h3>
-                      <p className="text-gray-400 text-[10px] sm:text-xs md:text-sm mt-0.5">General AI assistant via phone call</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Dashboard */}
-                <div className="bg-[#14152A]/70 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-[#2E2D47]/70 relative overflow-hidden group transition-all duration-300 hover:bg-[#1C1D2B]/80 shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="absolute bottom-0 left-0 h-[2px] w-full bg-[#B83280]/30 opacity-20 group-hover:opacity-70 transition-all duration-500"></div>
-                  
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-[#0C0D1D] border border-[#2E2D47] text-[#B83280] mr-2 sm:mr-3 shadow-lg group-hover:border-[#B83280]/50 transition-all duration-300">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><path d="m9 1 0 6"></path><path d="m15 1 0 6"></path><path d="m9 21 0-6"></path><path d="m15 21 0-6"></path><path d="m1 9 6 0"></path><path d="m1 15 6 0"></path><path d="m17 9 6 0"></path><path d="m17 15 6 0"></path></svg>
-                    </div>
-                    <div>
-                      <h3 className="text-white text-xs sm:text-sm md:text-base font-medium">Smart Dashboard</h3>
-                      <p className="text-gray-400 text-[10px] sm:text-xs md:text-sm mt-0.5">Upload context & choose specialists</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional features */}
-              <div className="space-y-2 sm:space-y-3">
+              {/* Simple feature list */}
+              <div className="space-y-3 sm:space-y-4">
                 {[
                   {
-                    icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>,
-                    title: "Instant access",
-                    desc: "Call anytime for immediate AI assistance"
+                    title: "Phone Hotline",
+                    desc: "Dial for instant general assistance - no apps or setup required"
                   },
                   {
-                    icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>,
-                    title: "Enhanced conversations",
-                    desc: "Upload text & get specialized AI responses"
+                    title: "Smart Dashboard", 
+                    desc: "Upload documents & images, choose specialized assistants for contextual conversations"
                   }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-start p-2 sm:p-3 bg-[#14152A]/50 backdrop-blur-sm rounded-lg border border-[#2E2D47]/50 relative overflow-hidden group transition-all duration-300 hover:bg-[#1C1D2B]/60 shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    
-                    <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-md bg-[#0C0D1D] border border-[#2E2D47] text-[#00F5A0] mr-2 sm:mr-3 shadow-sm group-hover:border-[#00F5A0]/50 transition-all duration-300">
-                      {item.icon}
+                  <div key={i} className="flex items-start">
+                    <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-[#14152A] border border-[#00F5A0]/50 rounded-sm mr-3 mt-0.5">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#00F5A0]" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12L10 17L19 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                     </div>
                     <div>
-                      <h4 className="text-white text-xs sm:text-sm font-medium">{item.title}</h4>
-                      <p className="text-gray-400 text-[10px] sm:text-xs mt-0.5">{item.desc}</p>
+                      <h4 className="text-white text-sm sm:text-base font-medium">{item.title}</h4>
+                      <p className="text-gray-400 text-xs sm:text-sm mt-0.5">{item.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
               
-              {/* CTA with styling that matches the cards but with pink accent */}
+              {/* CTA with clean styling */}
               <div className="pt-2 sm:pt-4">
                 <a 
                   href="tel:+14125208354" 
                   className="flex items-center justify-center w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-3 bg-[#14152A]/70 backdrop-blur-sm rounded-lg border border-[#2E2D47]/70 text-white font-medium transition-all duration-300 shadow-[0_4px_12px_rgba(0,0,0,0.25)] hover:shadow-[0_4px_18px_rgba(184,50,128,0.2)] relative overflow-hidden group text-sm sm:text-base"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#B83280]/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-[#00F5A0]/40 to-[#B83280]/40 opacity-20 group-hover:opacity-70 transition-all duration-500"></div>
+                  <div className="absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-[#00F5A0] to-[#B83280] opacity-20 group-hover:opacity-70 transition-all duration-500"></div>
                   
                   <div className="flex items-center">
                     <span className="text-[#B83280] mr-2">
