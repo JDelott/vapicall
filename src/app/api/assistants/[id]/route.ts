@@ -4,11 +4,12 @@ import { AssistantStore } from '@/lib/assistantStore';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const store = AssistantStore.getInstance();
-    const assistant = store.getById(params.id);
+    const assistant = store.getById(id);
     
     if (!assistant) {
       return NextResponse.json(
@@ -29,13 +30,14 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body: UpdateGlobalAssistantRequest = await request.json();
     
     const store = AssistantStore.getInstance();
-    const updatedAssistant = store.update(params.id, body);
+    const updatedAssistant = store.update(id, body);
     
     if (!updatedAssistant) {
       return NextResponse.json(
@@ -56,11 +58,12 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const store = AssistantStore.getInstance();
-    const success = store.deactivate(params.id);
+    const success = store.deactivate(id);
     
     if (!success) {
       return NextResponse.json(
