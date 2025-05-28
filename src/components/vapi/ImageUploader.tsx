@@ -124,46 +124,58 @@ export default function ImageUploader({ onDescriptionGenerated }: ImageUploaderP
                   <p className="text-red-400 text-xs mt-1">{error}</p>
                 )}
               </div>
-              <div className="flex gap-2 flex-wrap">
-                {!aiDescription && (
-                  <button
-                    onClick={() => setShowInstructions(!showInstructions)}
-                    className="text-xs px-3 py-1.5 bg-[#1C1D2B] text-gray-300 hover:text-[#00F5A0] hover:bg-[#1C1D2B]/80 border border-[#2E2D47] hover:border-[#00F5A0]/30 rounded-md transition-all duration-200 flex items-center"
-                  >
-                    <Settings className="w-3 h-3 mr-1.5" />
-                    {showInstructions ? 'Hide' : 'Setup'}
-                  </button>
-                )}
-                {aiDescription && (
-                  <button
-                    onClick={handleReprocess}
-                    className="text-xs px-3 py-1.5 bg-[#1C1D2B] text-gray-300 hover:text-[#00F5A0] hover:bg-[#1C1D2B]/80 border border-[#2E2D47] hover:border-[#00F5A0]/30 rounded-md transition-all duration-200 flex items-center"
-                  >
-                    <Settings className="w-3 h-3 mr-1.5" />
-                    Reprocess
-                  </button>
-                )}
-                {!isProcessing && !aiDescription && (
-                  <button
-                    onClick={handleProcessImage}
-                    className="text-xs px-3 py-1.5 bg-[#00F5A0] text-[#14152A] hover:bg-[#00E1C7] rounded-md transition-all duration-200 flex items-center font-medium shadow-sm"
-                  >
-                    <Sparkles className="w-3 h-3 mr-1.5" />
-                    Process
-                  </button>
-                )}
-                {isProcessing && (
-                  <button
-                    disabled
-                    className="text-xs px-3 py-1.5 bg-[#00F5A0]/50 text-[#14152A] cursor-not-allowed rounded-md flex items-center"
-                  >
-                    <div className="w-3 h-3 mr-1.5 border border-[#14152A] border-t-transparent rounded-full animate-spin"></div>
-                    Processing...
-                  </button>
-                )}
+              
+              {/* Button container with better mobile layout */}
+              <div className="flex items-center gap-2">
+                {/* Left side buttons - fixed width container */}
+                <div className="flex gap-2 flex-1 min-w-0">
+                  {!aiDescription && !isProcessing && (
+                    <>
+                      <button
+                        onClick={() => setShowInstructions(!showInstructions)}
+                        className="text-xs px-2.5 py-1.5 bg-[#1C1D2B] text-gray-300 hover:text-[#00F5A0] hover:bg-[#1C1D2B]/80 border border-[#2E2D47] hover:border-[#00F5A0]/30 rounded-md transition-all duration-200 flex items-center whitespace-nowrap"
+                      >
+                        <Settings className="w-3 h-3 mr-1" />
+                        {showInstructions ? 'Hide' : 'Setup'}
+                      </button>
+                      <button
+                        onClick={handleProcessImage}
+                        className="text-xs px-2.5 py-1.5 bg-[#00F5A0] text-[#14152A] hover:bg-[#00E1C7] rounded-md transition-all duration-200 flex items-center font-medium shadow-sm whitespace-nowrap"
+                      >
+                        <Sparkles className="w-3 h-3 mr-1" />
+                        Process
+                      </button>
+                    </>
+                  )}
+                  
+                  {isProcessing && (
+                    <div className="flex items-center gap-2 w-full">
+                      <button
+                        disabled
+                        className="text-xs px-2.5 py-1.5 bg-[#00F5A0]/50 text-[#14152A] cursor-not-allowed rounded-md flex items-center whitespace-nowrap"
+                      >
+                        <div className="w-3 h-3 mr-1 border border-[#14152A] border-t-transparent rounded-full animate-spin"></div>
+                        Processing...
+                      </button>
+                    </div>
+                  )}
+                  
+                  {aiDescription && (
+                    <button
+                      onClick={handleReprocess}
+                      className="text-xs px-2.5 py-1.5 bg-[#1C1D2B] text-gray-300 hover:text-[#00F5A0] hover:bg-[#1C1D2B]/80 border border-[#2E2D47] hover:border-[#00F5A0]/30 rounded-md transition-all duration-200 flex items-center whitespace-nowrap"
+                    >
+                      <Settings className="w-3 h-3 mr-1" />
+                      Reprocess
+                    </button>
+                  )}
+                </div>
+                
+                {/* X button - always positioned consistently */}
                 <button
                   onClick={handleClearImage}
-                  className="text-xs p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-all duration-200 flex items-center"
+                  className="text-xs p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-all duration-200 flex items-center flex-shrink-0 ml-auto"
+                  title="Remove image"
                 >
                   <X className="w-3 h-3" />
                 </button>
