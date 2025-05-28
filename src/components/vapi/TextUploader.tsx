@@ -91,6 +91,20 @@ export default function TextUploader({ onTextReady }: TextUploaderProps) {
           value={textContent}
           onChange={handleTextChange}
           className="w-full h-full bg-transparent border-none text-xs text-gray-300 placeholder-gray-500 focus:outline-none resize-none"
+          style={{
+            fontSize: '16px', // Prevents zoom on iOS
+            WebkitAppearance: 'none',
+            WebkitTapHighlightColor: 'transparent'
+          }}
+          onBlur={() => {
+            // Force viewport reset on blur for mobile
+            if (window.innerWidth <= 768) {
+              const viewport = document.querySelector('meta[name=viewport]');
+              if (viewport) {
+                viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+              }
+            }
+          }}
         />
       </div>
 

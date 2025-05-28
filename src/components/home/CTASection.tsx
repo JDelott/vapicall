@@ -346,8 +346,10 @@ export default function CTASection() {
                         <div className="h-full flex flex-col">
                           <div className="p-3 bg-[#14152A] border border-[#2E2D47] rounded-md mb-2 flex-grow overflow-hidden">
                             <h4 className="text-xs font-medium text-[#00F5A0] mb-1">Image Analysis</h4>
-                            <div className="text-xs text-gray-300 overflow-y-auto pr-1 h-[115px]">
-                              {imageDescription}
+                            <div className="text-xs text-gray-300 overflow-y-auto pr-2 h-[100px]">
+                              <div className="pb-12">
+                                {imageDescription}
+                              </div>
                             </div>
                           </div>
                           

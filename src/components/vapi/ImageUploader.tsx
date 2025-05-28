@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Upload, X, Settings, Sparkles } from 'lucide-react';
-import Button from '@/components/ui/Button';
 import { processImageWithClaude } from '@/utils/imageProcessor';
 
 interface ImageUploaderProps {
@@ -125,64 +124,76 @@ export default function ImageUploader({ onDescriptionGenerated }: ImageUploaderP
                   <p className="text-red-400 text-xs mt-1">{error}</p>
                 )}
               </div>
-              <div className="flex gap-1 flex-wrap">
+              <div className="flex gap-2 flex-wrap">
                 {!aiDescription && (
-                  <Button
+                  <button
                     onClick={() => setShowInstructions(!showInstructions)}
-                    variant="outline"
-                    className="text-xs py-1 px-2 bg-transparent border border-[#2E2D47] text-gray-300 hover:bg-[#1C1D2B] hover:text-white transition-colors"
+                    className="text-xs px-3 py-1.5 bg-[#1C1D2B] text-gray-300 hover:text-[#00F5A0] hover:bg-[#1C1D2B]/80 border border-[#2E2D47] hover:border-[#00F5A0]/30 rounded-md transition-all duration-200 flex items-center"
                   >
-                    <Settings className="w-3 h-3 mr-1" />
+                    <Settings className="w-3 h-3 mr-1.5" />
                     {showInstructions ? 'Hide' : 'Setup'}
-                  </Button>
+                  </button>
                 )}
                 {aiDescription && (
-                  <Button
+                  <button
                     onClick={handleReprocess}
-                    variant="outline"
-                    className="text-xs py-1 px-2 bg-transparent border border-[#2E2D47] text-gray-300 hover:bg-[#1C1D2B] hover:text-white transition-colors"
+                    className="text-xs px-3 py-1.5 bg-[#1C1D2B] text-gray-300 hover:text-[#00F5A0] hover:bg-[#1C1D2B]/80 border border-[#2E2D47] hover:border-[#00F5A0]/30 rounded-md transition-all duration-200 flex items-center"
                   >
-                    <Settings className="w-3 h-3 mr-1" />
+                    <Settings className="w-3 h-3 mr-1.5" />
                     Reprocess
-                  </Button>
+                  </button>
                 )}
                 {!isProcessing && !aiDescription && (
-                  <Button
+                  <button
                     onClick={handleProcessImage}
-                    className="text-xs py-1 px-2 bg-[#00F5A0] text-[#14152A] hover:bg-[#00F5A0]/90 transition-colors border-none"
+                    className="text-xs px-3 py-1.5 bg-[#00F5A0] text-[#14152A] hover:bg-[#00E1C7] rounded-md transition-all duration-200 flex items-center font-medium shadow-sm"
                   >
-                    <Sparkles className="w-3 h-3 mr-1" />
+                    <Sparkles className="w-3 h-3 mr-1.5" />
                     Process
-                  </Button>
+                  </button>
                 )}
                 {isProcessing && (
-                  <Button
+                  <button
                     disabled
-                    className="text-xs py-1 px-2 bg-[#00F5A0]/50 text-[#14152A] cursor-not-allowed border-none"
+                    className="text-xs px-3 py-1.5 bg-[#00F5A0]/50 text-[#14152A] cursor-not-allowed rounded-md flex items-center"
                   >
+                    <div className="w-3 h-3 mr-1.5 border border-[#14152A] border-t-transparent rounded-full animate-spin"></div>
                     Processing...
-                  </Button>
+                  </button>
                 )}
-                <Button
+                <button
                   onClick={handleClearImage}
-                  variant="outline"
-                  className="text-xs py-1 px-2 bg-transparent border border-[#2E2D47] text-gray-300 hover:bg-[#1C1D2B] hover:text-white transition-colors"
+                  className="text-xs p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-all duration-200 flex items-center"
                 >
                   <X className="w-3 h-3" />
-                </Button>
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Instructions input section - fills remaining space when shown */}
+          {/* Instructions input section - more space from bottom border */}
           {showInstructions && !aiDescription && (
-            <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-md p-3 flex-grow overflow-hidden">
-              <h4 className="text-xs font-medium text-[#00F5A0] mb-2">Processing Instructions</h4>
+            <div className="bg-[#1C1D2B] border border-[#2E2D47] rounded-md p-4 pb-6 flex-grow overflow-hidden">
+              <h4 className="text-xs font-medium text-[#00F5A0] mb-3">Processing Instructions</h4>
               <textarea
                 placeholder="What do you want to know about this image?"
                 value={customInstructions}
                 onChange={handleInstructionsChange}
-                className="w-full h-16 bg-[#14152A] border border-[#2E2D47] rounded-md px-2 py-1 text-xs text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#00F5A0] focus:border-[#00F5A0] resize-none"
+                className="w-full h-12 bg-[#14152A] border border-[#2E2D47] rounded-md px-3 py-2 text-xs text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#00F5A0] focus:border-[#00F5A0] resize-none"
+                style={{
+                  fontSize: '16px', // Prevents zoom on iOS
+                  WebkitAppearance: 'none',
+                  WebkitTapHighlightColor: 'transparent'
+                }}
+                onBlur={() => {
+                  // Force viewport reset on blur for mobile
+                  if (window.innerWidth <= 768) {
+                    const viewport = document.querySelector('meta[name=viewport]');
+                    if (viewport) {
+                      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+                    }
+                  }
+                }}
               />
             </div>
           )}
