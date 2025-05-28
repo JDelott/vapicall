@@ -4,8 +4,6 @@ export async function POST(request: NextRequest) {
   try {
     const { transcript } = await request.json();
     
-    console.log('Summarize API called with transcript length:', transcript?.length || 0);
-    
     if (!transcript) {
       return NextResponse.json(
         { error: 'No transcript provided' },
@@ -29,8 +27,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-
-    console.log('Server: Calling Claude API');
     
     // Call the Anthropic Claude API
     const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
@@ -68,7 +64,6 @@ export async function POST(request: NextRequest) {
     }
     
     const claudeData = await claudeResponse.json();
-    console.log('Server: Claude API call successful');
     
     if (!claudeData.content || !claudeData.content[0] || !claudeData.content[0].text) {
       console.error('Claude response missing content:', claudeData);

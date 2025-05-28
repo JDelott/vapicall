@@ -24,24 +24,17 @@ export default function useTranscriptSummary() {
         // Store the transcript we're working with
         finalTranscriptRef.current = transcript;
         
-        // Add debugging
-        console.log('Starting summary generation...');
-        console.log('Transcript length:', transcript.length);
-        console.log('Transcript preview:', transcript.substring(0, 200) + '...');
-        
         setIsSummarizing(true);
         
         try {
           // Check if transcript has meaningful content
           if (transcript.trim().length < 10) {
-            console.warn('Transcript too short for meaningful summary');
             setSummary('The conversation was too brief to generate a meaningful summary.');
             return;
           }
           
           // Get summary from Claude
           const result = await generateSummaryWithClaude(finalTranscriptRef.current);
-          console.log('Summary generated successfully');
           setSummary(result);
         } catch (error) {
           console.error('Error generating summary:', error);
@@ -58,7 +51,6 @@ export default function useTranscriptSummary() {
   // Update transcript only if call hasn't ended
   const updateTranscript = (newTranscript: string) => {
     if (!callEnded) {
-      console.log('Transcript updated:', newTranscript.length, 'characters');
       setTranscript(newTranscript);
     }
   };
@@ -66,7 +58,6 @@ export default function useTranscriptSummary() {
   // Mark call as ended, which triggers summary generation
   const endCall = () => {
     if (!callEnded) {
-      console.log('Call ended, final transcript length:', transcript.length);
       // Add a small delay to ensure we have the final transcript
       setTimeout(() => {
         setCallEnded(true);
@@ -76,7 +67,6 @@ export default function useTranscriptSummary() {
 
   // Reset everything for a new call
   const reset = () => {
-    console.log('Resetting transcript service for new call');
     setCallEnded(false);
     setSummary('');
     setTranscript('');

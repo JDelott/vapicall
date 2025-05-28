@@ -1,8 +1,6 @@
 // Client-side utility for calling our API route
 export async function generateSummaryWithClaude(transcript: string): Promise<string> {
   try {
-    console.log('Calling summary API with transcript length:', transcript.length);
-    
     const response = await fetch('/api/summarize', {
       method: 'POST',
       headers: {
@@ -18,10 +16,8 @@ export async function generateSummaryWithClaude(transcript: string): Promise<str
     }
     
     const data = await response.json();
-    console.log('Summary API response received');
     
     if (!data.summary) {
-      console.warn('No summary in API response');
       return 'No summary was generated';
     }
     
