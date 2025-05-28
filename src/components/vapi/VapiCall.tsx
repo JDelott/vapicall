@@ -23,6 +23,7 @@ interface VapiMessage {
 // Add a ref type for external access to component methods
 export interface VapiCallRefType {
   injectImageDescription: (description: string) => Promise<void>;
+  injectTextMessage: (text: string) => Promise<void>;
   isCallActive: () => boolean;
 }
 
@@ -84,6 +85,42 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
         }, 500);
       } catch (error) {
         console.error('Failed to inject image description:', error);
+      }
+    },
+    injectTextMessage: async (text: string) => {
+      if (!text || !vapiClientRef.current || !isCallActive) {
+        return;
+      }
+      
+      try {
+        // Use add-message to inject user text
+        vapiClientRef.current.send({
+          type: "add-message" as const,
+          message: {
+            role: "user",
+            content: text
+          }
+        });
+        
+        // Make sure microphone is unmuted
+        setTimeout(() => {
+          try {
+            if (vapiClientRef.current) {
+              // Force reconnect the microphone
+              vapiClientRef.current.setMuted(true);
+              setTimeout(() => {
+                if (vapiClientRef.current) {
+                  vapiClientRef.current.setMuted(false);
+                  setIsMuted(false);
+                }
+              }, 100);
+            }
+          } catch (error) {
+            console.error("Error restoring microphone:", error);
+          }
+        }, 500);
+      } catch (error) {
+        console.error('Failed to inject text message:', error);
       }
     },
     isCallActive: () => isCallActive

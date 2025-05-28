@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { image } = await request.json();
+    const { image, customInstructions } = await request.json();
     
     if (!image) {
       return NextResponse.json(
@@ -35,6 +35,15 @@ export async function POST(request: NextRequest) {
     const mediaType = mediaTypeMatch[1];
     const base64Data = image.replace(/^data:image\/\w+;base64,/, '');
     
+    // Create the prompt based on whether custom instructions are provided
+    let promptText = 'Please describe this image in detail. Include all important visual elements, objects, people, settings, colors, and text you can see.';
+    
+    if (customInstructions && customInstructions.trim()) {
+      promptText = `${customInstructions.trim()}
+
+Please analyze this image with the above context in mind. Provide a detailed and relevant response based on what you see in the image.`;
+    }
+    
     // Call the Anthropic Claude API with the image
     const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -52,7 +61,7 @@ export async function POST(request: NextRequest) {
             content: [
               {
                 type: 'text',
-                text: 'Please describe this image in detail. Include all important visual elements, objects, people, settings, colors, and text you can see.'
+                text: promptText
               },
               {
                 type: 'image',

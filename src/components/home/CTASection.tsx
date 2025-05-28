@@ -1,18 +1,22 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronUp, Copy, Check, Clock, MessageSquare, Image, Send, Activity, VolumeX } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Check, Clock, MessageSquare, Image, Send, Activity, VolumeX, FileText } from "lucide-react";
 import useTranscriptSummary from "@/services/vapiTranscriptService";
 import ImageUploader from "@/components/vapi/ImageUploader";
 import VapiCall, { VapiCallRefType } from "@/components/vapi/VapiCall";
 import Button from "@/components/ui/Button";
+import TextUploader from "@/components/vapi/TextUploader";
 
 export default function CTASection() {
   const [showTranscript, setShowTranscript] = useState(false);
   const [showImageProcessing, setShowImageProcessing] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [showTextProcessing, setShowTextProcessing] = useState(false);
   const { transcript, summary, updateTranscript, endCall, isSummarizing, reset } = useTranscriptSummary();
   const [copied, setCopied] = useState(false);
   const [imageDescription, setImageDescription] = useState<string | null>(null);
   const [isInjectingDescription, setIsInjectingDescription] = useState(false);
+  const [textContent, setTextContent] = useState<string | null>(null);
+  const [isInjectingText, setIsInjectingText] = useState(false);
   const vapiCallRef = useRef<VapiCallRefType>(null);
   
   // Add state for call status and duration
@@ -142,6 +146,34 @@ export default function CTASection() {
     }
   };
   
+  // Handle text content from TextUploader
+  const handleTextContent = (text: string) => {
+    setTextContent(text || null);
+  };
+  
+  // Function to send text content to the conversation
+  const handleSendTextToConversation = async () => {
+    if (!textContent || !vapiCallRef.current) {
+      return;
+    }
+    
+    setIsInjectingText(true);
+    
+    if (!vapiCallRef.current.isCallActive()) {
+      setIsInjectingText(false);
+      return;
+    }
+    
+    try {
+      await vapiCallRef.current.injectTextMessage(textContent);
+      setTextContent(null);
+    } catch (error) {
+      console.error("Error sending text to conversation:", error);
+    } finally {
+      setIsInjectingText(false);
+    }
+  };
+  
   return (
     <section className="w-full py-20 sm:py-28 md:py-32 relative z-10">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -211,6 +243,76 @@ export default function CTASection() {
                 onCallStart={handleCallStart}
               />
               
+              {/* Text Processing Toggle Button */}
+              <div className="mt-4 border-t border-[#2E2D47] pt-3">
+                <button
+                  onClick={() => setShowTextProcessing(!showTextProcessing)}
+                  className="w-full flex items-center justify-between text-sm text-gray-300 hover:text-[#00F5A0] transition-colors p-2 rounded-md hover:bg-[#1C1D2B]"
+                >
+                  <span className="flex items-center">
+                    <FileText className="w-4 h-4 mr-2 text-[#00F5A0]" aria-hidden="true" />
+                    Text Upload
+                  </span>
+                  {showTextProcessing ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              
+              {/* Collapsible Text Processing Section */}
+              {showTextProcessing && (
+                <div className="mt-3 p-4 bg-[#1C1D2B] rounded-lg border border-[#2E2D47] transition-all duration-300 ease-in-out">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Left side - Text Uploader - fixed height */}
+                    <div className="h-[180px] flex items-center">
+                      <TextUploader onTextReady={handleTextContent} />
+                    </div>
+                    
+                    {/* Right side - Text Content & Controls - fixed height */}
+                    <div className="h-[180px] flex flex-col">
+                      {textContent ? (
+                        <div className="h-full flex flex-col">
+                          <div className="p-3 bg-[#14152A] border border-[#2E2D47] rounded-md mb-2 flex-grow overflow-hidden">
+                            <h4 className="text-xs font-medium text-[#00F5A0] mb-1">Text Content</h4>
+                            <div className="text-xs text-gray-300 overflow-y-auto pr-1 h-[115px]">
+                              {textContent}
+                            </div>
+                          </div>
+                          
+                          <div className="flex flex-col space-y-1">
+                            <Button
+                              onClick={handleSendTextToConversation}
+                              disabled={isInjectingText || !vapiCallRef.current?.isCallActive()}
+                              className={`w-full ${
+                                isInjectingText || !vapiCallRef.current?.isCallActive()
+                                  ? 'bg-[#14152A] text-gray-500 border border-[#2E2D47] cursor-not-allowed'
+                                  : 'bg-[#14152A] text-[#00F5A0] border border-[#00F5A0] hover:bg-[#00F5A0]/10'
+                              } flex items-center justify-center py-1 text-xs transition-colors`}
+                            >
+                              <Send className="w-2.5 h-2.5 mr-1" />
+                              {isInjectingText ? 'Sending...' : 'Send to Conversation'}
+                            </Button>
+                            {!vapiCallRef.current?.isCallActive() && (
+                              <p className="text-[10px] text-gray-500 text-center italic">
+                                Start a call first to send
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center h-full p-6 text-center bg-[#14152A] border border-[#2E2D47] rounded-md">
+                          <p className="text-sm text-gray-500">
+                            Upload a text file or type your message to see it here
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {/* Image Processing Toggle Button */}
               <div className="mt-4 border-t border-[#2E2D47] pt-3">
                 <button
@@ -218,7 +320,6 @@ export default function CTASection() {
                   className="w-full flex items-center justify-between text-sm text-gray-300 hover:text-[#00F5A0] transition-colors p-2 rounded-md hover:bg-[#1C1D2B]"
                 >
                   <span className="flex items-center">
-                    {/* eslint-disable-next-line jsx-a11y/alt-text */}
                     <Image className="w-4 h-4 mr-2 text-[#00F5A0]" aria-hidden="true" />
                     Image Processing
                   </span>

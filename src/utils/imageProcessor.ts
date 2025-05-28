@@ -1,5 +1,5 @@
 // Client-side utility for calling our image processing API route
-export async function processImageWithClaude(imageBase64: string): Promise<string> {
+export async function processImageWithClaude(imageBase64: string, customInstructions?: string): Promise<string> {
   try {
    
     
@@ -8,7 +8,10 @@ export async function processImageWithClaude(imageBase64: string): Promise<strin
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ image: imageBase64 })
+      body: JSON.stringify({ 
+        image: imageBase64,
+        customInstructions: customInstructions || ''
+      })
     });
     
     if (!response.ok) {
