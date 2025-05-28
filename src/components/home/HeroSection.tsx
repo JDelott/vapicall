@@ -41,15 +41,15 @@ function MobileHeroSection() {
           
           {/* Subheading */}
           <p className="text-white/90 text-md mb-6 leading-relaxed">
-            Experience AI technology with a simple phone call - get instant answers to any question.
+            AI assistance through phone calls, plus a powerful dashboard for contextual conversations.
           </p>
           
           {/* Feature points - bold style with matching colors */}
           <div className="space-y-3.5 mb-6">
             {[
-              "Connect to AI with just one call",
-              "Have natural conversations",
-              "Get real-time information instantly"
+              "Call for instant AI assistance anytime",
+              "Use dashboard for contextual conversations",
+              "Upload content & choose specialized assistants"
             ].map((feature, i) => (
               <div key={i} className="flex items-center">
                 <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center bg-[#14152A] border border-[#00F5A0]/50 rounded-sm mr-3">
@@ -96,9 +96,9 @@ function DesktopHeroSection() {
             </div>
             
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-4 sm:mb-6 md:mb-8" style={{textShadow: '0 0 20px rgba(0, 0, 0, 0.5)'}}>
-              <span className="block relative z-10">AI Power</span> 
+              <span className="block relative z-10">AI Assistant</span> 
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00F5A0] to-[#00F5A0] relative">
-                Through Your Phone
+                Phone & Dashboard
                 <span className="absolute -inset-1 bg-gradient-to-r from-[#00F5A0]/5 to-[#B83280]/5 blur-xl opacity-30 -z-10"></span>
               </span>
             </h1>
@@ -112,39 +112,68 @@ function DesktopHeroSection() {
               <div className="bg-[#14152A]/70 backdrop-blur-sm rounded-lg p-3 sm:p-4 border-l-4 border-[#00F5A0] relative overflow-hidden shadow-[0_0_15px_rgba(0,0,0,0.3)]">
                 <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-[#00F5A0]/10 to-transparent rounded-bl-full"></div>
                 <p className="text-sm sm:text-base md:text-lg text-white font-medium relative z-10">
-                  Experience AI technology with a simple phone call
+                  Call for instant AI help, or use our dashboard for contextual conversations
                 </p>
               </div>
               
-              {/* Feature points with subtle electric styling */}
-              <div className="space-y-2 sm:space-y-4">
+              {/* Two-column feature layout */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                {/* Phone Hotline */}
+                <div className="bg-[#14152A]/70 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-[#2E2D47]/70 relative overflow-hidden group transition-all duration-300 hover:bg-[#1C1D2B]/80 shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute bottom-0 left-0 h-[2px] w-full bg-[#00F5A0]/30 opacity-20 group-hover:opacity-70 transition-all duration-500"></div>
+                  
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-[#0C0D1D] border border-[#2E2D47] text-[#00F5A0] mr-2 sm:mr-3 shadow-lg group-hover:border-[#00F5A0]/50 transition-all duration-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </div>
+                    <div>
+                      <h3 className="text-white text-xs sm:text-sm md:text-base font-medium">Phone Hotline</h3>
+                      <p className="text-gray-400 text-[10px] sm:text-xs md:text-sm mt-0.5">General AI assistant via phone call</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dashboard */}
+                <div className="bg-[#14152A]/70 backdrop-blur-sm rounded-lg p-3 sm:p-4 border border-[#2E2D47]/70 relative overflow-hidden group transition-all duration-300 hover:bg-[#1C1D2B]/80 shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute bottom-0 left-0 h-[2px] w-full bg-[#B83280]/30 opacity-20 group-hover:opacity-70 transition-all duration-500"></div>
+                  
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-[#0C0D1D] border border-[#2E2D47] text-[#B83280] mr-2 sm:mr-3 shadow-lg group-hover:border-[#B83280]/50 transition-all duration-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><path d="m9 1 0 6"></path><path d="m15 1 0 6"></path><path d="m9 21 0-6"></path><path d="m15 21 0-6"></path><path d="m1 9 6 0"></path><path d="m1 15 6 0"></path><path d="m17 9 6 0"></path><path d="m17 15 6 0"></path></svg>
+                    </div>
+                    <div>
+                      <h3 className="text-white text-xs sm:text-sm md:text-base font-medium">Smart Dashboard</h3>
+                      <p className="text-gray-400 text-[10px] sm:text-xs md:text-sm mt-0.5">Upload context & choose specialists</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional features */}
+              <div className="space-y-2 sm:space-y-3">
                 {[
                   {
-                    icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>,
-                    title: "One call away",
-                    desc: "Connect to AI with a simple phone call"
+                    icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>,
+                    title: "Instant access",
+                    desc: "Call anytime for immediate AI assistance"
                   },
                   {
-                    icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>,
-                    title: "Natural conversation",
-                    desc: "Ask anything, get instant answers"
-                  },
-                  {
-                    icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>,
-                    title: "Real-time information",
-                    desc: "Get the latest info from the web"
+                    icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>,
+                    title: "Enhanced conversations",
+                    desc: "Upload text & get specialized AI responses"
                   }
                 ].map((item, i) => (
-                  <div key={i} className="flex items-start p-2 sm:p-3 bg-[#14152A]/70 backdrop-blur-sm rounded-lg border border-[#2E2D47]/70 relative overflow-hidden group transition-all duration-300 hover:bg-[#1C1D2B]/80 shadow-[0_4px_12px_rgba(0,0,0,0.25)]">
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div className="absolute bottom-0 left-0 h-[2px] w-full bg-[#00F5A0]/30 opacity-20 group-hover:opacity-70 transition-all duration-500"></div>
+                  <div key={i} className="flex items-start p-2 sm:p-3 bg-[#14152A]/50 backdrop-blur-sm rounded-lg border border-[#2E2D47]/50 relative overflow-hidden group transition-all duration-300 hover:bg-[#1C1D2B]/60 shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     
-                    <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg bg-[#0C0D1D] border border-[#2E2D47] text-[#00F5A0] mr-2 sm:mr-3 shadow-lg group-hover:border-[#00F5A0]/50 transition-all duration-300">
+                    <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-md bg-[#0C0D1D] border border-[#2E2D47] text-[#00F5A0] mr-2 sm:mr-3 shadow-sm group-hover:border-[#00F5A0]/50 transition-all duration-300">
                       {item.icon}
                     </div>
                     <div>
-                      <h3 className="text-white text-xs sm:text-sm md:text-base font-medium">{item.title}</h3>
-                      <p className="text-gray-400 text-[10px] sm:text-xs md:text-sm mt-0.5">{item.desc}</p>
+                      <h4 className="text-white text-xs sm:text-sm font-medium">{item.title}</h4>
+                      <p className="text-gray-400 text-[10px] sm:text-xs mt-0.5">{item.desc}</p>
                     </div>
                   </div>
                 ))}
