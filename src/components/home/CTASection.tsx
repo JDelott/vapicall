@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, ChevronUp, Copy, Check, Clock, MessageSquare, Image, Send, Activity, VolumeX, FileText } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Check, Clock, MessageSquare, Image, Send, Activity, VolumeX, FileText, Mail } from "lucide-react";
 import useTranscriptSummary from "@/services/vapiTranscriptService";
 import ImageUploader from "@/components/vapi/ImageUploader";
 import VapiCall, { VapiCallRefType } from "@/components/vapi/VapiCall";
@@ -7,6 +7,7 @@ import Button from "@/components/ui/Button";
 import TextUploader from "@/components/vapi/TextUploader";
 import AssistantSelector from "@/components/vapi/AssistantSelector";
 import { useAssistants } from "@/hooks/useAssistants";
+import { sendConversationEmail } from "@/utils/emailService";
 
 export default function CTASection() {
   const [showTranscript, setShowTranscript] = useState(false);
@@ -28,6 +29,12 @@ export default function CTASection() {
   
   // Use the assistants hook
   const { assistants, selectedAssistant, selectAssistant, loading: assistantsLoading } = useAssistants();
+  
+  // Add email-related state
+  const [emailAddress, setEmailAddress] = useState('');
+  const [isEmailSending, setIsEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState('');
   
   // Format duration as mm:ss
   const formatDuration = (seconds: number): string => {
@@ -139,6 +146,60 @@ export default function CTASection() {
       console.error("Error sending text to conversation:", error);
     } finally {
       setIsInjectingText(false);
+    }
+  };
+  
+  // Function to send email
+  const handleSendEmail = async () => {
+    if (!emailAddress.trim()) {
+      setEmailError('Please enter an email address');
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailAddress)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
+
+    if (!transcript && !summary) {
+      setEmailError('No conversation data available to send');
+      return;
+    }
+
+    setIsEmailSending(true);
+    setEmailError('');
+    setEmailSent(false);
+
+    try {
+      const result = await sendConversationEmail({
+        email: emailAddress,
+        transcript: transcript || undefined,
+        summary: summary || undefined,
+      });
+
+      if (result.success) {
+        setEmailSent(true);
+        setEmailAddress(''); // Clear the email field
+        setTimeout(() => setEmailSent(false), 5000); // Reset success message after 5 seconds
+      } else {
+        console.error('Error sending email:', result.error);
+        setEmailError(result.error || 'Failed to send email');
+      }
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setEmailError('An unexpected error occurred');
+    } finally {
+      setIsEmailSending(false);
+    }
+  };
+
+  // Clear email error when user starts typing
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmailAddress(e.target.value);
+    if (emailError) {
+      setEmailError('');
     }
   };
   
@@ -422,6 +483,60 @@ export default function CTASection() {
                   ) : (
                     <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 h-[100px] flex items-center justify-center">
                       <p className="text-sm text-gray-500">No summary available yet</p>
+                    </div>
+                  )}
+                  
+                  {/* Email Section - Only show if we have content to send */}
+                  {(summary || transcript) && (
+                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 mb-4">
+                      <div className="flex items-center mb-3">
+                        <Mail className="w-4 h-4 mr-2 text-[#00F5A0]" />
+                        <p className="text-xs font-semibold text-[#00F5A0]">Email Conversation</p>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div>
+                          <input
+                            type="email"
+                            placeholder="Enter email address..."
+                            value={emailAddress}
+                            onChange={handleEmailChange}
+                            className="w-full px-3 py-2 bg-[#1C1D2B] border border-[#2E2D47] rounded-md text-sm text-gray-300 placeholder-gray-500 focus:border-[#00F5A0] focus:outline-none transition-colors"
+                            disabled={isEmailSending}
+                          />
+                          {emailError && (
+                            <p className="text-xs text-red-400 mt-1">{emailError}</p>
+                          )}
+                          {emailSent && (
+                            <p className="text-xs text-[#00F5A0] mt-1 flex items-center">
+                              <Check className="w-3 h-3 mr-1" />
+                              Email sent successfully!
+                            </p>
+                          )}
+                        </div>
+                        
+                        <Button
+                          onClick={handleSendEmail}
+                          disabled={isEmailSending || !emailAddress.trim()}
+                          className={`w-full ${
+                            isEmailSending || !emailAddress.trim()
+                              ? 'bg-[#1C1D2B] text-gray-500 border border-[#2E2D47] cursor-not-allowed'
+                              : 'bg-[#1C1D2B] text-[#00F5A0] border border-[#00F5A0] hover:bg-[#00F5A0]/10'
+                          } flex items-center justify-center py-2 text-xs transition-colors`}
+                        >
+                          <Mail className="w-3 h-3 mr-2" />
+                          {isEmailSending ? 'Sending...' : 'Send Email'}
+                        </Button>
+                        
+                        <p className="text-xs text-gray-500 text-center">
+                          {summary && transcript 
+                            ? 'Will send both summary and full transcript'
+                            : summary 
+                              ? 'Will send AI summary only'
+                              : 'Will send transcript only'
+                          }
+                        </p>
+                      </div>
                     </div>
                   )}
                   
