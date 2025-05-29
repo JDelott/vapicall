@@ -124,7 +124,7 @@ export default function FeaturesSection() {
                   Perfect For These <span className="text-[#00F5A0]">Use Cases</span>
                 </h3>
                 <p className="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto">
-                  Real-world scenarios where VapiCall makes a difference
+                  Real-world scenarios where VAYA Call makes a difference
                 </p>
               </div>
 

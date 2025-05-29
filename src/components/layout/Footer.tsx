@@ -37,7 +37,7 @@ export default function Footer() {
         </div>
         
         <p className="text-xs text-gray-400">
-          © {new Date().getFullYear()} VAPI Call
+          © {new Date().getFullYear()} VAYA Call
         </p>
       </div>
     </footer>
