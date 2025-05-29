@@ -559,11 +559,11 @@ export default function CTASection() {
                           <Button
                             onClick={handleSendEmail}
                             disabled={isEmailSending || !emailAddress.trim()}
-                            className={`px-8 py-2.5 rounded-lg font-medium text-sm transition-all duration-300 ${
+                            className={`px-8 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 ${
                               isEmailSending || !emailAddress.trim()
-                                ? 'bg-[#1C1D2B]/60 text-gray-500 border border-[#2E2D47]/40 cursor-not-allowed'
-                                : 'bg-gradient-to-r from-[#00F5A0]/20 to-[#00F5A0]/10 text-[#00F5A0] border border-[#00F5A0]/30 hover:from-[#00F5A0]/30 hover:to-[#00F5A0]/20 hover:border-[#00F5A0]/50 hover:shadow-lg hover:shadow-[#00F5A0]/20'
-                            } flex items-center space-x-2 backdrop-blur-sm`}
+                                ? 'bg-transparent text-gray-500 border border-gray-600 cursor-not-allowed'
+                                : 'bg-transparent text-[#00F5A0] border border-[#00F5A0] hover:bg-[#00F5A0]/10'
+                            } flex items-center space-x-2`}
                           >
                             {isEmailSending ? (
                               <>
@@ -616,13 +616,17 @@ export default function CTASection() {
                   
                   {/* Transcript Content */}
                   {showTranscript && (
-                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4">
+                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 h-[240px] flex flex-col">
                       {transcript ? (
-                        <div className="whitespace-pre-line text-xs text-gray-300 max-h-[200px] overflow-y-auto">
-                          {transcript}
+                        <div className="flex-1 min-h-0">
+                          <div className="whitespace-pre-line text-xs text-gray-300 h-full overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#2E2D47] scrollbar-track-transparent">
+                            {transcript}
+                          </div>
                         </div>
                       ) : (
-                        <p className="text-xs text-gray-400">No conversation recorded yet.</p>
+                        <div className="flex-1 flex items-center justify-center">
+                          <p className="text-xs text-gray-400">No conversation recorded yet.</p>
+                        </div>
                       )}
                     </div>
                   )}
