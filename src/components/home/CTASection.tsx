@@ -445,23 +445,22 @@ export default function CTASection() {
               
               {/* Collapsible Conversation Summary Section */}
               {showSummary && (
-                <div className="mt-3 p-4 bg-[#1C1D2B] rounded-lg border border-[#2E2D47] transition-all duration-300 ease-in-out">
-                  {isSummarizing ? (
-                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 h-[100px] flex flex-col justify-center items-center">
-                      <p className="text-xs font-semibold text-[#00F5A0] mb-3">Generating Summary...</p>
-                      <div className="flex space-x-2">
-                        <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse"></div>
-                        <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse delay-75"></div>
-                        <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse delay-150"></div>
+                <div className="mt-3 p-6 bg-[#1C1D2B] rounded-lg border border-[#2E2D47] transition-all duration-300 ease-in-out">
+                  
+                  {/* Section 1: AI Summary */}
+                  <div className="mb-6">
+                    <div className="flex items-center mb-4">
+                      <div className="p-2 bg-[#00F5A0]/10 rounded-lg border border-[#00F5A0]/20 mr-3">
+                        <MessageSquare className="w-4 h-4 text-[#00F5A0]" />
                       </div>
-                    </div>
-                  ) : summary ? (
-                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 mb-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-semibold text-[#00F5A0]">AI Generated Summary</p>
+                      <div>
+                        <h3 className="text-sm font-semibold text-white">AI Generated Summary</h3>
+                        <p className="text-xs text-gray-400">Key insights from your conversation</p>
+                      </div>
+                      {summary && (
                         <button 
                           onClick={copyToClipboard}
-                          className="text-xs flex items-center text-gray-400 hover:text-[#00F5A0] transition-colors"
+                          className="ml-auto text-xs flex items-center text-gray-400 hover:text-[#00F5A0] transition-colors"
                         >
                           {copied ? (
                             <>
@@ -475,157 +474,262 @@ export default function CTASection() {
                             </>
                           )}
                         </button>
-                      </div>
-                      <div className="whitespace-pre-line text-sm text-gray-300 max-h-[150px] overflow-y-auto">
-                        {summary}
-                      </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 h-[100px] flex items-center justify-center">
-                      <p className="text-sm text-gray-500">No summary available yet</p>
-                    </div>
-                  )}
-                  
-                  {/* Email Section - Only show if we have content to send */}
-                  {(summary || transcript) && (
-                    <div className="bg-gradient-to-r from-[#14152A]/80 to-[#1C1D2B]/60 border border-[#2E2D47]/50 rounded-xl p-6 mb-4 backdrop-blur-sm">
-                      <div className="flex items-center justify-center mb-6">
-                        <div className="flex items-center space-x-3">
-                          <div className="p-2 bg-[#00F5A0]/10 rounded-lg border border-[#00F5A0]/20">
-                            <Mail className="w-4 h-4 text-[#00F5A0]" />
+                    
+                    {/* Fixed height container for all states */}
+                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg h-[150px] flex flex-col">
+                      {isSummarizing ? (
+                        <div className="flex-1 flex flex-col justify-center items-center p-4">
+                          <p className="text-xs font-medium text-[#00F5A0] mb-3">Generating Summary...</p>
+                          <div className="flex space-x-2">
+                            <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse"></div>
+                            <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse delay-75"></div>
+                            <div className="h-2 w-2 bg-[#00F5A0] rounded-full animate-pulse delay-150"></div>
                           </div>
-                          <div>
-                            <p className="text-sm font-medium text-white">Email Summary</p>
-                            <p className="text-xs text-gray-400">Send conversation to your inbox</p>
+                        </div>
+                      ) : summary ? (
+                        <div className="flex-1 min-h-0 p-4">
+                          <div className="whitespace-pre-line text-sm text-gray-300 h-full overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#2E2D47] scrollbar-track-transparent">
+                            {summary}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex-1 flex items-center justify-center p-4">
+                          <p className="text-sm text-gray-400">No summary available yet</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Section 2: Full Transcript */}
+                  <div className="mb-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center">
+                        <div className="p-2 bg-[#00F5A0]/10 rounded-lg border border-[#00F5A0]/20 mr-3">
+                          <FileText className="w-4 h-4 text-[#00F5A0]" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-semibold text-white">Full Conversation</h3>
+                          <p className="text-xs text-gray-400">Complete transcript of your call</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowTranscript(!showTranscript)}
+                        className="flex items-center text-xs text-gray-400 hover:text-[#00F5A0] transition-colors px-3 py-1.5 rounded-md hover:bg-[#14152A]"
+                      >
+                        {showTranscript ? (
+                          <>
+                            <ChevronUp className="h-3 w-3 mr-1" />
+                            <span>Hide</span>
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="h-3 w-3 mr-1" />
+                            <span>Show</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    
+                    {showTranscript && (
+                      <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 h-[200px] flex flex-col">
+                        {transcript ? (
+                          <div className="flex-1 min-h-0">
+                            <div className="whitespace-pre-line text-xs text-gray-300 h-full overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#2E2D47] scrollbar-track-transparent">
+                              {transcript}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex-1 flex items-center justify-center">
+                            <p className="text-xs text-gray-400">No conversation recorded yet.</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Section 3: Email Actions - Responsive Subtle CTA */}
+                  {(summary || transcript) && (
+                    <div className="mt-6 pt-4 border-t border-[#2E2D47]/50">
+                      {/* Mobile Layout (xs to sm) */}
+                      <div className="block md:hidden">
+                        <div className="p-4 bg-[#14152A]/40 border border-[#2E2D47]/30 rounded-lg space-y-4">
+                          <div className="flex items-center space-x-3">
+                            <Mail className="w-4 h-4 text-[#00F5A0] flex-shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-sm text-white font-medium">Send to email</p>
+                              <p className="text-xs text-gray-400">
+                                {summary && transcript ? 'Summary + transcript' : summary ? 'AI summary' : 'Transcript'}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-3">
+                            <input
+                              type="email"
+                              placeholder="your@email.com"
+                              value={emailAddress}
+                              onChange={handleEmailChange}
+                              className="w-full px-3 py-2.5 bg-[#0A0B14] border border-[#2E2D47] rounded-md text-sm text-white placeholder-gray-400 focus:border-[#00F5A0]/50 focus:outline-none transition-all duration-200"
+                              style={{
+                                fontSize: '16px', // Prevents zoom on iOS
+                                WebkitAppearance: 'none',
+                                WebkitTapHighlightColor: 'transparent'
+                              }}
+                              disabled={isEmailSending}
+                              onFocus={() => {
+                                // Force viewport to stay fixed on mobile
+                                const viewport = document.querySelector('meta[name=viewport]');
+                                if (viewport) {
+                                  viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+                                }
+                              }}
+                              onBlur={() => {
+                                // Keep viewport fixed after blur
+                                const viewport = document.querySelector('meta[name=viewport]');
+                                if (viewport) {
+                                  viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+                                }
+                              }}
+                            />
+                            
+                            <Button
+                              onClick={handleSendEmail}
+                              disabled={isEmailSending || !emailAddress.trim()}
+                              className={`w-full px-4 py-2.5 rounded-md text-sm transition-all duration-200 ${
+                                isEmailSending || !emailAddress.trim()
+                                  ? 'bg-transparent text-gray-500 border border-gray-600 cursor-not-allowed'
+                                  : 'bg-transparent text-[#00F5A0] border border-[#00F5A0] hover:bg-[#00F5A0]/10'
+                              } flex items-center justify-center space-x-2`}
+                            >
+                              {isEmailSending ? (
+                                <>
+                                  <div className="w-3 h-3 border border-[#00F5A0]/30 border-t-[#00F5A0] rounded-full animate-spin"></div>
+                                  <span>Sending...</span>
+                                </>
+                              ) : (
+                                <span>Send Email</span>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Tablet Layout (md to lg) */}
+                      <div className="hidden md:block lg:hidden">
+                        <div className="p-4 bg-[#14152A]/40 border border-[#2E2D47]/30 rounded-lg">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center space-x-3">
+                              <Mail className="w-4 h-4 text-[#00F5A0]" />
+                              <div>
+                                <p className="text-sm text-white font-medium">Send to email</p>
+                                <p className="text-xs text-gray-400">
+                                  {summary && transcript ? 'Summary + transcript' : summary ? 'AI summary' : 'Transcript'}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="email"
+                              placeholder="your@email.com"
+                              value={emailAddress}
+                              onChange={handleEmailChange}
+                              className="flex-1 px-3 py-2 bg-[#0A0B14] border border-[#2E2D47] rounded-md text-sm text-white placeholder-gray-400 focus:border-[#00F5A0]/50 focus:outline-none transition-all duration-200"
+                              style={{
+                                fontSize: '16px',
+                                WebkitAppearance: 'none',
+                                WebkitTapHighlightColor: 'transparent'
+                              }}
+                              disabled={isEmailSending}
+                            />
+                            
+                            <Button
+                              onClick={handleSendEmail}
+                              disabled={isEmailSending || !emailAddress.trim()}
+                              className={`px-6 py-2 rounded-md text-sm transition-all duration-200 ${
+                                isEmailSending || !emailAddress.trim()
+                                  ? 'bg-transparent text-gray-500 border border-gray-600 cursor-not-allowed'
+                                  : 'bg-transparent text-[#00F5A0] border border-[#00F5A0] hover:bg-[#00F5A0]/10'
+                              } flex items-center space-x-2 whitespace-nowrap`}
+                            >
+                              {isEmailSending ? (
+                                <>
+                                  <div className="w-3 h-3 border border-[#00F5A0]/30 border-t-[#00F5A0] rounded-full animate-spin"></div>
+                                  <span>Sending...</span>
+                                </>
+                              ) : (
+                                <span>Send</span>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Desktop Layout (lg and xl) */}
+                      <div className="hidden lg:block">
+                        <div className="flex items-center justify-between p-4 bg-[#14152A]/40 border border-[#2E2D47]/30 rounded-lg hover:bg-[#14152A]/60 transition-all duration-200">
+                          <div className="flex items-center space-x-3">
+                            <Mail className="w-4 h-4 text-[#00F5A0]" />
+                            <div>
+                              <p className="text-sm text-white font-medium">Send to email</p>
+                              <p className="text-xs text-gray-400">
+                                {summary && transcript ? 'Summary + transcript' : summary ? 'AI summary' : 'Transcript'}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-3">
+                            <input
+                              type="email"
+                              placeholder="your@email.com"
+                              value={emailAddress}
+                              onChange={handleEmailChange}
+                              className="w-48 xl:w-56 px-3 py-2 bg-[#0A0B14] border border-[#2E2D47] rounded-md text-sm text-white placeholder-gray-400 focus:border-[#00F5A0]/50 focus:outline-none transition-all duration-200"
+                              style={{
+                                fontSize: '16px',
+                                WebkitAppearance: 'none',
+                                WebkitTapHighlightColor: 'transparent'
+                              }}
+                              disabled={isEmailSending}
+                            />
+                            
+                            <Button
+                              onClick={handleSendEmail}
+                              disabled={isEmailSending || !emailAddress.trim()}
+                              className={`px-4 py-2 rounded-md text-sm transition-all duration-200 ${
+                                isEmailSending || !emailAddress.trim()
+                                  ? 'bg-transparent text-gray-500 border border-gray-600 cursor-not-allowed'
+                                  : 'bg-transparent text-[#00F5A0] border border-[#00F5A0] hover:bg-[#00F5A0]/10'
+                              } flex items-center space-x-2 whitespace-nowrap`}
+                            >
+                              {isEmailSending ? (
+                                <>
+                                  <div className="w-3 h-3 border border-[#00F5A0]/30 border-t-[#00F5A0] rounded-full animate-spin"></div>
+                                  <span>Sending...</span>
+                                </>
+                              ) : (
+                                <span>Send</span>
+                              )}
+                            </Button>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="space-y-4">
-                        <div className="relative">
-                          <input
-                            type="email"
-                            placeholder="your@email.com"
-                            value={emailAddress}
-                            onChange={handleEmailChange}
-                            className="w-full sm:w-72 sm:mx-auto block px-4 py-3 bg-[#0A0B14]/60 border border-[#2E2D47]/60 rounded-lg text-white placeholder-gray-400 focus:border-[#00F5A0]/60 focus:outline-none focus:ring-2 focus:ring-[#00F5A0]/20 transition-all duration-300 text-center shadow-inner backdrop-blur-sm"
-                            style={{
-                              fontSize: '16px', // Prevents zoom on iOS
-                              WebkitAppearance: 'none',
-                              WebkitTapHighlightColor: 'transparent'
-                            }}
-                            disabled={isEmailSending}
-                            onFocus={() => {
-                              // Additional viewport fix for mobile
-                              if (window.innerWidth <= 768) {
-                                const viewport = document.querySelector('meta[name=viewport]');
-                                if (viewport) {
-                                  viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-                                }
-                              }
-                            }}
-                            onBlur={() => {
-                              // Reset viewport on blur for mobile
-                              if (window.innerWidth <= 768) {
-                                const viewport = document.querySelector('meta[name=viewport]');
-                                if (viewport) {
-                                  viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-                                }
-                              }
-                            }}
-                          />
-                          
-                          {/* Fixed height status area to prevent container expansion */}
-                          <div className="h-8 flex items-center justify-center mt-3">
-                            {emailError && (
-                              <div className="flex items-center px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full animate-in fade-in duration-200">
-                                <svg className="w-3 h-3 text-red-400 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
-                                <span className="text-xs text-red-400">{emailError}</span>
-                              </div>
-                            )}
-                            
-                            {emailSent && (
-                              <div className="flex items-center px-3 py-1.5 bg-[#00F5A0]/10 border border-[#00F5A0]/20 rounded-full animate-in fade-in duration-200">
-                                <Check className="w-3 h-3 text-[#00F5A0] mr-1.5" />
-                                <span className="text-xs text-[#00F5A0]">Email sent successfully!</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <div className="flex justify-center">
-                          <Button
-                            onClick={handleSendEmail}
-                            disabled={isEmailSending || !emailAddress.trim()}
-                            className={`px-8 py-2.5 rounded-lg font-medium text-sm transition-all duration-200 ${
-                              isEmailSending || !emailAddress.trim()
-                                ? 'bg-transparent text-gray-500 border border-gray-600 cursor-not-allowed'
-                                : 'bg-transparent text-[#00F5A0] border border-[#00F5A0] hover:bg-[#00F5A0]/10'
-                            } flex items-center space-x-2`}
-                          >
-                            {isEmailSending ? (
-                              <>
-                                <div className="w-3 h-3 border border-[#00F5A0]/30 border-t-[#00F5A0] rounded-full animate-spin"></div>
-                                <span>Sending...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Mail className="w-3 h-3" />
-                                <span>Send to Email</span>
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                        
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500 leading-relaxed">
-                            {summary && transcript 
-                              ? 'Includes AI summary and full transcript'
-                              : summary 
-                                ? 'Includes AI-generated summary'
-                                : 'Includes conversation transcript'
-                            }
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Transcript Toggle */}
-                  <div className="flex justify-between items-center mb-2 mt-4">
-                    <p className="text-xs font-medium text-gray-300">Full Conversation Transcript</p>
-                    <button
-                      onClick={() => setShowTranscript(!showTranscript)}
-                      className="flex items-center text-xs text-gray-400 hover:text-[#00F5A0] transition-colors"
-                    >
-                      {showTranscript ? (
-                        <>
-                          <ChevronUp className="h-3 w-3 mr-1" />
-                          <span>Hide</span>
-                        </>
-                      ) : (
-                        <>
-                          <ChevronDown className="h-3 w-3 mr-1" />
-                          <span>Show</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  
-                  {/* Transcript Content */}
-                  {showTranscript && (
-                    <div className="bg-[#14152A] border border-[#2E2D47] rounded-lg p-4 h-[240px] flex flex-col">
-                      {transcript ? (
-                        <div className="flex-1 min-h-0">
-                          <div className="whitespace-pre-line text-xs text-gray-300 h-full overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-[#2E2D47] scrollbar-track-transparent">
-                            {transcript}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex-1 flex items-center justify-center">
-                          <p className="text-xs text-gray-400">No conversation recorded yet.</p>
+                      {/* Compact status messages for all screen sizes */}
+                      {(emailError || emailSent) && (
+                        <div className="mt-2 text-center">
+                          {emailError && (
+                            <p className="text-xs text-red-400">{emailError}</p>
+                          )}
+                          {emailSent && (
+                            <p className="text-xs text-[#00F5A0] flex items-center justify-center">
+                              <Check className="w-3 h-3 mr-1" />
+                              Email sent successfully!
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
