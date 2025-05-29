@@ -355,11 +355,11 @@ const VapiCall = forwardRef<VapiCallRefType, VapiCallProps>(({
         </div>
         
         {/* Display selected assistant name if available */}
-        {selectedAssistant && (
+        {/* {selectedAssistant && (
           <div className="absolute top-3 left-3 z-10 flex items-center bg-[#14152A]/70 backdrop-blur-sm py-1 px-2 rounded-full border border-[#2E2D47]">
             <p className="text-xs text-[#00F5A0]">{selectedAssistant.name}</p>
           </div>
-        )}
+        )} */}
         
         {/* Display Mode Toggle - Floating in top-right */}
         <div className="absolute top-3 right-3 z-10">
