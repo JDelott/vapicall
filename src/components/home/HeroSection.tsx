@@ -32,10 +32,11 @@ function MobileHeroSection() {
         
         {/* Main Content - angular design */}
         <div className="p-6 border-l-4 border-[#00F5A0] rounded-r-md mb-8 relative overflow-hidden">
-          {/* Headline - back to VapiCall */}
-          <h1 className="text-5xl font-bold leading-[1.15] mb-5">
-            <span className="block mb-1 text-white relative z-10">
-              VapiCall
+          {/* Headline - larger size */}
+          <h1 className="text-6xl font-bold leading-[1.1] mb-5">
+            <span className="block relative z-10">
+              <span className="text-white tracking-wide">VAYA </span>
+              <span className="text-[#00F5A0] tracking-normal">Call</span>
             </span>
           </h1>
           
@@ -95,10 +96,10 @@ function DesktopHeroSection() {
               <span className="mr-1.5">⚡</span> Powered by Vapi AI
             </div>
             
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-4 sm:mb-6 md:mb-8" style={{textShadow: '0 0 20px rgba(0, 0, 0, 0.5)'}}>
-              <span className="block relative z-10">Quick Help</span> 
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00F5A0] to-[#00F5A0] relative">
-                or Deep Conversations
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-[1.1] mb-4 sm:mb-6 md:mb-8" style={{textShadow: '0 0 20px rgba(0, 0, 0, 0.5)'}}>
+              <span className="block relative z-10">
+                <span className="text-white tracking-wide">VAYA </span>
+                <span className="text-[#00F5A0] tracking-normal">Call</span>
                 <span className="absolute -inset-1 bg-gradient-to-r from-[#00F5A0]/5 to-[#B83280]/5 blur-xl opacity-30 -z-10"></span>
               </span>
             </h1>
